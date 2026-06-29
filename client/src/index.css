@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wide transition-all duration-300;
+  }
+  .btn-gold {
+    @apply bg-gold text-navy hover:bg-gold-light;
+  }
+  .btn-outline {
+    @apply border border-gold text-gold hover:bg-gold hover:text-navy;
+  }
+  .section-label {
+    @apply text-gold text-xs font-semibold tracking-[3px] uppercase text-center mb-3;
+  }
+}
