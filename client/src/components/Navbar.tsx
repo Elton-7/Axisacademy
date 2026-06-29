@@ -30,15 +30,15 @@ export default function Navbar() {
     <nav 
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-navy-900/95 backdrop-blur-md shadow-lg shadow-navy-900/20' 
-          : 'bg-navy-900'
+          ? 'border-b border-white/10 bg-navy-900/95 shadow-lg shadow-navy-900/20 backdrop-blur-xl' 
+          : 'border-b border-white/10 bg-navy-900/90 backdrop-blur-sm'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="relative w-12 h-12 border-2 border-gold-500 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105">
+            <div className="relative w-12 h-12 border-2 border-gold-500 rounded-xl flex items-center justify-center transition-transform group-hover:scale-105">
               <span className="text-2xl font-bold text-gold-500 font-serif">A</span>
               <div className="absolute -bottom-1 -right-1 w-4 h-4 border-r-2 border-b-2 border-gold-500" />
             </div>
@@ -75,7 +75,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-4">
             <a 
               href="tel:0737003007" 
-              className="flex items-center gap-2 px-5 py-2.5 border border-gold-500 rounded-full text-gold-500 text-sm font-medium hover:bg-gold-500 hover:text-navy-900 transition-all duration-300"
+              className="flex items-center gap-2 rounded-full border border-gold-500 px-5 py-2.5 text-sm font-medium text-gold-500 transition-all duration-300 hover:bg-gold-500 hover:text-navy-900"
             >
               <Phone className="w-4 h-4" />
               0737 003 007
@@ -99,7 +99,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-navy-900 border-t border-gold-500/20 overflow-hidden"
+            className="overflow-hidden border-t border-gold-500/20 bg-navy-900/95 backdrop-blur-md lg:hidden"
           >
             <div className="px-4 py-6 space-y-4">
               {navLinks.map((link) => (

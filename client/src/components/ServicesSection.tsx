@@ -45,45 +45,50 @@ export default function ServicesSection() {
   const { ref, isVisible } = useScrollAnimation()
 
   return (
-    <section ref={ref} id="services" className="py-24 bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section ref={ref} id="services" className="bg-slate-50 py-24">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="section-label mb-4">Our Services</div>
-        <h2 className="text-3xl font-semibold text-navy-900 text-center mb-16">
-          Comprehensive Programmes for Every Learner
-        </h2>
+        <div className="mx-auto mb-16 max-w-3xl text-center">
+          <h2 className="text-3xl font-semibold text-navy sm:text-4xl">
+            Comprehensive programmes for every learner.
+          </h2>
+          <p className="mt-4 text-lg leading-relaxed text-navy/70">
+            From academic support to enrichment and wellbeing, each programme is designed to build confidence, curiosity, and real progress.
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {services.map((service, i) => (
             <motion.div
               key={service.title}
               initial={{ opacity: 0, y: 30 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-white rounded-2xl p-8 border border-gray-100 card-hover group"
+              transition={{ duration: 0.5, delay: i * 0.08 }}
+              className="group rounded-[1.75rem] border border-slate-200 bg-white p-8 shadow-sm card-hover"
             >
-              <div className="w-14 h-14 rounded-xl bg-navy-900 flex items-center justify-center mb-6 group-hover:bg-gold-500 transition-colors duration-300">
-                <service.icon className="w-7 h-7 text-gold-500 group-hover:text-navy-900 transition-colors duration-300" />
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-navy transition-colors duration-300 group-hover:bg-gold">
+                <service.icon className="h-7 w-7 text-gold transition-colors duration-300 group-hover:text-navy" />
               </div>
-              <h3 className="text-sm font-semibold text-navy-900 uppercase tracking-wide mb-3">
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-navy">
                 {service.title}
               </h3>
               {service.description && (
-                <p className="text-navy-600/70 text-sm mb-4">{service.description}</p>
+                <p className="mb-4 text-sm leading-relaxed text-navy/70">{service.description}</p>
               )}
-              <ul className="space-y-2 mb-6">
+              <ul className="mb-6 space-y-2">
                 {service.items.map((item) => (
-                  <li key={item} className="text-navy-600/70 text-sm flex items-start gap-2">
-                    <span className="w-1.5 h-1.5 rounded-full bg-gold-500 mt-1.5 flex-shrink-0" />
+                  <li key={item} className="flex items-start gap-2 text-sm text-navy/70">
+                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-gold" />
                     {item}
                   </li>
                 ))}
               </ul>
-              <a 
-                href="/services" 
-                className="inline-flex items-center gap-2 text-gold-600 text-sm font-semibold uppercase tracking-wide hover:text-gold-700 transition-colors"
+              <a
+                href="/services"
+                className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold transition-colors hover:text-gold-dark"
               >
                 Learn More
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
             </motion.div>
           ))}
