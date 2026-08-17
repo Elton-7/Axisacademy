@@ -842,12 +842,33 @@ const seedData = async () => {
       })
     }
 
+    /**
+     * /api/portal/overview queries schedules and messages by (role, userId).
+     * These records were previously seeded with userId left null, so they never
+     * matched a signed-in account and the demonstration data was invisible.
+     * They are attached to the seeded accounts here, and skipped entirely when
+     * those accounts are not configured.
+     */
+    const tutorEmail = process.env.TUTOR_EMAIL?.toLowerCase().trim()
+    const portalOwners = {}
+
+    for (const [role, email] of [['student', studentEmail], ['tutor', tutorEmail]]) {
+      if (!email) continue
+      const owner = await User.findOne({ where: { email } })
+      if (owner) portalOwners[role] = owner.id
+    }
+
     const portalRecords = [
       { role: 'student', title: 'Academic Support orientation', date: '2026-08-17T10:00:00.000Z' },
       { role: 'tutor', title: 'Academic Support learner review', date: '2026-08-17T09:00:00.000Z' },
     ]
     for (const record of portalRecords) {
-      await PortalSchedule.findOrCreate({ where: record, defaults: record })
+      const userId = portalOwners[record.role]
+      if (!userId) continue
+      await PortalSchedule.findOrCreate({
+        where: { userId, role: record.role, title: record.title },
+        defaults: { ...record, userId },
+      })
     }
 
     const portalMessages = [
@@ -855,7 +876,12 @@ const seedData = async () => {
       { role: 'tutor', subject: 'Learner review reminder', preview: 'Please review the Academic Support learner assignment before the next session.' },
     ]
     for (const message of portalMessages) {
-      await PortalMessage.findOrCreate({ where: message, defaults: message })
+      const userId = portalOwners[message.role]
+      if (!userId) continue
+      await PortalMessage.findOrCreate({
+        where: { userId, role: message.role, subject: message.subject },
+        defaults: { ...message, userId },
+      })
     }
 
     await seedIfEmpty(Partner, [

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Users, MessageSquare, TrendingUp, Mail, Phone, Calendar, Search, Filter, Download, LogOut, RefreshCw, X, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -30,6 +30,13 @@ export default function AdminDashboard() {
   })
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
+  // The search box drives a request, so the typed value and the value actually
+  // queried are kept apart: the input stays responsive while requests wait.
+  const [debouncedSearch, setDebouncedSearch] = useState('')
+  const [exporting, setExporting] = useState(false)
+  // Identifies the most recent contacts request so slower earlier ones can be
+  // discarded rather than overwriting fresher rows.
+  const contactRequestRef = useRef(0)
   const [contactPage, setContactPage] = useState(1)
   const [selectedContact, setSelectedContact] = useState<Contact | null>(null)
   const [selectedEnrollment, setSelectedEnrollment] = useState<Enrollment | null>(null)
@@ -108,17 +115,30 @@ export default function AdminDashboard() {
     }
   }, [activeTab])
 
+  // Settle the typed term before querying, and move back to the first page in
+  // the same update so the two changes produce one fetch rather than two.
+  useEffect(() => {
+    if (search === debouncedSearch) return
+
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search)
+      setContactPage(1)
+    }, 300)
+
+    return () => clearTimeout(timer)
+  }, [search, debouncedSearch])
+
   useEffect(() => {
     if (activeTab === 'dashboard') {
       fetchContacts()
     }
-  }, [contactPage, filter, search, activeTab])
+  }, [contactPage, filter, debouncedSearch, activeTab])
 
   useEffect(() => {
     if (activeTab === 'dashboard') {
       setContactPage(1)
     }
-  }, [filter, search])
+  }, [filter])
 
   useEffect(() => {
     if (activeTab === 'dashboard') {
@@ -170,16 +190,20 @@ export default function AdminDashboard() {
   }
 
   const fetchContacts = async () => {
+    const requestId = ++contactRequestRef.current
     try {
-      const response = await contactsApi.getAll({ page: contactPage, limit: pageSize, search, ...(filter !== 'all' ? { status: filter as Contact['status'] } : {}) })
+      const response = await contactsApi.getAll({ page: contactPage, limit: pageSize, search: debouncedSearch, ...(filter !== 'all' ? { status: filter as Contact['status'] } : {}) })
+      // A slower earlier request must not overwrite the results of a later one.
+      if (requestId !== contactRequestRef.current) return
       setContacts(response.data)
       setContactTotal(response.total)
     } catch (error) {
+      if (requestId !== contactRequestRef.current) return
       console.error('Failed to fetch contacts:', error)
       setContacts([])
       toast.error('Could not load inquiries. Please try again.')
     } finally {
-      setLoading(false)
+      if (requestId === contactRequestRef.current) setLoading(false)
     }
   }
 
@@ -581,10 +605,38 @@ export default function AdminDashboard() {
     window.location.href = '/admin/login'
   }
 
-  const exportData = () => {
+  const exportData = async () => {
+    // `contacts` holds only the current page, so exporting it would silently
+    // produce a ten-row file. Walk every page under the active filter and
+    // search instead — the API caps `limit` at 100, so a single large request
+    // would truncate just as quietly.
+    const perRequest = 100
+    let allContacts: Contact[] = []
+
+    try {
+      setExporting(true)
+      for (let page = 1; ; page += 1) {
+        const response = await contactsApi.getAll({
+          page,
+          limit: perRequest,
+          search: debouncedSearch,
+          ...(filter !== 'all' ? { status: filter as Contact['status'] } : {}),
+        })
+
+        allContacts = allContacts.concat(response.data)
+
+        if (response.data.length < perRequest || allContacts.length >= response.total) break
+      }
+    } catch (error) {
+      console.error('Failed to fetch all contacts for export:', error)
+      toast.error('Could not export every inquiry. Please try again.')
+      setExporting(false)
+      return
+    }
+
     const rows = [
       ['Type', 'Name or Email', 'Email', 'Subject or Programme', 'Status', 'Date'],
-      ...contacts.map((contact) => [
+      ...allContacts.map((contact) => [
         'Contact',
         contact.name,
         contact.email,
@@ -619,7 +671,8 @@ export default function AdminDashboard() {
     link.download = `axis-academy-export-${new Date().toISOString().slice(0, 10)}.csv`
     link.click()
     URL.revokeObjectURL(url)
-    toast.success('Export downloaded')
+    setExporting(false)
+    toast.success(`Exported ${allContacts.length} inquiries and ${subscribers.length} subscribers`)
   }
 
   const updateStatus = async (id: number, status: Contact['status']) => {
@@ -670,9 +723,9 @@ export default function AdminDashboard() {
                   <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                   Refresh
                 </button>
-                <button onClick={exportData} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800">
+                <button onClick={exportData} disabled={exporting} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800 disabled:cursor-not-allowed disabled:opacity-60">
                   <Download className="h-4 w-4" />
-                  Export Data
+                  {exporting ? 'Preparing export...' : 'Export Data'}
                 </button>
               </>
             )}
