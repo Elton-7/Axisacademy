@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Monitor, Users, Layers } from 'lucide-react'
+import { Monitor, Home, Building2, Layers } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
 
 const options = [
@@ -9,9 +9,14 @@ const options = [
     description: 'Live virtual lessons from anywhere.',
   },
   {
-    icon: Users,
-    title: 'In-Person Learning',
-    description: "Lessons conducted at the learner's location or designated learning centre.",
+    icon: Home,
+    title: 'Educator Comes to You',
+    description: 'Home-based learning with an Axis educator in the comfort of your learner’s own environment.',
+  },
+  {
+    icon: Building2,
+    title: 'Learner Comes to Axis',
+    description: 'Centre-based sessions at an Axis learning centre or approved learning facility.',
   },
   {
     icon: Layers,
@@ -41,7 +46,7 @@ export default function LearningOptions() {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {options.map((option, i) => (
             <motion.div
               key={option.title}
