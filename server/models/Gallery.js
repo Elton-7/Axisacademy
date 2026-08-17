@@ -47,6 +47,30 @@ const Gallery = sequelize.define(
       defaultValue: false,
       comment: 'Staff confirmation that publication consent has been verified for this media item.',
     },
+    /**
+     * Brief §38 — working with children means a consent tick on its own is not
+     * a record. If a parent later withdraws consent or disputes that it was
+     * given, Axis needs to show who confirmed it, when, and against which
+     * signed media release.
+     */
+    consentConfirmedBy: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      field: 'consent_confirmed_by',
+      comment: 'User who confirmed publication consent.',
+    },
+    consentConfirmedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      field: 'consent_confirmed_at',
+      comment: 'When publication consent was confirmed.',
+    },
+    consentReference: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      field: 'consent_reference',
+      comment: 'Reference to the signed media release held on file for this item.',
+    },
     isActive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true,

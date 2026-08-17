@@ -57,8 +57,50 @@ export interface Enrollment {
   contactConsent: boolean
   notes?: string
   status: 'pending' | 'approved' | 'rejected' | 'waitlist'
+  pipelineStage: PipelineStage
+  stageChangedAt?: string
+  stageNote?: string
   createdAt: string
   updatedAt: string
+}
+
+/**
+ * The client journey from brief §31. 'Lost' is not in the brief's list but is
+ * required to answer the question the pipeline exists to answer — where
+ * enquiries stop progressing.
+ */
+export type PipelineStage =
+  | 'New Enquiry'
+  | 'Contacted'
+  | 'Consultation Booked'
+  | 'Consultation Completed'
+  | 'Proposal Sent'
+  | 'Awaiting Decision'
+  | 'Enrolled'
+  | 'Active Learner'
+  | 'Lost'
+
+export const PIPELINE_STAGES: PipelineStage[] = [
+  'New Enquiry',
+  'Contacted',
+  'Consultation Booked',
+  'Consultation Completed',
+  'Proposal Sent',
+  'Awaiting Decision',
+  'Enrolled',
+  'Active Learner',
+  'Lost',
+]
+
+export interface PipelineSummary {
+  stages: Array<{ stage: PipelineStage; count: number }>
+  totals: {
+    active: number
+    enrolled: number
+    lost: number
+    /** Share of decided enquiries that enrolled; null until something is decided. */
+    conversionRate: number | null
+  }
 }
 
 export interface DashboardStats {
@@ -365,6 +407,9 @@ export interface GalleryItem {
   thumbnail?: string
   tags?: string[]
   consentConfirmed: boolean
+  consentConfirmedBy?: number | null
+  consentConfirmedAt?: string | null
+  consentReference?: string | null
   isActive: boolean
   sortOrder: number
   createdAt: string
@@ -380,6 +425,8 @@ export interface CreateGalleryRequest {
   thumbnail?: string
   tags?: string[]
   consentConfirmed: boolean
+  /** Reference to the signed media release held on file (brief §38). */
+  consentReference: string
 }
 
 export interface UpdateGalleryRequest {
@@ -391,6 +438,7 @@ export interface UpdateGalleryRequest {
   thumbnail?: string
   tags?: string[]
   consentConfirmed?: boolean
+  consentReference?: string
   isActive?: boolean
   sortOrder?: number
 }

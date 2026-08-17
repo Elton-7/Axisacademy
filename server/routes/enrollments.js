@@ -4,6 +4,7 @@ const { body, validationResult } = require('express-validator')
 const Enrollment = require('../models/Enrollment')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
+const { notifyNewEnquiry } = require('../services/notifications')
 
 // Get all enrollments
 router.get('/', requireAuth, requireRole('admin', 'staff'), async (req, res) => {
@@ -59,6 +60,13 @@ router.post(
 
     try {
       const enrollment = await Enrollment.create(req.body)
+
+      // Answer the parent immediately; alerting Axis must not be able to slow
+      // that down or fail it. The enquiry is already saved either way.
+      notifyNewEnquiry(enrollment).catch((error) =>
+        console.error('Failed to notify of new enquiry:', error)
+      )
+
       res.status(201).json({ success: true, data: enrollment })
     } catch (error) {
       res.status(500).json({ success: false, error: 'Failed to create enrollment' })
@@ -97,6 +105,102 @@ router.patch('/:id/status', requireAuth, requireRole('admin', 'staff'), async (r
     res.json({ success: true, data: enrollment })
   } catch (error) {
     res.status(500).json({ success: false, error: 'Failed to update enrollment' })
+  }
+})
+
+/** Brief §31 — the client journey, in the order the brief sets out. */
+const PIPELINE_STAGES = [
+  'New Enquiry',
+  'Contacted',
+  'Consultation Booked',
+  'Consultation Completed',
+  'Proposal Sent',
+  'Awaiting Decision',
+  'Enrolled',
+  'Active Learner',
+  'Lost',
+]
+
+router.patch('/:id/stage', requireAuth, requireRole('admin', 'staff'), async (req, res) => {
+  try {
+    const { pipelineStage, stageNote } = req.body
+
+    if (!PIPELINE_STAGES.includes(pipelineStage)) {
+      return res.status(400).json({ success: false, error: 'Invalid pipeline stage' })
+    }
+
+    const enrollment = await Enrollment.findByPk(req.params.id)
+    if (!enrollment) {
+      return res.status(404).json({ success: false, error: 'Enrollment not found' })
+    }
+
+    const previousStage = enrollment.pipelineStage
+
+    // Losing an enquiry is the one transition worth explaining, because the
+    // reason is the whole point of tracking the pipeline.
+    if (pipelineStage === 'Lost' && !String(stageNote || '').trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Please record why this enquiry was lost',
+      })
+    }
+
+    await enrollment.update({
+      pipelineStage,
+      stageChangedAt: new Date(),
+      ...(stageNote !== undefined && { stageNote: stageNote ? String(stageNote).trim() : null }),
+    })
+
+    await recordAudit(req, 'stage_updated', 'enrollment', enrollment.id, {
+      from: previousStage,
+      to: pipelineStage,
+    })
+
+    res.json({ success: true, data: enrollment })
+  } catch (error) {
+    console.error('Failed to update pipeline stage:', error)
+    res.status(500).json({ success: false, error: 'Failed to update pipeline stage' })
+  }
+})
+
+/**
+ * The funnel summary the brief asks for: how many enquiries sit at each stage,
+ * so Axis can see where families stop progressing.
+ */
+router.get('/pipeline/summary', requireAuth, requireRole('admin', 'staff'), async (req, res) => {
+  try {
+    const counts = await Enrollment.findAll({
+      attributes: ['pipelineStage', [Enrollment.sequelize.fn('COUNT', '*'), 'count']],
+      group: ['pipelineStage'],
+      raw: true,
+    })
+
+    const byStage = Object.fromEntries(counts.map((row) => [row.pipelineStage, Number(row.count)]))
+    const stages = PIPELINE_STAGES.map((stage) => ({ stage, count: byStage[stage] || 0 }))
+
+    const active = stages
+      .filter((entry) => entry.stage !== 'Lost')
+      .reduce((total, entry) => total + entry.count, 0)
+    const enrolled = (byStage['Enrolled'] || 0) + (byStage['Active Learner'] || 0)
+    const lost = byStage['Lost'] || 0
+    const decided = enrolled + lost
+
+    res.json({
+      success: true,
+      data: {
+        stages,
+        totals: {
+          active,
+          enrolled,
+          lost,
+          // Of the enquiries that reached an outcome, how many enrolled.
+          conversionRate: decided > 0 ? Math.round((enrolled / decided) * 100) : null,
+        },
+      },
+    })
+  } catch (error) {
+    console.error('Failed to build pipeline summary:', error)
+    res.status(500).json({ success: false, error: 'Failed to build pipeline summary' })
   }
 })
 

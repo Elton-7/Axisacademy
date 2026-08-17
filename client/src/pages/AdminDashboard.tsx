@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Users, MessageSquare, TrendingUp, Mail, Phone, Calendar, Search, Filter, Download, LogOut, RefreshCw, X, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
+import PipelineBoard from '../components/PipelineBoard'
 import { auditApi, authApi, contactsApi, enrollmentsApi, newsletterApi, statsApi, galleryApi, resourcesApi, partnersApi, educatorsApi, eventsApi, faqsApi, locationsApi } from '../services/apiClient'
 import type { AuditLog, Contact, DashboardStats, Enrollment, Newsletter, GalleryItem, Resource, Partner, Educator, Event, FAQ, Location, GalleryType, GalleryCategory, ResourceCategory, PartnerCategory, EducatorCategory, EventCategory, EventStatus, FAQCategory, LocationType } from '../types'
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'gallery' | 'resources' | 'partners' | 'educators' | 'events' | 'faqs' | 'locations'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pipeline' | 'gallery' | 'resources' | 'partners' | 'educators' | 'events' | 'faqs' | 'locations'>('dashboard')
   
   // Dashboard state
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -45,8 +46,8 @@ export default function AdminDashboard() {
   // Gallery state
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
   const [editingGallery, setEditingGallery] = useState<GalleryItem | null | undefined>(undefined)
-  const [galleryForm, setGalleryForm] = useState<{title: string; type: GalleryType; category: GalleryCategory; description: string; url: string; thumbnail: string; tags: string; consentConfirmed: boolean}>({
-    title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false
+  const [galleryForm, setGalleryForm] = useState<{title: string; type: GalleryType; category: GalleryCategory; description: string; url: string; thumbnail: string; tags: string; consentConfirmed: boolean; consentReference: string}>({
+    title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false, consentReference: ''
   })
 
   // Resources state
@@ -231,6 +232,10 @@ export default function AdminDashboard() {
       toast.error('Confirm publication consent before adding media')
       return
     }
+    if (!galleryForm.consentReference.trim()) {
+      toast.error('Record which signed media release this consent refers to')
+      return
+    }
     try {
       const payload = {
         ...galleryForm,
@@ -246,7 +251,7 @@ export default function AdminDashboard() {
         toast.success('Gallery item created')
       }
       setEditingGallery(undefined)
-      setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false })
+      setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false, consentReference: '' })
     } catch (error) {
       console.error('Failed to save gallery item:', error)
       toast.error('Failed to save gallery item')
@@ -739,7 +744,7 @@ export default function AdminDashboard() {
         {/* Tab Navigation */}
         <div className="bg-white rounded-xl border border-gray-100 mb-6 overflow-hidden">
           <div className="flex border-b border-gray-100 overflow-x-auto">
-            {(['dashboard', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations'] as const).map((tab) => (
+            {(['dashboard', 'pipeline', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -817,13 +822,16 @@ export default function AdminDashboard() {
           </>
         )}
 
+        {/* Pipeline Tab — brief §31 */}
+        {activeTab === 'pipeline' && <PipelineBoard />}
+
         {/* Gallery Tab */}
         {activeTab === 'gallery' && (
           <div className="space-y-6">
             <button
               onClick={() => {
                 setEditingGallery(null)
-                setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false })
+                setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false, consentReference: '' })
               }}
               className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"
             >
@@ -850,13 +858,17 @@ export default function AdminDashboard() {
                   <input type="url" placeholder="Image/Video URL" value={galleryForm.url} onChange={(e) => setGalleryForm({...galleryForm, url: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                   <input type="url" placeholder="Thumbnail URL (optional)" value={galleryForm.thumbnail} onChange={(e) => setGalleryForm({...galleryForm, thumbnail: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                   <input type="text" placeholder="Tags (comma-separated)" value={galleryForm.tags} onChange={(e) => setGalleryForm({...galleryForm, tags: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <label className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-navy-700">
-                    <input type="checkbox" checked={galleryForm.consentConfirmed} onChange={(e) => setGalleryForm({...galleryForm, consentConfirmed: e.target.checked})} className="mt-0.5 h-4 w-4 rounded border-gray-300 text-gold-600 focus:ring-gold-500" />
-                    <span>I confirm that the appropriate consent has been verified for public publication of this photo or video.</span>
-                  </label>
+                  <div className="space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                    <label className="flex items-start gap-3 text-sm text-navy-700">
+                      <input type="checkbox" checked={galleryForm.consentConfirmed} onChange={(e) => setGalleryForm({...galleryForm, consentConfirmed: e.target.checked})} className="mt-0.5 h-4 w-4 rounded border-gray-300 text-gold-600 focus:ring-gold-500" />
+                      <span>I confirm that the appropriate consent has been verified for public publication of this photo or video.</span>
+                    </label>
+                    <input type="text" placeholder="Signed media release reference (e.g. MR-2026-014)" value={galleryForm.consentReference} onChange={(e) => setGalleryForm({...galleryForm, consentReference: e.target.value})} className="w-full rounded-lg border border-amber-300 bg-white px-4 py-2 text-sm outline-none focus:border-gold-500" />
+                    <p className="text-xs text-navy-600/70">Recorded with your name and the date, so consent can be evidenced or withdrawn later.</p>
+                  </div>
                   <div className="flex gap-2">
                     <button onClick={saveGalleryItem} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
-                    <button onClick={() => {setEditingGallery(undefined); setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
+                    <button onClick={() => {setEditingGallery(undefined); setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false, consentReference: '' })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -892,7 +904,7 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2">
-                            <button onClick={() => {setEditingGallery(item); setGalleryForm({title: item.title, type: item.type, category: item.category, description: item.description || '', url: item.url, thumbnail: item.thumbnail || '', tags: item.tags?.join(', ') || '', consentConfirmed: item.consentConfirmed})}} className="text-navy-600 hover:text-navy-900">
+                            <button onClick={() => {setEditingGallery(item); setGalleryForm({title: item.title, type: item.type, category: item.category, description: item.description || '', url: item.url, thumbnail: item.thumbnail || '', tags: item.tags?.join(', ') || '', consentConfirmed: item.consentConfirmed, consentReference: item.consentReference || ''})}} className="text-navy-600 hover:text-navy-900">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => deleteGalleryItem(item.id)} className="text-red-600 hover:text-red-900">

@@ -1,6 +1,7 @@
 const { body, validationResult } = require('express-validator')
 const Contact = require('../models/Contact')
 const { recordAudit } = require('../middleware/audit')
+const { notifyNewContact } = require('../services/notifications')
 
 exports.submitContact = [
   body('name').trim().notEmpty().withMessage('Name is required').isLength({ max: 100 }).withMessage('Name is too long').escape(),
@@ -25,7 +26,14 @@ exports.submitContact = [
         message: req.body.message,
       }
       const contact = await Contact.create(payload)
-      res.status(201).json({ 
+
+      // Non-blocking: the message is saved, and a mail outage must not turn a
+      // successful submission into an error for the sender.
+      notifyNewContact(contact).catch((error) =>
+        console.error('Failed to notify of new contact message:', error)
+      )
+
+      res.status(201).json({
         success: true,
         message: 'Thank you for contacting us! We will respond within 24 hours.',
         data: contact 

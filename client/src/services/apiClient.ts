@@ -38,6 +38,8 @@ import {
   LoginRequest,
   LoginResponse,
   NewsletterSubscribeRequest,
+  PipelineStage,
+  PipelineSummary,
   PortalOverview,
   ApiResponse,
   ApiListResponse,
@@ -352,6 +354,19 @@ export const enrollmentsApi = {
     const { data } = await api.patch<ApiResponse<Enrollment>>(`/enrollments/${id}/status`, {
       status,
     })
+    return unwrap(data)
+  },
+
+  async updateStage(id: number, pipelineStage: PipelineStage, stageNote?: string) {
+    const { data } = await api.patch<ApiResponse<Enrollment>>(`/enrollments/${id}/stage`, {
+      pipelineStage,
+      ...(stageNote !== undefined && { stageNote }),
+    })
+    return unwrap(data)
+  },
+
+  async getPipelineSummary() {
+    const { data } = await api.get<ApiResponse<PipelineSummary>>('/enrollments/pipeline/summary')
     return unwrap(data)
   },
 }

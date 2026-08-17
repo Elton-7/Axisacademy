@@ -53,13 +53,19 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
   try {
-    const { title, type, category, description, url, thumbnail, tags, consentConfirmed } = req.body
+    const { title, type, category, description, url, thumbnail, tags, consentConfirmed, consentReference } = req.body
 
     if (!title || !url) {
       return res.status(400).json({ error: 'title and url are required' })
     }
     if (consentConfirmed !== true) {
       return res.status(400).json({ error: 'Publication consent must be confirmed before media can be added' })
+    }
+    // A tick with no reference to the signed release is not a record of consent.
+    if (!String(consentReference || '').trim()) {
+      return res.status(400).json({
+        error: 'Please record the signed media release this consent refers to',
+      })
     }
 
     const item = await Gallery.create({
@@ -71,6 +77,9 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
       thumbnail,
       tags: Array.isArray(tags) ? tags : [],
       consentConfirmed: true,
+      consentConfirmedBy: req.user?.userId || null,
+      consentConfirmedAt: new Date(),
+      consentReference: String(consentReference).trim(),
     })
 
     res.status(201).json(item)
@@ -105,6 +114,18 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
       ...(consentConfirmed !== undefined && { consentConfirmed }),
       ...(isActive !== undefined && { isActive }),
       ...(sortOrder !== undefined && { sortOrder }),
+      // Re-confirming consent re-stamps who did it and when; withdrawing it
+      // clears the provenance so a stale approval cannot be mistaken for a
+      // current one.
+      ...(consentConfirmed === true &&
+        !item.consentConfirmed && {
+          consentConfirmedBy: req.user?.userId || null,
+          consentConfirmedAt: new Date(),
+        }),
+      ...(consentConfirmed === false && {
+        consentConfirmedBy: null,
+        consentConfirmedAt: null,
+      }),
     })
 
     res.json(item)

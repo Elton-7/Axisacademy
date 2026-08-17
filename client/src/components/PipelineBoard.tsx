@@ -1,0 +1,255 @@
+import { useEffect, useState } from 'react'
+import { AlertCircle, Loader2, TrendingDown, TrendingUp, Users } from 'lucide-react'
+import toast from 'react-hot-toast'
+import { enrollmentsApi } from '../services/apiClient'
+import { PIPELINE_STAGES } from '../types'
+import type { Enrollment, PipelineStage, PipelineSummary } from '../types'
+
+/**
+ * Brief §31 — the client journey, and specifically where families stop moving
+ * along it. The stage counts are the point: a bulge in one column is the
+ * question Axis needs to answer.
+ */
+
+const ACTIVE_STAGES = PIPELINE_STAGES.filter((stage) => stage !== 'Lost')
+
+const stageTone: Record<PipelineStage, string> = {
+  'New Enquiry': 'bg-blue-50 text-blue-800 border-blue-200',
+  Contacted: 'bg-sky-50 text-sky-800 border-sky-200',
+  'Consultation Booked': 'bg-indigo-50 text-indigo-800 border-indigo-200',
+  'Consultation Completed': 'bg-violet-50 text-violet-800 border-violet-200',
+  'Proposal Sent': 'bg-amber-50 text-amber-800 border-amber-200',
+  'Awaiting Decision': 'bg-orange-50 text-orange-800 border-orange-200',
+  Enrolled: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  'Active Learner': 'bg-green-50 text-green-800 border-green-200',
+  Lost: 'bg-rose-50 text-rose-800 border-rose-200',
+}
+
+function daysSince(iso?: string) {
+  if (!iso) return null
+  const days = Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000)
+  return Number.isFinite(days) ? days : null
+}
+
+export default function PipelineBoard() {
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([])
+  const [summary, setSummary] = useState<PipelineSummary | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState<number | null>(null)
+
+  const load = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const [list, pipelineSummary] = await Promise.all([
+        enrollmentsApi.getAll({ page: 1, limit: 100 }),
+        enrollmentsApi.getPipelineSummary(),
+      ])
+      setEnrollments(list.data)
+      setSummary(pipelineSummary)
+    } catch (err) {
+      console.error('Failed to load the pipeline:', err)
+      setError('The enquiry pipeline is unavailable right now.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    load()
+  }, [])
+
+  const moveStage = async (enrollment: Enrollment, stage: PipelineStage) => {
+    if (stage === enrollment.pipelineStage) return
+
+    // The server requires a reason for a loss; ask for it here rather than
+    // letting the request fail.
+    let note: string | undefined
+    if (stage === 'Lost') {
+      const reason = window.prompt(
+        `Why was the enquiry for ${enrollment.studentName} lost?\n\nThis is what makes the pipeline worth keeping.`
+      )
+      if (reason === null) return
+      if (!reason.trim()) {
+        toast.error('A reason is needed before an enquiry can be marked lost')
+        return
+      }
+      note = reason.trim()
+    }
+
+    const previous = enrollments
+    // Optimistic: the board should feel immediate, and we roll back on failure.
+    setEnrollments((prev) =>
+      prev.map((item) =>
+        item.id === enrollment.id
+          ? { ...item, pipelineStage: stage, stageChangedAt: new Date().toISOString(), stageNote: note ?? item.stageNote }
+          : item
+      )
+    )
+    setSaving(enrollment.id)
+
+    try {
+      await enrollmentsApi.updateStage(enrollment.id, stage, note)
+      setSummary(await enrollmentsApi.getPipelineSummary())
+      toast.success(`${enrollment.studentName} moved to ${stage}`)
+    } catch (err) {
+      console.error('Failed to move the enquiry:', err)
+      setEnrollments(previous)
+      toast.error('Could not move this enquiry. Please try again.')
+    } finally {
+      setSaving(null)
+    }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-16">
+        <Loader2 className="h-6 w-6 animate-spin text-gold-500" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+        <AlertCircle className="h-5 w-5 flex-shrink-0" />
+        {error}
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Headline numbers */}
+      {summary && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-gray-100 bg-white p-5">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy-500">
+              <Users className="h-4 w-4" /> In the pipeline
+            </div>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-navy-900">{summary.totals.active}</p>
+          </div>
+          <div className="rounded-xl border border-gray-100 bg-white p-5">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy-500">
+              <TrendingUp className="h-4 w-4" /> Enrolled
+            </div>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-emerald-700">{summary.totals.enrolled}</p>
+          </div>
+          <div className="rounded-xl border border-gray-100 bg-white p-5">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy-500">
+              <TrendingDown className="h-4 w-4" /> Lost
+            </div>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-rose-700">{summary.totals.lost}</p>
+          </div>
+          <div className="rounded-xl border border-gray-100 bg-white p-5">
+            <div className="text-xs font-semibold uppercase tracking-wide text-navy-500">Conversion</div>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-navy-900">
+              {summary.totals.conversionRate === null ? '—' : `${summary.totals.conversionRate}%`}
+            </p>
+            <p className="mt-1 text-xs text-navy-500">
+              {summary.totals.conversionRate === null
+                ? 'No enquiry has reached an outcome yet'
+                : 'Of enquiries that reached an outcome'}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Stage distribution */}
+      {summary && (
+        <div className="rounded-xl border border-gray-100 bg-white p-6">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-navy-500">
+            Where enquiries are sitting
+          </h3>
+          <div className="mt-4 space-y-2">
+            {summary.stages.map(({ stage, count }) => {
+              const max = Math.max(...summary.stages.map((entry) => entry.count), 1)
+              return (
+                <div key={stage} className="flex items-center gap-3">
+                  <span className="w-48 flex-shrink-0 text-sm text-navy-700">{stage}</span>
+                  <div className="h-6 flex-1 overflow-hidden rounded bg-gray-100">
+                    <div
+                      className={`h-full ${stage === 'Lost' ? 'bg-rose-400' : 'bg-gold-500'}`}
+                      style={{ width: `${(count / max) * 100}%` }}
+                    />
+                  </div>
+                  <span className="w-10 text-right text-sm font-semibold tabular-nums text-navy-900">
+                    {count}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* The enquiries themselves */}
+      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
+        <div className="border-b border-gray-100 px-6 py-4">
+          <h3 className="text-lg font-semibold text-navy-900">Enquiries</h3>
+          <p className="text-sm text-navy-600/60">
+            Move an enquiry as the family progresses. Marking one lost asks why.
+          </p>
+        </div>
+
+        {enrollments.length === 0 ? (
+          <p className="px-6 py-12 text-center text-sm text-navy-500">No enquiries yet.</p>
+        ) : (
+          <div className="divide-y divide-gray-100">
+            {enrollments.map((enrollment) => {
+              const stalled = daysSince(enrollment.stageChangedAt || enrollment.createdAt)
+              return (
+                <div key={enrollment.id} className="flex flex-wrap items-center gap-4 px-6 py-4">
+                  <div className="min-w-[12rem] flex-1">
+                    <p className="font-medium text-navy-900">{enrollment.studentName}</p>
+                    <p className="text-sm text-navy-600/70">
+                      {enrollment.programme}
+                      {enrollment.parentName ? ` · ${enrollment.parentName}` : ''}
+                    </p>
+                    {enrollment.stageNote && (
+                      <p className="mt-1 text-xs italic text-navy-500">{enrollment.stageNote}</p>
+                    )}
+                  </div>
+
+                  {stalled !== null && (
+                    <span
+                      className={`text-xs tabular-nums ${
+                        stalled >= 14 && enrollment.pipelineStage !== 'Active Learner' && enrollment.pipelineStage !== 'Lost'
+                          ? 'font-semibold text-rose-600'
+                          : 'text-navy-500'
+                      }`}
+                    >
+                      {stalled}d in stage
+                    </span>
+                  )}
+
+                  <span
+                    className={`rounded-full border px-3 py-1 text-xs font-semibold ${stageTone[enrollment.pipelineStage]}`}
+                  >
+                    {enrollment.pipelineStage}
+                  </span>
+
+                  <select
+                    value={enrollment.pipelineStage}
+                    disabled={saving === enrollment.id}
+                    onChange={(event) => moveStage(enrollment, event.target.value as PipelineStage)}
+                    className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-gold-500 disabled:opacity-50"
+                    aria-label={`Pipeline stage for ${enrollment.studentName}`}
+                  >
+                    {ACTIVE_STAGES.map((stage) => (
+                      <option key={stage} value={stage}>
+                        {stage}
+                      </option>
+                    ))}
+                    <option value="Lost">Lost</option>
+                  </select>
+                </div>
+              )
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
