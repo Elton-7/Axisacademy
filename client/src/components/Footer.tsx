@@ -1,12 +1,28 @@
 import { Link } from 'react-router-dom'
 import { Phone, Mail, Globe, Facebook, Instagram, Youtube, Linkedin } from 'lucide-react'
+import NewsletterSignup from './NewsletterSignup'
 
 const quickLinks = [
-  { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
+  { href: '/philosophy', label: 'Our Philosophy' },
   { href: '/services', label: 'Services' },
+  { href: '/learning-paths', label: 'Learning Paths' },
   { href: '/programmes', label: 'Programmes' },
+  { href: '/educator-network', label: 'Educator Network' },
+  { href: '/team', label: 'Our Team' },
+  { href: '/locations', label: 'Locations' },
+  { href: '/events', label: 'Events' },
+  { href: '/gallery', label: 'Gallery' },
+  { href: '/resources', label: 'Resources' },
+  { href: '/partners', label: 'Partners' },
+  { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
+  { href: '/privacy', label: 'Privacy & Child Safety' },
+]
+
+const portalLinks = [
+  { href: '/portal/student', label: 'Student Portal' },
+  { href: '/portal/tutor', label: 'Tutor Portal' },
 ]
 
 const socialLinks = [
@@ -29,11 +45,11 @@ export default function Footer() {
               </div>
               <div>
                 <h1 className="text-sm font-semibold uppercase tracking-[0.15em] text-gold-500">Axis</h1>
-                <p className="text-[0.55rem] uppercase tracking-[0.1em] text-gold-500/70">Homeschool & Enrichment Academy</p>
+                <p className="text-[0.55rem] uppercase tracking-[0.1em] text-gold-500/70">Learning</p>
               </div>
             </Link>
             <p className="mb-1 text-sm italic text-gold-500/80">Learn · Think · Create · Explore · Thrive</p>
-            <p className="mb-6 text-xs text-white/40">A Division of Gurais Limited</p>
+            <p className="mb-6 text-xs text-white/40">A Division of Guraxis Limited</p>
             <div className="flex gap-3">
               {socialLinks.map(({ icon: Icon, href, label }) => (
                 <a
@@ -79,22 +95,26 @@ export default function Footer() {
                 AxisHomeschooling.org
               </li>
             </ul>
+            <div className="mt-7">
+              <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gold-500">Portal Access</h5>
+              <ul className="space-y-2">
+                {portalLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link to={link.href} className="text-sm text-white/50 transition-colors hover:text-gold-500">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          <div>
-            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wide text-white">Get In Touch</h4>
-            <p className="mb-6 text-sm leading-relaxed text-white/50">
-              We are here to answer your questions and help you find the right learning pathway.
-            </p>
-            <Link to="/contact" className="btn-primary px-5 py-2.5 text-xs">
-              Contact Us Today
-            </Link>
-          </div>
+          <NewsletterSignup />
         </div>
 
         <div className="border-t border-white/10 pt-8 text-center">
           <p className="text-xs text-white/30">
-            © {new Date().getFullYear()} Axis Homeschool & Enrichment Academy. All Rights Reserved.
+            © {new Date().getFullYear()} Axis Learning. All Rights Reserved.
           </p>
         </div>
       </div>
