@@ -37,49 +37,49 @@ export default function AdminDashboard() {
 
   // Gallery state
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([])
-  const [editingGallery, setEditingGallery] = useState<GalleryItem | null>(null)
+  const [editingGallery, setEditingGallery] = useState<GalleryItem | null | undefined>(undefined)
   const [galleryForm, setGalleryForm] = useState<{title: string; type: GalleryType; category: GalleryCategory; description: string; url: string; thumbnail: string; tags: string; consentConfirmed: boolean}>({
     title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false
   })
 
   // Resources state
   const [resources, setResources] = useState<Resource[]>([])
-  const [editingResource, setEditingResource] = useState<Resource | null>(null)
+  const [editingResource, setEditingResource] = useState<Resource | null | undefined>(undefined)
   const [resourceForm, setResourceForm] = useState<{title: string; slug: string; excerpt: string; content: string; category: ResourceCategory; author: string; coverImage: string; readTime: string; tags: string}>({
     title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: ''
   })
 
   // Partners state
   const [partners, setPartners] = useState<Partner[]>([])
-  const [editingPartner, setEditingPartner] = useState<Partner | null>(null)
+  const [editingPartner, setEditingPartner] = useState<Partner | null | undefined>(undefined)
   const [partnerForm, setPartnerForm] = useState<{name: string; logo: string; category: PartnerCategory; description: string; website: string; contact: string; email: string; phone: string; focusAreas: string}>({
     name: '', logo: '', category: 'Corporate', description: '', website: '', contact: '', email: '', phone: '', focusAreas: ''
   })
 
   // Educators state
   const [educators, setEducators] = useState<Educator[]>([])
-  const [editingEducator, setEditingEducator] = useState<Educator | null>(null)
+  const [editingEducator, setEditingEducator] = useState<Educator | null | undefined>(undefined)
   const [educatorForm, setEducatorForm] = useState<{name: string; position: string; category: EducatorCategory; qualifications: string; experience: string; subjects: string; languages: string; expertise: string; biography: string; photo: string; email: string; phone: string}>({
     name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: ''
   })
 
   // Events state
   const [events, setEvents] = useState<Event[]>([])
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null)
+  const [editingEvent, setEditingEvent] = useState<Event | null | undefined>(undefined)
   const [eventForm, setEventForm] = useState<{title: string; description: string; category: EventCategory; startDate: string; endDate: string; venue: string; location: string; capacity: string; ageGroup: string; programme: string; priceKES: string; registrationDeadline: string; registrationLink: string; poster: string; status: EventStatus}>({
     title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming'
   })
 
   // FAQs state
   const [faqs, setFaqs] = useState<FAQ[]>([])
-  const [editingFAQ, setEditingFAQ] = useState<FAQ | null>(null)
+  const [editingFAQ, setEditingFAQ] = useState<FAQ | null | undefined>(undefined)
   const [faqForm, setFaqForm] = useState<{question: string; answer: string; category: FAQCategory; order: string}>({
     question: '', answer: '', category: 'General', order: ''
   })
 
   // Locations state
   const [locations, setLocations] = useState<Location[]>([])
-  const [editingLocation, setEditingLocation] = useState<Location | null>(null)
+  const [editingLocation, setEditingLocation] = useState<Location | null | undefined>(undefined)
   const [locationForm, setLocationForm] = useState<{name: string; type: LocationType; address: string; city: string; county: string; phone: string; email: string; description: string; programmes: string; photo: string; latitude: string; longitude: string}>({
     name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: ''
   })
@@ -221,7 +221,7 @@ export default function AdminDashboard() {
         setGalleryItems(prev => [...prev, newItem])
         toast.success('Gallery item created')
       }
-      setEditingGallery(null)
+      setEditingGallery(undefined)
       setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false })
     } catch (error) {
       console.error('Failed to save gallery item:', error)
@@ -276,7 +276,7 @@ export default function AdminDashboard() {
         setResources(prev => [...prev, newItem])
         toast.success('Resource created')
       }
-      setEditingResource(null)
+      setEditingResource(undefined)
       setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })
     } catch (error) {
       console.error('Failed to save resource:', error)
@@ -330,7 +330,7 @@ export default function AdminDashboard() {
         setPartners(prev => [...prev, newItem])
         toast.success('Partner created')
       }
-      setEditingPartner(null)
+      setEditingPartner(undefined)
       setPartnerForm({ name: '', logo: '', category: 'Corporate', description: '', website: '', contact: '', email: '', phone: '', focusAreas: '' })
     } catch (error) {
       console.error('Failed to save partner:', error)
@@ -385,7 +385,7 @@ export default function AdminDashboard() {
         setEducators(prev => [...prev, newItem])
         toast.success('Educator created')
       }
-      setEditingEducator(null)
+      setEditingEducator(undefined)
       setEducatorForm({ name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: '' })
     } catch (error) {
       console.error('Failed to save educator:', error)
@@ -440,7 +440,7 @@ export default function AdminDashboard() {
         setEvents(prev => [...prev, newItem])
         toast.success('Event created')
       }
-      setEditingEvent(null)
+      setEditingEvent(undefined)
       setEventForm({ title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming' })
     } catch (error) {
       console.error('Failed to save event:', error)
@@ -494,7 +494,7 @@ export default function AdminDashboard() {
         setFaqs(prev => [...prev, newItem])
         toast.success('FAQ created')
       }
-      setEditingFAQ(null)
+      setEditingFAQ(undefined)
       setFaqForm({ question: '', answer: '', category: 'General', order: '' })
     } catch (error) {
       console.error('Failed to save FAQ:', error)
@@ -550,7 +550,7 @@ export default function AdminDashboard() {
         setLocations(prev => [...prev, newItem])
         toast.success('Location created')
       }
-      setEditingLocation(null)
+      setEditingLocation(undefined)
       setLocationForm({ name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: '' })
     } catch (error) {
       console.error('Failed to save location:', error)
@@ -602,9 +602,16 @@ export default function AdminDashboard() {
       ]),
     ]
 
-    const csv = rows
-      .map((row) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(','))
-      .join('\n')
+    // Contact and enrolment text comes from a public form, and a spreadsheet
+    // treats a leading =, +, -, @ or control character as a formula. Prefixing
+    // with an apostrophe forces Excel and Sheets to read the cell as text.
+    const escapeCell = (value: unknown) => {
+      const text = String(value ?? '')
+      const safe = /^[=+\-@\t\r]/.test(text) ? `'${text}` : text
+      return `"${safe.replace(/"/g, '""')}"`
+    }
+
+    const csv = rows.map((row) => row.map(escapeCell).join(',')).join('\n')
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -771,7 +778,7 @@ export default function AdminDashboard() {
               Add Gallery Item
             </button>
 
-            {editingGallery !== null && (
+            {editingGallery !== undefined && (
               <div className="bg-white rounded-xl border border-gray-100 p-6">
                 <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingGallery ? 'Edit' : 'Add'} Gallery Item</h3>
                 <div className="space-y-4">
@@ -796,7 +803,7 @@ export default function AdminDashboard() {
                   </label>
                   <div className="flex gap-2">
                     <button onClick={saveGalleryItem} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
-                    <button onClick={() => {setEditingGallery(null); setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
+                    <button onClick={() => {setEditingGallery(undefined); setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -868,7 +875,7 @@ export default function AdminDashboard() {
               Add Resource
             </button>
 
-            {editingResource !== null && (
+            {editingResource !== undefined && (
               <div className="bg-white rounded-xl border border-gray-100 p-6">
                 <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingResource ? 'Edit' : 'Add'} Resource</h3>
                 <div className="space-y-4">
@@ -890,7 +897,7 @@ export default function AdminDashboard() {
                   <input type="text" placeholder="Tags (comma-separated)" value={resourceForm.tags} onChange={(e) => setResourceForm({...resourceForm, tags: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                   <div className="flex gap-2">
                     <button onClick={saveResource} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
-                    <button onClick={() => {setEditingResource(null); setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
+                    <button onClick={() => {setEditingResource(undefined); setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -957,7 +964,7 @@ export default function AdminDashboard() {
               Add Partner
             </button>
 
-            {editingPartner !== null && (
+            {editingPartner !== undefined && (
               <div className="bg-white rounded-xl border border-gray-100 p-6">
                 <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingPartner ? 'Edit' : 'Add'} Partner</h3>
                 <div className="space-y-4">
@@ -978,7 +985,7 @@ export default function AdminDashboard() {
                   <input type="text" placeholder="Focus Areas (comma-separated)" value={partnerForm.focusAreas} onChange={(e) => setPartnerForm({...partnerForm, focusAreas: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                   <div className="flex gap-2">
                     <button onClick={savePartner} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
-                    <button onClick={() => {setEditingPartner(null); setPartnerForm({ name: '', logo: '', category: 'Corporate', description: '', website: '', contact: '', email: '', phone: '', focusAreas: '' })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
+                    <button onClick={() => {setEditingPartner(undefined); setPartnerForm({ name: '', logo: '', category: 'Corporate', description: '', website: '', contact: '', email: '', phone: '', focusAreas: '' })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -1038,7 +1045,7 @@ export default function AdminDashboard() {
         {activeTab === 'educators' && (
           <div className="space-y-6">
             <button onClick={() => {setEditingEducator(null); setEducatorForm({name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: ''})}} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"><Plus className="h-4 w-4" />Add Educator</button>
-            {editingEducator !== null && (
+            {editingEducator !== undefined && (
               <div className="bg-white rounded-xl border border-gray-100 p-6">
                 <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingEducator ? 'Edit' : 'Add'} Educator</h3>
                 <div className="space-y-4">
@@ -1064,7 +1071,7 @@ export default function AdminDashboard() {
                   <input type="url" placeholder="Photo URL" value={educatorForm.photo} onChange={(e) => setEducatorForm({...educatorForm, photo: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                   <input type="email" placeholder="Email" value={educatorForm.email} onChange={(e) => setEducatorForm({...educatorForm, email: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                   <input type="tel" placeholder="Phone" value={educatorForm.phone} onChange={(e) => setEducatorForm({...educatorForm, phone: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <div className="flex gap-2"><button onClick={saveEducator} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingEducator(null); setEducatorForm({name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
+                  <div className="flex gap-2"><button onClick={saveEducator} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingEducator(undefined); setEducatorForm({name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
                 </div>
               </div>
             )}
@@ -1102,7 +1109,7 @@ export default function AdminDashboard() {
         {activeTab === 'events' && (
           <div className="space-y-6">
             <button onClick={() => {setEditingEvent(null); setEventForm({title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming'})}} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"><Plus className="h-4 w-4" />Add Event</button>
-            {editingEvent !== null && (
+            {editingEvent !== undefined && (
               <div className="bg-white rounded-xl border border-gray-100 p-6">
                 <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingEvent ? 'Edit' : 'Add'} Event</h3>
                 <div className="space-y-4">
@@ -1137,7 +1144,7 @@ export default function AdminDashboard() {
                     <option value="Completed">Completed</option>
                     <option value="Cancelled">Cancelled</option>
                   </select>
-                  <div className="flex gap-2"><button onClick={saveEvent} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingEvent(null); setEventForm({title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming'})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
+                  <div className="flex gap-2"><button onClick={saveEvent} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingEvent(undefined); setEventForm({title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming'})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
                 </div>
               </div>
             )}
@@ -1175,7 +1182,7 @@ export default function AdminDashboard() {
         {activeTab === 'faqs' && (
           <div className="space-y-6">
             <button onClick={() => {setEditingFAQ(null); setFaqForm({question: '', answer: '', category: 'General', order: ''})}} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"><Plus className="h-4 w-4" />Add FAQ</button>
-            {editingFAQ !== null && (
+            {editingFAQ !== undefined && (
               <div className="bg-white rounded-xl border border-gray-100 p-6">
                 <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingFAQ ? 'Edit' : 'Add'} FAQ</h3>
                 <div className="space-y-4">
@@ -1194,7 +1201,7 @@ export default function AdminDashboard() {
                     <option value="Technical">Technical</option>
                   </select>
                   <input type="number" placeholder="Order" value={faqForm.order} onChange={(e) => setFaqForm({...faqForm, order: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <div className="flex gap-2"><button onClick={saveFAQ} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingFAQ(null); setFaqForm({question: '', answer: '', category: 'General', order: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
+                  <div className="flex gap-2"><button onClick={saveFAQ} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingFAQ(undefined); setFaqForm({question: '', answer: '', category: 'General', order: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
                 </div>
               </div>
             )}
@@ -1232,7 +1239,7 @@ export default function AdminDashboard() {
         {activeTab === 'locations' && (
           <div className="space-y-6">
             <button onClick={() => {setEditingLocation(null); setLocationForm({name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: ''})}} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"><Plus className="h-4 w-4" />Add Location</button>
-            {editingLocation !== null && (
+            {editingLocation !== undefined && (
               <div className="bg-white rounded-xl border border-gray-100 p-6">
                 <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingLocation ? 'Edit' : 'Add'} Location</h3>
                 <div className="space-y-4">
@@ -1242,6 +1249,7 @@ export default function AdminDashboard() {
                     <option value="Learning Centre">Learning Centre</option>
                     <option value="Partner Facility">Partner Facility</option>
                     <option value="Educator Hub">Educator Hub</option>
+                    <option value="Home-Based Service">Home-Based Service</option>
                   </select>
                   <input type="text" placeholder="Address" value={locationForm.address} onChange={(e) => setLocationForm({...locationForm, address: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                   <div className="grid grid-cols-2 gap-4">
@@ -1257,7 +1265,7 @@ export default function AdminDashboard() {
                     <input type="number" placeholder="Latitude" step="0.0001" value={locationForm.latitude} onChange={(e) => setLocationForm({...locationForm, latitude: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                     <input type="number" placeholder="Longitude" step="0.0001" value={locationForm.longitude} onChange={(e) => setLocationForm({...locationForm, longitude: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
                   </div>
-                  <div className="flex gap-2"><button onClick={saveLocation} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingLocation(null); setLocationForm({name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
+                  <div className="flex gap-2"><button onClick={saveLocation} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingLocation(undefined); setLocationForm({name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
                 </div>
               </div>
             )}

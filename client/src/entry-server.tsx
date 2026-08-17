@@ -1,7 +1,9 @@
 import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'react-router-dom/server'
 import { HelmetProvider, type FilledContext } from 'react-helmet-async'
+import { Toaster } from 'react-hot-toast'
 import App from './App'
+import { toasterProps } from './toaster'
 
 /**
  * Build-time rendering entry point (see scripts/prerender.mjs).
@@ -20,6 +22,7 @@ export function render(url: string) {
     <HelmetProvider context={helmetContext}>
       <StaticRouter location={url}>
         <App />
+        <Toaster {...toasterProps} />
       </StaticRouter>
     </HelmetProvider>
   )

@@ -33,8 +33,12 @@ export function initAnalytics() {
   document.head.appendChild(script)
 
   window.dataLayer = window.dataLayer || []
-  window.gtag = function gtag(...args: GtagArgs) {
-    window.dataLayer?.push(args)
+  // gtag.js identifies its own calls by checking for a genuine `arguments`
+  // object, so this must not push a rest-parameter array — GA would discard
+  // every command, including the config call.
+  window.gtag = function gtag() {
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer?.push(arguments)
   }
 
   window.gtag('js', new Date())

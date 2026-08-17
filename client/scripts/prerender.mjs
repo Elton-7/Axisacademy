@@ -39,10 +39,12 @@ for (const { path } of allRoutes()) {
       `<div id="root" data-prerendered-path="${path}">${html}</div>`
     )
 
-    // The template's own <title> is the generic fallback; Helmet supplies the
-    // per-route one, so drop the static tag before injecting.
+    // The template's own title and description are generic fallbacks for the
+    // un-prerendered shell. Helmet supplies per-route versions, so the static
+    // tags are removed rather than left to conflict with them.
     if (head) {
       page = page.replace(/<title>[\s\S]*?<\/title>\s*/, '')
+      page = page.replace(/<meta name="description"[^>]*>\s*/, '')
       page = page.replace('</head>', `  ${head}\n</head>`)
     }
 
@@ -54,6 +56,22 @@ for (const { path } of allRoutes()) {
     failures.push(`${path}: ${error.message}`)
   }
 }
+
+/**
+ * A pristine shell for every route that is not prerendered — the admin and
+ * portal areas, and genuinely unknown URLs.
+ *
+ * dist/index.html is the prerendered homepage, so using it as the SPA fallback
+ * would answer /admin and every mistyped URL with a 200 carrying homepage
+ * markup and a canonical pointing at the site root. This shell has an empty
+ * root container, so the client mounts fresh, and is marked noindex so that a
+ * crawler following a bad link does not index it as duplicate homepage content.
+ */
+const shell = template
+  .replace(/<title>[\s\S]*?<\/title>/, '<title>Axis Learning</title>')
+  .replace('</head>', '  <meta name="robots" content="noindex, nofollow" />\n</head>')
+
+writeFileSync(resolve(distDir, 'app.html'), shell, 'utf8')
 
 // The SSR bundle is a build artefact, not something to deploy.
 rmSync(ssrDir, { recursive: true, force: true })

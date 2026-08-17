@@ -94,7 +94,10 @@ export default function FAQPage() {
   useEffect(() => {
     let filtered = faqs
 
-    if (selectedCategory && selectedCategory !== 'all') {
+    // A search is a question about the whole FAQ, not about the category that
+    // happens to be selected — so searching looks across every category.
+    // Otherwise "special needs" typed while General is active returns nothing.
+    if (selectedCategory && selectedCategory !== 'all' && !searchQuery.trim()) {
       filtered = filtered.filter((f) => f.category === selectedCategory)
     }
 

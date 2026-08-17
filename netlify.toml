@@ -10,13 +10,33 @@
 [build.environment]
   NODE_VERSION = "20"
 
-# Public routes are prerendered to real HTML files, and Netlify serves a matching
-# static file before it consults redirects. This fallback therefore only catches
-# the routes that are deliberately not prerendered — the admin and portal areas.
+# Public routes are prerendered to real HTML files and Netlify serves a matching
+# static file before consulting redirects, so these only catch what is left.
+#
+# The fallback is app.html — a pristine, noindex shell — and never index.html,
+# which is the prerendered homepage. Falling back to that would answer /admin and
+# every mistyped URL with homepage markup and a site-root canonical.
+[[redirects]]
+  from = "/admin"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/portal/*"
+  to = "/app.html"
+  status = 200
+
+# Anything else is genuinely not a page. The app still boots and renders its own
+# not-found view, but the status tells crawlers the truth.
 [[redirects]]
   from = "/*"
-  to = "/index.html"
-  status = 200
+  to = "/app.html"
+  status = 404
 
 [[headers]]
   for = "/*"

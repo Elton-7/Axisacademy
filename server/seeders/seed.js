@@ -1,8 +1,24 @@
 const { Service, Testimonial, User, Enrollment, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner } = require('../models')
 
+/**
+ * Seeding runs on every server start, and most of these models have no unique
+ * constraint — so `ignoreDuplicates` had nothing to detect a conflict against
+ * and every restart inserted another full copy of the seed data.
+ *
+ * Seeding a table only when it is empty is idempotent regardless of constraints,
+ * and leaves real content alone once Axis starts adding its own.
+ */
+const seedIfEmpty = async (Model, rows) => {
+  const existing = await Model.count()
+  if (existing > 0) return 0
+
+  await Model.bulkCreate(rows)
+  return rows.length
+}
+
 const seedData = async () => {
   try {
-    await Service.bulkCreate([
+    await seedIfEmpty(Service, [
       {
         title: 'Homeschooling',
         slug: 'homeschooling',
@@ -51,9 +67,9 @@ const seedData = async () => {
         items: ['Personalized learning pathways designed to help every learner succeed.'],
         order: 6
       }
-    ], { ignoreDuplicates: true })
+    ])
 
-    await Educator.bulkCreate([
+    await seedIfEmpty(Educator, [
       {
         name: 'Dr. Sarah Njoroge',
         position: 'Head of Academic Programmes',
@@ -176,9 +192,9 @@ const seedData = async () => {
         email: 'charles.nkosi@axislearning.com',
         sortOrder: 10,
       },
-    ], { ignoreDuplicates: true })
+    ])
 
-    await Event.bulkCreate([
+    await seedIfEmpty(Event, [
       {
         title: 'August Holiday Tuition Programme',
         description: 'Comprehensive holiday tuition covering Mathematics, Sciences, English, and other key subjects. Flexible scheduling with one-on-one and group sessions available.',
@@ -307,9 +323,9 @@ const seedData = async () => {
         recap: 'Successfully conducted with 85 participants across CBC, Cambridge, and IGCSE programmes. Students showed significant improvement in targeted areas.',
         sortOrder: 8,
       },
-    ], { ignoreDuplicates: true })
+    ])
 
-    await Location.bulkCreate([
+    await seedIfEmpty(Location, [
       {
         name: 'Chandaria Innovation Centre',
         type: 'Head Office',
@@ -579,9 +595,9 @@ const seedData = async () => {
         longitude: 36.6882,
         sortOrder: 22,
       }
-    ], { ignoreDuplicates: true })
+    ])
 
-    await Testimonial.bulkCreate([
+    await seedIfEmpty(Testimonial, [
       {
         text: "Axis has been a blessing for our family. The personalized attention and flexibility have helped our child excel academically and build confidence.",
         author: 'Parent',
@@ -600,9 +616,9 @@ const seedData = async () => {
         role: 'Parent',
         rating: 5
       }
-    ], { ignoreDuplicates: true })
+    ])
 
-    await FAQ.bulkCreate([
+    await seedIfEmpty(FAQ, [
       {
         question: 'What is Axis Learning?',
         answer: 'Axis Learning is a comprehensive educational network providing personalized learning pathways for all learners through academic support, homeschooling, tuition, special needs education, languages, sports, enrichment programmes, and more. We believe every learner is different and education should be designed around the individual learner.',
@@ -783,7 +799,7 @@ const seedData = async () => {
         category: 'General',
         order: 3,
       },
-    ], { ignoreDuplicates: true })
+    ])
 
     const configuredUsers = [
       { email: process.env.ADMIN_EMAIL || 'admin@axis.com', passwordHash: process.env.ADMIN_PASSWORD_HASH, name: process.env.ADMIN_NAME || 'Admin User', role: 'admin' },
@@ -842,7 +858,7 @@ const seedData = async () => {
       await PortalMessage.findOrCreate({ where: message, defaults: message })
     }
 
-    await Partner.bulkCreate([
+    await seedIfEmpty(Partner, [
       {
         name: 'Kenya Institute of Curriculum Development',
         category: 'Educational Institution',
@@ -923,11 +939,11 @@ const seedData = async () => {
         website: 'https://www.allafrica.edu',
         sortOrder: 10,
       },
-    ], { ignoreDuplicates: true })
+    ])
 
     // Brief §24 — the resources section doubles as the SEO surface, so these are
     // written as genuinely useful parent guidance rather than filler.
-    await Resource.bulkCreate([
+    await seedIfEmpty(Resource, [
       {
         title: 'Choosing a curriculum in Kenya: CBC, Cambridge, IB or Montessori?',
         slug: 'choosing-a-curriculum-in-kenya',
@@ -1060,7 +1076,7 @@ If you are unsure, that is a normal position to be in — and not one you have t
         sortOrder: 6,
         publishedAt: new Date('2026-07-14'),
       },
-    ], { ignoreDuplicates: true })
+    ])
 
     console.log('Seed data inserted successfully')
   } catch (error) {

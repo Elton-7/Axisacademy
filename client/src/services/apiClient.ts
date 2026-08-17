@@ -44,16 +44,35 @@ import {
 } from '../types'
 
 /**
- * The API envelope types `data` as optional, because an error response omits it.
- * A 2xx response that omits the payload is a server contract violation, not
- * something every call site should have to null-check — so we fail loudly here
- * and let callers work with a defined value.
+ * The API is not consistent about its response shape: some routes wrap the
+ * payload in `{ success, data }` (resources, partners) while others return the
+ * bare record (educators, events, faqs, locations, gallery). This normalises
+ * both so callers always receive a defined value.
+ *
+ * An enveloped 2xx response that omits `data` is a server contract violation
+ * rather than something 38 call sites should null-check, so that fails loudly.
+ *
+ * TODO: make the server envelope every response, then simplify this back to
+ * reading `.data`.
  */
-function unwrap<T>(payload: { data?: T; error?: string; message?: string }): T {
-  if (payload.data === undefined) {
-    throw new Error(payload.error || payload.message || 'The server returned no data for this request.')
+function unwrap<T>(payload: ApiListResponse<T>): T[]
+function unwrap<T>(payload: ApiResponse<T>): T
+function unwrap<T>(payload: T): T
+function unwrap(payload: unknown): unknown {
+  const isEnvelope = payload !== null && typeof payload === 'object' && 'success' in payload
+
+  if (!isEnvelope) {
+    // A bare record — already the value the caller wants.
+    return payload
   }
-  return payload.data
+
+  const envelope = payload as { data?: unknown; error?: string; message?: string }
+  if (envelope.data === undefined) {
+    throw new Error(
+      envelope.error || envelope.message || 'The server returned no data for this request.'
+    )
+  }
+  return envelope.data
 }
 
 // Services

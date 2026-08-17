@@ -10,6 +10,22 @@ const pages: Record<string, { title: string; description: string }> = {
     title: 'Education Services | Axis Learning Kenya',
     description: 'Explore homeschooling, academic tuition, languages, enrichment, sports, holiday tuition, examination preparation, and learner discovery with Axis Learning.',
   },
+  '/about': {
+    title: 'About Axis Learning | Learner-Centred Education in Kenya',
+    description: 'Who Axis Learning is, what we believe about learners, and how we build personalised educational pathways across Kenya.',
+  },
+  '/events': {
+    title: 'Events, Workshops & Holiday Programmes | Axis Learning',
+    description: 'Holiday tuition, public speaking and debate competitions, theatre, workshops, cultural events, camps and educational trips with Axis Learning.',
+  },
+  '/gallery': {
+    title: 'Photo & Video Gallery | Axis Learning',
+    description: 'Real photographs and videos of Axis Learning classrooms, tuition sessions, activities, events and learner projects across Kenya.',
+  },
+  '/partners': {
+    title: 'Our Partners | Axis Learning',
+    description: 'The schools, publishers, universities, cultural and sports organisations and community partners Axis Learning works with across Kenya.',
+  },
   '/philosophy': {
     title: 'Our Educational Philosophy | Axis Learning',
     description: 'Every learner is different, and education should be designed around the learner. The belief behind how Axis Learning builds individual educational pathways in Kenya.',
