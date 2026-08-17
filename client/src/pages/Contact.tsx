@@ -1,35 +1,63 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Loader2 } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Loader2, AlertCircle } from 'lucide-react'
+import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import api from '../utils/api'
+import { contactsApi } from '../services/apiClient'
+import { trackConversion } from '../services/analytics'
+import type { CreateContactRequest } from '../types'
+import { sanitizeContactPayload } from '../utils/sanitize'
 
-interface ContactForm {
+interface ContactForm extends CreateContactRequest {
   firstName: string
   lastName: string
-  email: string
-  phone: string
-  subject: string
-  message: string
-  programme: string
 }
 
 export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactForm>()
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<ContactForm>({ mode: 'onBlur' })
 
-  const onSubmit = async (data: ContactForm) => {
+  const onSubmit = async (formData: ContactForm) => {
     setIsSubmitting(true)
+    setSubmitError(null)
     try {
-      await api.post('/contacts', data)
+      // Combine first and last name into single name field
+      const raw = {
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message,
+      }
+
+      const payload = sanitizeContactPayload({ ...raw, programme: formData.programme })
+      await contactsApi.submit(payload)
       setIsSuccess(true)
+      trackConversion('consultation_requested')
       toast.success('Message sent successfully! We will get back to you soon.')
       reset()
       setTimeout(() => setIsSuccess(false), 5000)
-    } catch (error) {
-      toast.error('Something went wrong. Please try again.')
+    } catch (error: unknown) {
+      console.error('Contact form error:', error)
+      let message = 'We could not send your message. Please try again later.'
+      if (axios.isAxiosError(error)) {
+        const responseData = error.response?.data as { error?: string; errors?: Array<{ msg?: string }> } | undefined
+        const validationMessage = responseData?.errors?.[0]?.msg
+        if (validationMessage) {
+          message = validationMessage
+        } else if (error.response?.status === 429) {
+          message = 'Too many messages were sent recently. Please wait a few minutes and try again.'
+        } else if (error.code === 'ECONNABORTED' || !error.response) {
+          message = 'We could not reach the server. Please check your connection and try again.'
+        } else if (responseData?.error) {
+          message = responseData.error
+        }
+      }
+      setSubmitError(message)
+      toast.error(message)
     } finally {
       setIsSubmitting(false)
     }
@@ -133,12 +161,18 @@ export default function Contact() {
                     <p className="text-navy-600/70">We'll get back to you within 24 hours.</p>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                  <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
+                    {submitError && (
+                      <div role="alert" className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
+                        <p>{submitError}</p>
+                      </div>
+                    )}
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
                         <label className="block text-sm font-medium text-navy-900 mb-2">First Name *</label>
                         <input
-                          {...register('firstName', { required: 'First name is required' })}
+                          {...register('firstName', { required: 'First name is required', validate: value => value.trim().length > 0 || 'First name is required', maxLength: { value: 50, message: 'First name must be 50 characters or fewer' } })}
                           className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="John"
                         />
@@ -147,7 +181,7 @@ export default function Contact() {
                       <div>
                         <label className="block text-sm font-medium text-navy-900 mb-2">Last Name *</label>
                         <input
-                          {...register('lastName', { required: 'Last name is required' })}
+                          {...register('lastName', { required: 'Last name is required', validate: value => value.trim().length > 0 || 'Last name is required', maxLength: { value: 50, message: 'Last name must be 50 characters or fewer' } })}
                           className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="Doe"
                         />
@@ -162,7 +196,8 @@ export default function Contact() {
                           type="email"
                           {...register('email', { 
                             required: 'Email is required',
-                            pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' }
+                            pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
+                            maxLength: { value: 100, message: 'Email must be 100 characters or fewer' }
                           })}
                           className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="john@example.com"
@@ -172,7 +207,7 @@ export default function Contact() {
                       <div>
                         <label className="block text-sm font-medium text-navy-900 mb-2">Phone</label>
                         <input
-                          {...register('phone')}
+                          {...register('phone', { pattern: { value: /^[0-9+()\s-]{6,20}$/, message: 'Enter a valid phone number' }, maxLength: { value: 20, message: 'Phone must be 20 characters or fewer' } })}
                           className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="0737 003 007"
                         />
@@ -198,7 +233,8 @@ export default function Contact() {
                     <div>
                       <label className="block text-sm font-medium text-navy-900 mb-2">Subject *</label>
                       <input
-                        {...register('subject', { required: 'Subject is required' })}
+                        {...register('subject', { required: 'Subject is required', validate: value => value.trim().length > 0 || 'Subject is required', maxLength: { value: 100, message: 'Subject must be 100 characters or fewer' } })}
+                        maxLength={100}
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                         placeholder="How can we help?"
                       />
@@ -208,7 +244,8 @@ export default function Contact() {
                     <div>
                       <label className="block text-sm font-medium text-navy-900 mb-2">Message *</label>
                       <textarea
-                        {...register('message', { required: 'Message is required' })}
+                        {...register('message', { required: 'Message is required', validate: value => value.trim().length > 0 || 'Message is required', maxLength: { value: 2000, message: 'Message must be 2,000 characters or fewer' } })}
+                        maxLength={2000}
                         rows={5}
                         className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all resize-none"
                         placeholder="Tell us about your learning goals..."
