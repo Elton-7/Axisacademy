@@ -327,17 +327,17 @@
 
   <div class="tiles">
     <div class="tile t-built">
-      <span class="tile-n">23</span>
+      <span class="tile-n">25</span>
       <span class="tile-l">Built</span>
       <span class="tile-sub">Working and matching the brief</span>
     </div>
     <div class="tile t-partial">
-      <span class="tile-n">17</span>
+      <span class="tile-n">16</span>
       <span class="tile-l">Partial</span>
       <span class="tile-sub">Structure exists, content or depth missing</span>
     </div>
     <div class="tile t-absent">
-      <span class="tile-n">2</span>
+      <span class="tile-n">1</span>
       <span class="tile-l">Not started</span>
       <span class="tile-sub">No implementation in the codebase</span>
     </div>
@@ -490,7 +490,7 @@
 
     <h3>Conversion</h3>
     <div class="ledger">
-      <div class="row"><span class="ref">§26</span><span class="what"><b>Enquiry funnel</b><span>The front half — discover, explore, understand, trust, enquire — works. Consult onwards depends on the CRM.</span></span><span class="chip c-partial">Partial</span></div>
+      <div class="row"><span class="ref">§26</span><span class="what"><b>Enquiry funnel</b><span>End to end now: the public half feeds the enquiry form, and consult onwards is tracked in the pipeline. New enquiries email Axis so leads cannot go cold unnoticed. <span class="new-flag">phase 4</span></span></span><span class="chip c-built">Built</span></div>
       <div class="row"><span class="ref">§27</span><span class="what"><b>Online enquiry form</b><span>All 16 brief fields present, conversational rather than bureaucratic, with validation and length limits.</span></span><span class="chip c-built">Built</span></div>
     </div>
 
@@ -499,7 +499,7 @@
       <div class="row"><span class="ref">§28</span><span class="what"><b>Parent / learner portal</b><span>Login, role-guarded routes, schedule and message models exist. Academic area, attendance, resources and fees are not built.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§29</span><span class="what"><b>Educator portal</b><span>Tutor login and role separation work. Attendance marking, lesson notes, assignments and reporting are not built.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§30</span><span class="what"><b>Administration portal</b><span>Substantial dashboard already managing most content types, with an audit log behind it.</span></span><span class="chip c-partial">Partial</span></div>
-      <div class="row"><span class="ref">§31</span><span class="what"><b>CRM / client management</b><span>The enquiry-to-enrolled pipeline does not exist in any form.</span></span><span class="chip c-absent">Not started</span></div>
+      <div class="row"><span class="ref">§31</span><span class="what"><b>CRM / client management</b><span>The full journey from new enquiry to active learner, with an admin board showing stage distribution, conversion over decided enquiries, and days-in-stage. A Lost stage was added beyond the brief’s list, because “where are we losing people” cannot be answered without one. <span class="new-flag">phase 4</span></span></span><span class="chip c-built">Built</span></div>
       <div class="row"><span class="ref">§32</span><span class="what"><b>Payments</b><span>No M-Pesa, bank or card integration; no invoices or receipts.</span></span><span class="chip c-absent">Not started</span></div>
     </div>
 
@@ -510,7 +510,7 @@
       <div class="row"><span class="ref">§35</span><span class="what"><b>Analytics</b><span>GA4 wired with manual page views for client-side routing and named conversion events for enquiries, consultations and WhatsApp. Ships with zero tracking code until an ID is configured. Search Console still to connect. <span class="new-flag">phase 3</span></span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§36</span><span class="what"><b>Content management</b><span>Seven of the eight admin tabs were unreachable dead code until this session (see below). Now working; announcements and media upload still to come. <span class="new-flag">phase 2</span></span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§37</span><span class="what"><b>Materials from Axis</b><span>Blocked on the client. Nothing from this list has been supplied yet.</span></span><span class="chip c-na">Awaiting</span></div>
-      <div class="row"><span class="ref">§38</span><span class="what"><b>Child safety, privacy &amp; data protection</b><span>Role-based access, hashed passwords, rate limiting, audit logging and a privacy page are in place. Consent capture, media-release tracking and backups are not.</span></span><span class="chip c-partial">Partial</span></div>
+      <div class="row"><span class="ref">§38</span><span class="what"><b>Child safety, privacy &amp; data protection</b><span>Role-based access, hashed passwords, rate limiting, audit logging and a privacy page, plus consent provenance on media — who confirmed it, when, and against which signed release, required before anything can be published. Backups and the retention schedule are still open. <span class="new-flag">phase 4</span></span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§39</span><span class="what"><b>Ownership of the platform</b><span>Commercial matter — see the recommendation below on account ownership.</span></span><span class="chip c-na">Process</span></div>
       <div class="row"><span class="ref">§40</span><span class="what"><b>Visual character</b><span>Cards, icons, clean type, strong CTAs and subtle animation are all there. The imagery is not yet real.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§41</span><span class="what"><b>The parent experience</b><span>Narrative objective, measured by the funnel above.</span></span><span class="chip c-na">N/A</span></div>
@@ -571,18 +571,19 @@
         </div>
       </div>
       <div class="phase">
-        <span class="phase-id">Phase 4<em>Next</em></span>
+        <span class="phase-id">Phase 4<em>Done</em></span>
         <div>
           <h4>Close the loop on enquiries</h4>
           <ul>
-            <li>CRM pipeline from new enquiry through to active learner (§31)</li>
-            <li>Email and WhatsApp notification on new enquiry so none go cold</li>
-            <li>Consent capture and media-release tracking before any learner photograph is published (§38)</li>
+            <li>CRM pipeline from new enquiry through to active learner, with stage distribution and conversion reporting (§31)</li>
+            <li>Email notification on every new enquiry and contact message, non-blocking and inert until SMTP is configured</li>
+            <li>Consent provenance on media — who confirmed, when, and against which signed release (§38)</li>
+            <li><strong>Still open:</strong> WhatsApp Business API notification, which needs Meta verification first</li>
           </ul>
         </div>
       </div>
       <div class="phase">
-        <span class="phase-id">Phase 5</span>
+        <span class="phase-id">Phase 5<em>Next</em></span>
         <div>
           <h4>The portals</h4>
           <ul>
