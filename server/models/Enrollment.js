@@ -27,6 +27,41 @@ const Enrollment = sequelize.define('Enrollment', {
   ageGroup: {
     type: DataTypes.ENUM('child', 'teenager', 'adult')
   },
+  learnerAge: {
+    type: DataTypes.INTEGER
+  },
+  location: {
+    type: DataTypes.STRING(120)
+  },
+  currentSchool: {
+    type: DataTypes.STRING(160)
+  },
+  curriculum: {
+    type: DataTypes.STRING(80)
+  },
+  gradeClass: {
+    type: DataTypes.STRING(80)
+  },
+  subjects: {
+    type: DataTypes.STRING(500)
+  },
+  learningNeeds: {
+    type: DataTypes.TEXT
+  },
+  preferredLearningModel: {
+    type: DataTypes.ENUM('online', 'home-based', 'centre-based', 'blended', 'not-sure')
+  },
+  preferredDays: {
+    type: DataTypes.STRING(120)
+  },
+  preferredTimes: {
+    type: DataTypes.STRING(120)
+  },
+  contactConsent: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  },
   notes: {
     type: DataTypes.TEXT
   },

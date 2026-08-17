@@ -1,0 +1,130 @@
+const express = require('express')
+const { Gallery } = require('../models')
+const { requireAuth, requireRole } = require('../middleware/requireAuth')
+
+const router = express.Router()
+
+router.get('/', async (req, res) => {
+  try {
+    const { category, type, search, limit = 200, offset = 0 } = req.query
+    const where = { isActive: true, consentConfirmed: true }
+
+    if (category && category !== 'all') where.category = category
+    if (type && type !== 'all') where.type = type
+
+    if (search) {
+      const { Op } = require('sequelize')
+      where[Op.or] = [
+        { title: { [Op.iLike]: `%${search}%` } },
+        { description: { [Op.iLike]: `%${search}%` } },
+      ]
+    }
+
+    const galleryItems = await Gallery.findAndCountAll({
+      where,
+      order: [['sortOrder', 'ASC'], ['createdAt', 'DESC']],
+      limit: Math.min(parseInt(limit), 500),
+      offset: parseInt(offset),
+    })
+
+    res.json({
+      data: galleryItems.rows,
+      total: galleryItems.count,
+      limit: Math.min(parseInt(limit), 500),
+      offset: parseInt(offset),
+    })
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch gallery items' })
+  }
+})
+
+router.get('/:id', async (req, res) => {
+  try {
+    const item = await Gallery.findByPk(req.params.id)
+    if (!item || !item.isActive || !item.consentConfirmed) {
+      return res.status(404).json({ error: 'Gallery item not found' })
+    }
+
+    res.json(item)
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch gallery item' })
+  }
+})
+
+router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+  try {
+    const { title, type, category, description, url, thumbnail, tags, consentConfirmed } = req.body
+
+    if (!title || !url) {
+      return res.status(400).json({ error: 'title and url are required' })
+    }
+    if (consentConfirmed !== true) {
+      return res.status(400).json({ error: 'Publication consent must be confirmed before media can be added' })
+    }
+
+    const item = await Gallery.create({
+      title: title.trim(),
+      type: type || 'Photo',
+      category: category || 'General',
+      description,
+      url,
+      thumbnail,
+      tags: Array.isArray(tags) ? tags : [],
+      consentConfirmed: true,
+    })
+
+    res.status(201).json(item)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
+router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+  try {
+    const item = await Gallery.findByPk(req.params.id)
+    if (!item) {
+      return res.status(404).json({ error: 'Gallery item not found' })
+    }
+
+    const { title, type, category, description, url, thumbnail, tags, consentConfirmed, isActive, sortOrder } = req.body
+    const nextConsentConfirmed = consentConfirmed !== undefined ? consentConfirmed : item.consentConfirmed
+    const nextIsActive = isActive !== undefined ? isActive : item.isActive
+
+    if (nextIsActive && nextConsentConfirmed !== true) {
+      return res.status(400).json({ error: 'Publication consent must be confirmed before media can be published' })
+    }
+
+    await item.update({
+      ...(title !== undefined && { title: title.trim() }),
+      ...(type !== undefined && { type }),
+      ...(category !== undefined && { category }),
+      ...(description !== undefined && { description }),
+      ...(url !== undefined && { url }),
+      ...(thumbnail !== undefined && { thumbnail }),
+      ...(tags !== undefined && { tags: Array.isArray(tags) ? tags : [] }),
+      ...(consentConfirmed !== undefined && { consentConfirmed }),
+      ...(isActive !== undefined && { isActive }),
+      ...(sortOrder !== undefined && { sortOrder }),
+    })
+
+    res.json(item)
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
+router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+  try {
+    const item = await Gallery.findByPk(req.params.id)
+    if (!item) {
+      return res.status(404).json({ error: 'Gallery item not found' })
+    }
+
+    await item.update({ isActive: false })
+    res.json({ message: 'Gallery item deleted successfully' })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+module.exports = router

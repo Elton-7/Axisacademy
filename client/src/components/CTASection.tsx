@@ -34,8 +34,8 @@ export default function CTASection() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <a href="/contact" className="btn-navy">Enroll Now</a>
-              <a href="/contact" className="btn-secondary border-navy text-navy hover:bg-navy hover:text-white">
+              <a href="/enroll" className="btn-navy">Enroll Now</a>
+                <a href="/enroll" className="btn-secondary border-navy text-navy hover:bg-navy hover:text-white">
                 Book a Consultation
               </a>
               <a

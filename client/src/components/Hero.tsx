@@ -48,9 +48,9 @@ export default function Hero() {
             </p>
 
             <div className="mb-8 flex flex-wrap gap-3">
-              <a href="/contact" className="btn-primary">
+              <a href="/enroll" className="btn-primary">
                 <MessageCircle className="h-4 w-4" />
-                Enroll Now
+                  Enroll Now
               </a>
               <a href="/contact" className="btn-secondary">
                 <GraduationCap className="h-4 w-4" />
