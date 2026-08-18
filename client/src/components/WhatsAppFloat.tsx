@@ -1,11 +1,14 @@
 import { MessageCircle } from 'lucide-react'
+import { trackConversion } from '../services/analytics'
+import { whatsappHref } from '../content/contact'
 
 export default function WhatsAppFloat() {
   return (
     <a
-      href="https://wa.me/254737003007"
+      href={whatsappHref()}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() => trackConversion('whatsapp_opened')}
       className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center shadow-lg shadow-[#25D366]/30 hover:scale-110 transition-transform duration-300 group"
       aria-label="Chat on WhatsApp"
     >

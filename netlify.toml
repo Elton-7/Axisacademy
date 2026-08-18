@@ -1,0 +1,64 @@
+# Netlify reads this file from the repository root. The generated file in
+# .netlify/ is local CLI state and is not used for deploys — it also contains an
+# absolute Windows path, which would not resolve on Netlify's build image.
+
+[build]
+  base = "client"
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Public routes are prerendered to real HTML files and Netlify serves a matching
+# static file before consulting redirects, so these only catch what is left.
+#
+# The fallback is app.html — a pristine, noindex shell — and never index.html,
+# which is the prerendered homepage. Falling back to that would answer /admin and
+# every mistyped URL with homepage markup and a site-root canonical.
+[[redirects]]
+  from = "/admin"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/portal/*"
+  to = "/app.html"
+  status = 200
+
+# Anything else is genuinely not a page. The app still boots and renders its own
+# not-found view, but the status tells crawlers the truth.
+[[redirects]]
+  from = "/*"
+  to = "/app.html"
+  status = 404
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Asset filenames are content-hashed, so they can be cached indefinitely.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# HTML is regenerated on every deploy and must not be served stale.
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/sitemap.xml"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"

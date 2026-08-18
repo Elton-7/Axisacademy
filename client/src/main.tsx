@@ -1,38 +1,36 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
+import { toasterProps } from './toaster'
 import './index.css'
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000,
-      retry: 2,
-      refetchOnWindowFocus: false,
-    },
-  },
-})
+const container = document.getElementById('root')!
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// Prerendered pages arrive with markup already in place, so hydrate those and
+// mount fresh only when the container is empty (dev server, or a route that was
+// not prerendered).
+const app = (
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <HelmetProvider>
       <BrowserRouter>
         <App />
-        <Toaster 
-          position="top-right"
-          toastOptions={{
-            duration: 4000,
-            style: {
-              background: '#0a1628',
-              color: '#fff',
-              border: '1px solid #c9a84c',
-            },
-          }}
-        />
+        <Toaster {...toasterProps} />
       </BrowserRouter>
-    </QueryClientProvider>
-  </React.StrictMode>,
+    </HelmetProvider>
+  </React.StrictMode>
 )
+
+// Hydrate only when the markup in the page was prerendered for this exact route.
+// Any other case — the dev server, or a non-prerendered route served the
+// fallback shell — mounts fresh, so React never hydrates mismatched markup.
+const prerenderedPath = container.dataset.prerenderedPath
+
+if (prerenderedPath && prerenderedPath === window.location.pathname) {
+  ReactDOM.hydrateRoot(container, app)
+} else {
+  container.innerHTML = ''
+  ReactDOM.createRoot(container).render(app)
+}

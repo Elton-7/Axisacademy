@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Phone, GraduationCap, MessageCircle, User, Clock, Heart, Sparkles } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
+import { contact, telHref } from '../content/contact'
 
 const features = [
   { icon: User, label: 'Personalized\nLearning' },
@@ -48,17 +49,22 @@ export default function Hero() {
             </p>
 
             <div className="mb-8 flex flex-wrap gap-3">
-              <a href="/contact" className="btn-primary">
+              {/*
+                The form starts an enquiry, not an enrolment — enrolment happens
+                after a consultation. "Enroll Now" promised something the site
+                does not do.
+              */}
+              <a href="/enroll" className="btn-primary">
                 <MessageCircle className="h-4 w-4" />
-                Enroll Now
+                Make an Enquiry
               </a>
-              <a href="/contact" className="btn-secondary">
+              <a href="/consultation" className="btn-secondary">
                 <GraduationCap className="h-4 w-4" />
                 Book a Consultation
               </a>
-              <a href="tel:0737003007" className="btn-navy bg-white/10 border border-white/20 hover:bg-white/20">
+              <a href={telHref} className="btn-navy bg-white/10 border border-white/20 hover:bg-white/20">
                 <Phone className="h-4 w-4" />
-                Call 0737 003 007
+                {`Call ${contact.phoneDisplay}`}
               </a>
             </div>
 

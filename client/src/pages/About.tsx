@@ -1,19 +1,27 @@
 import { motion } from 'framer-motion'
-import { Target, Eye, Award, Users, BookOpen, Heart } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Target, Eye, ArrowRight, BookOpen, Brain, Palette, Compass, Sprout } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
 
-const stats = [
-  { icon: Users, value: '500+', label: 'Students Enrolled' },
-  { icon: Award, value: '50+', label: 'Qualified Instructors' },
-  { icon: BookOpen, value: '25+', label: 'Programmes Offered' },
-  { icon: Heart, value: '98%', label: 'Satisfaction Rate' },
+/**
+ * The tagline pillars (brief §2) replace the previous statistics band, which
+ * carried invented figures — enrolment counts, instructor numbers and a
+ * satisfaction rate that no source in the brief supports. Real metrics can be
+ * reinstated here once Axis supplies them.
+ */
+const pillars = [
+  { icon: BookOpen, title: 'Learn', desc: 'Academic learning built around the learner, not the timetable.' },
+  { icon: Brain, title: 'Think', desc: 'Understanding and independent thought ahead of memorisation.' },
+  { icon: Palette, title: 'Create', desc: 'Room for creativity, expression and talent alongside academics.' },
+  { icon: Compass, title: 'Explore', desc: 'Languages, cultures, sports and interests worth discovering.' },
+  { icon: Sprout, title: 'Thrive', desc: 'Confidence and independence that outlast any single programme.' },
 ]
 
 const values = [
-  { title: 'Excellence', desc: 'We strive for the highest standards in education and personal development.' },
-  { title: 'Innovation', desc: 'We embrace modern teaching methods and technologies to enhance learning.' },
-  { title: 'Inclusivity', desc: 'We welcome learners of all backgrounds, abilities, and aspirations.' },
-  { title: 'Integrity', desc: 'We operate with honesty, transparency, and ethical responsibility.' },
+  { title: 'Learner-centred', desc: 'Every pathway begins with who the learner is, not which class they are in.' },
+  { title: 'Inclusive', desc: 'We welcome learners of all backgrounds, abilities, and aspirations.' },
+  { title: 'Flexible', desc: 'Online, at home, at a centre, or blended — the model follows the learner.' },
+  { title: 'Trustworthy', desc: 'We are honest about what we offer, who delivers it, and what it will take.' },
 ]
 
 export default function About() {
@@ -41,22 +49,25 @@ export default function About() {
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 bg-gold-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, i) => (
+      {/* Tagline pillars */}
+      <section className="bg-gold-500 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <p className="mb-10 text-center font-mono text-xs uppercase tracking-[0.3em] text-navy-900/70">
+            Learn • Think • Create • Explore • Thrive
+          </p>
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
+            {pillars.map((pillar, i) => (
               <motion.div
-                key={stat.label}
+                key={pillar.title}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.08 }}
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <stat.icon className="w-8 h-8 text-navy-900 mx-auto mb-3" />
-                <div className="text-3xl font-bold text-navy-900 mb-1">{stat.value}</div>
-                <div className="text-navy-800/80 text-sm">{stat.label}</div>
+                <pillar.icon className="mx-auto mb-3 h-8 w-8 text-navy-900" />
+                <div className="mb-1 text-xl font-bold text-navy-900">{pillar.title}</div>
+                <div className="text-sm leading-snug text-navy-900/75">{pillar.desc}</div>
               </motion.div>
             ))}
           </div>
@@ -120,6 +131,20 @@ export default function About() {
                 <p className="text-navy-600/70 text-sm leading-relaxed">{value.desc}</p>
               </motion.div>
             ))}
+          </div>
+
+          <div className="mt-16 rounded-3xl border border-gray-200 bg-white p-10 text-center">
+            <h3 className="font-serif text-2xl italic text-navy-900 sm:text-3xl">
+              “Every learner is different, and education should be designed around the learner.”
+            </h3>
+            <p className="mx-auto mt-4 max-w-2xl text-navy-600">
+              That belief shapes every pathway we build. It is worth reading in full before you
+              decide whether Axis is right for your learner.
+            </p>
+            <Link to="/philosophy" className="btn-primary mt-8">
+              Read our educational philosophy
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>

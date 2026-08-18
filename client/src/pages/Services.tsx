@@ -1,109 +1,108 @@
 import { motion } from 'framer-motion'
-import { Home, GraduationCap, Languages, Star, Trophy, HeartHandshake, ArrowRight, CheckCircle } from 'lucide-react'
-
-const services = [
-  {
-    icon: Home,
-    title: 'Homeschooling',
-    description: 'Comprehensive homeschooling support tailored to each family's needs and educational goals.',
-    features: ['CBC Curriculum', 'Cambridge International', 'IGCSE Preparation', 'A Levels Support', 'Custom Learning Plans', 'Progress Tracking'],
-    color: 'bg-blue-50',
-  },
-  {
-    icon: GraduationCap,
-    title: 'Academic Support',
-    description: 'Expert tutoring across all subjects with proven results in examination preparation.',
-    features: ['Mathematics', 'Sciences', 'Languages', 'Humanities', 'Business Studies', 'Exam Prep'],
-    color: 'bg-emerald-50',
-  },
-  {
-    icon: Languages,
-    title: 'Language Programmes',
-    description: 'Master new languages with immersive, practical instruction for all proficiency levels.',
-    features: ['French', 'German', 'Arabic', 'Swahili', 'English Support', 'Cultural Immersion'],
-    color: 'bg-purple-50',
-  },
-  {
-    icon: Star,
-    title: 'Enrichment Programmes',
-    description: 'Develop critical life skills beyond academics through engaging enrichment activities.',
-    features: ['Chess & Strategy', 'Public Speaking', 'Creative Writing', 'Coding & Robotics', 'Entrepreneurship', 'Leadership'],
-    color: 'bg-amber-50',
-  },
-  {
-    icon: Trophy,
-    title: 'Sports & Recreation',
-    description: 'Build physical fitness, teamwork, and discipline through structured sports programmes.',
-    features: ['Swimming', 'Football', 'Basketball', 'Athletics', 'Skating', 'Outdoor Adventures'],
-    color: 'bg-rose-50',
-  },
-  {
-    icon: HeartHandshake,
-    title: 'Special Learner Support',
-    description: 'Personalized pathways for learners with diverse educational needs and abilities.',
-    features: ['Individual Assessment', 'Adaptive Curriculum', 'Specialist Instructors', 'Progress Monitoring', 'Family Support', 'Inclusive Environment'],
-    color: 'bg-teal-50',
-  },
-]
+import { Link } from 'react-router-dom'
+import { ArrowRight, CheckCircle, Compass } from 'lucide-react'
+import { services } from '../content/services'
 
 export default function Services() {
   return (
     <div className="pt-20">
       <section className="bg-navy-900 py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
             <div className="section-label mb-4">Our Services</div>
-            <h1 className="text-4xl md:text-5xl font-semibold text-white mb-6">
-              Comprehensive Programmes
+            <h1 className="mb-6 text-4xl font-semibold text-white md:text-5xl">
+              Learning that begins with the learner
             </h1>
-            <p className="text-white/70 max-w-2xl mx-auto text-lg">
-              From homeschooling to enrichment, we offer a full spectrum of educational services 
-              designed to help every learner succeed.
+            <p className="mx-auto max-w-2xl text-lg text-white/70">
+              Whether you know exactly what you need or only know that your learner needs support,
+              Axis can help you find the right next step.
             </p>
           </motion.div>
         </div>
       </section>
 
-      <section className="py-24 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8">
-            {services.map((service, i) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-2xl overflow-hidden border border-gray-100 card-hover group"
-              >
-                <div className={`${service.color} p-8`}>
-                  <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center mb-4 shadow-sm">
-                    <service.icon className="w-7 h-7 text-navy-900" />
+      <section className="bg-gray-50 py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-8 md:grid-cols-2">
+            {services.map((service, i) => {
+              const Icon = service.icon
+              return (
+                <motion.div
+                  key={service.slug}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: (i % 2) * 0.1 }}
+                  viewport={{ once: true }}
+                  className="card-hover group overflow-hidden rounded-2xl border border-gray-100 bg-white"
+                >
+                  <div className={`${service.accent} p-8`}>
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white shadow-sm">
+                      <Icon className="h-7 w-7 text-navy-900" />
+                    </div>
+                    <h2 className="mb-2 text-xl font-semibold text-navy-900">{service.title}</h2>
+                    <p className="text-sm leading-relaxed text-navy-600">{service.summary}</p>
                   </div>
-                  <h3 className="text-xl font-semibold text-navy-900 mb-2">{service.title}</h3>
-                  <p className="text-navy-600/70 text-sm leading-relaxed">{service.description}</p>
-                </div>
-                <div className="p-8">
-                  <ul className="space-y-3 mb-6">
-                    {service.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-3 text-sm text-navy-700">
-                        <CheckCircle className="w-4 h-4 text-gold-500 flex-shrink-0" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <button className="inline-flex items-center gap-2 text-gold-600 font-semibold text-sm uppercase tracking-wide hover:text-gold-700 transition-colors group/btn">
-                    Enquire Now
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </button>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="p-8">
+                    <ul className="mb-6 space-y-3">
+                      {service.highlights.map((highlight) => (
+                        <li key={highlight} className="flex items-start gap-3 text-sm text-navy-700">
+                          <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-gold-500" />
+                          {highlight}
+                        </li>
+                      ))}
+                    </ul>
+                    <div className="flex flex-wrap items-center gap-6">
+                      <Link
+                        to={`/services/${service.slug}`}
+                        className="group/btn inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-600 transition-colors hover:text-gold-700"
+                      >
+                        Learn more
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                      </Link>
+                      <Link
+                        to={`/enroll?programme=${encodeURIComponent(service.title)}`}
+                        className="text-sm font-semibold uppercase tracking-wide text-navy-600 transition-colors hover:text-navy-900"
+                      >
+                        Enquire now
+                      </Link>
+                    </div>
+                  </div>
+                </motion.div>
+              )
+            })}
           </div>
+
+          {/* Brief §13 — the parent who cannot name what they need must still have a door in. */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="mt-12 rounded-3xl border border-gold-200 bg-gold-50 p-10 text-center"
+          >
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+              <Compass className="h-7 w-7 text-gold-600" />
+            </div>
+            <h2 className="text-2xl font-semibold text-navy-900 sm:text-3xl">
+              Not sure which of these your learner needs?
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-navy-600">
+              You do not have to choose from this list. Start with Learner Discovery — we will
+              understand the learner, identify the challenge, and recommend the right pathway.
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              <Link to="/services/learner-discovery" className="btn-primary">
+                How Learner Discovery works
+              </Link>
+              <Link to="/consultation" className="btn-secondary">
+                Book a consultation
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>

@@ -15,7 +15,7 @@ export default function AboutSection() {
             Thoughtful education that meets each learner where they are.
           </h2>
           <p className="text-lg leading-relaxed text-navy/70">
-            Axis Homeschool & Enrichment Academy offers calm, personalized, and future-focused learning experiences for children, teenagers, and adults.
+            Axis Learning offers calm, personalized, and future-focused learning experiences for children, teenagers, and adults.
           </p>
         </div>
 

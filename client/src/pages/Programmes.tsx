@@ -50,8 +50,8 @@ const programmes = [
     duration: 'Ongoing',
     schedule: 'Customized',
     students: '1-on-1',
-    description: 'Specialized educational support for learners with diverse needs, delivered with patience and expertise.',
-    highlights: ['Individual Assessment', 'Adaptive Methods', 'Family Collaboration', 'Progress Tracking'],
+    description: 'Individualised educational support shaped around the learner’s strengths, goals, and learning environment.',
+    highlights: ['Learner Discovery', 'Adaptive Methods', 'Family Collaboration', 'Progress Tracking'],
   },
   {
     id: 'exam',
@@ -60,7 +60,7 @@ const programmes = [
     duration: '4-8 Weeks',
     schedule: 'Intensive',
     students: 'Small Groups (5-10)',
-    description: 'Targeted preparation for KCPE, KCSE, IGCSE, and other standardized examinations.',
+    description: 'Targeted preparation for KCSE, IGCSE, A Levels, Cambridge assessments, and school examinations.',
     highlights: ['Mock Exams', 'Past Paper Practice', 'Study Techniques', 'Stress Management'],
   },
 ]
@@ -88,7 +88,7 @@ export default function Programmes() {
               Our Learning Programmes
             </h1>
             <p className="text-white/70 max-w-2xl mx-auto text-lg">
-              Explore our diverse range of programmes designed to meet every learner's unique needs and goals.
+              Explore learning options, then speak to Axis if you would like help choosing the right pathway.
             </p>
           </motion.div>
         </div>
@@ -159,8 +159,8 @@ export default function Programmes() {
                     ))}
                   </ul>
 
-                  <a href="/contact" className="btn-primary w-full text-center">
-                    Apply Now
+                  <a href="/enroll" className="btn-primary w-full text-center">
+                  Enquire about this programme
                   </a>
                 </div>
               </motion.div>
