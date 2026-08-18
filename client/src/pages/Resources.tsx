@@ -18,8 +18,7 @@ export default function Resources() {
     const fetchResources = async () => {
       try {
         setLoading(true)
-        const response = await resourcesApi.getAll({ limit: 100 })
-        const list = Array.isArray(response) ? response : response.data || []
+        const list = await resourcesApi.getAll({ limit: 100 })
         setResources(list)
       } catch (err) {
         console.error('Failed to load resources:', err)

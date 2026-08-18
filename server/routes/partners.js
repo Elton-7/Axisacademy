@@ -1,8 +1,12 @@
 const express = require('express')
 const { Partner } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateUuidParam } = require('../middleware/validateUuidParam')
 
 const router = express.Router()
+
+// Every :id in this router is a UUID; reject anything else as a 400, not a 500.
+router.param('id', validateUuidParam)
 
 router.get('/', async (req, res) => {
   try {

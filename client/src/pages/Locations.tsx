@@ -46,8 +46,7 @@ export default function Locations() {
     const fetchLocations = async () => {
       try {
         setLoading(true)
-        const response = await locationsApi.getAll({ limit: 200 })
-        const items = Array.isArray(response) ? response : response.data || []
+        const items = await locationsApi.getAll({ limit: 200 })
         setLocations(items)
       } catch (err) {
         console.error('Failed to load locations:', err)

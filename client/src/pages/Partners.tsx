@@ -18,8 +18,7 @@ export default function Partners() {
     const fetchPartners = async () => {
       try {
         setLoading(true)
-        const response = await partnersApi.getAll({ limit: 100 })
-        const list = Array.isArray(response) ? response : response.data || []
+        const list = await partnersApi.getAll({ limit: 100 })
         setPartners(list)
       } catch (err) {
         console.error('Failed to load partners:', err)

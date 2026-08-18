@@ -20,8 +20,7 @@ export default function Gallery() {
     const fetchGallery = async () => {
       try {
         setLoading(true)
-        const response = await galleryApi.getAll({ limit: 200 })
-        const galleryItems = Array.isArray(response) ? response : response.data || []
+        const galleryItems = await galleryApi.getAll({ limit: 200 })
         setItems(galleryItems)
       } catch (err) {
         console.error('Failed to load gallery:', err)

@@ -32,8 +32,7 @@ export default function Events() {
     const fetchEvents = async () => {
       try {
         setLoading(true)
-        const response = await eventsApi.getAll({ limit: 100 })
-        const eventsList = Array.isArray(response) ? response : response.data || []
+        const eventsList = await eventsApi.getAll({ limit: 100 })
         setEvents(eventsList)
         setFilteredEvents(eventsList)
       } catch (err) {

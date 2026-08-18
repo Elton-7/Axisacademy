@@ -76,8 +76,7 @@ export default function FAQPage() {
     const fetchFaqs = async () => {
       try {
         setLoading(true)
-        const response = await faqsApi.getAll({ limit: 200 })
-        const faqsList = Array.isArray(response) ? response : response.data || []
+        const faqsList = await faqsApi.getAll({ limit: 200 })
         setFaqs(faqsList)
         setFilteredFaqs(faqsList.filter((f: FAQ) => f.category === 'General'))
         setOpenIndexes([0]) // Open first FAQ by default

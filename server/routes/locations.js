@@ -1,8 +1,12 @@
 const express = require('express')
 const { Location } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateUuidParam } = require('../middleware/validateUuidParam')
 
 const router = express.Router()
+
+// Every :id in this router is a UUID; reject anything else as a 400, not a 500.
+router.param('id', validateUuidParam)
 
 router.get('/', async (req, res) => {
   try {
@@ -36,13 +40,14 @@ router.get('/', async (req, res) => {
     })
 
     res.json({
+      success: true,
       data: locations.rows,
       total: locations.count,
       limit: Math.min(parseInt(limit), 500),
       offset: parseInt(offset),
     })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch locations' })
+    res.status(500).json({ success: false, error: 'Failed to fetch locations' })
   }
 })
 
@@ -50,12 +55,12 @@ router.get('/:id', async (req, res) => {
   try {
     const location = await Location.findByPk(req.params.id)
     if (!location || !location.isActive) {
-      return res.status(404).json({ error: 'Location not found' })
+      return res.status(404).json({ success: false, error: 'Location not found' })
     }
 
-    res.json(location)
+    res.json({ success: true, data: location })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch location' })
+    res.status(500).json({ success: false, error: 'Failed to fetch location' })
   }
 })
 
@@ -64,7 +69,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
     const { name, type, address, city, county, phone, email, description, programmes, photo, latitude, longitude } = req.body
 
     if (!name || !type) {
-      return res.status(400).json({ error: 'name and type are required' })
+      return res.status(400).json({ success: false, error: 'name and type are required' })
     }
 
     const location = await Location.create({
@@ -82,9 +87,9 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
       longitude,
     })
 
-    res.status(201).json(location)
+    res.status(201).json({ success: true, data: location })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -92,7 +97,7 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
   try {
     const location = await Location.findByPk(req.params.id)
     if (!location) {
-      return res.status(404).json({ error: 'Location not found' })
+      return res.status(404).json({ success: false, error: 'Location not found' })
     }
 
     const { name, type, address, city, county, phone, email, description, programmes, photo, latitude, longitude, isActive, sortOrder } = req.body
@@ -114,9 +119,9 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
       ...(sortOrder !== undefined && { sortOrder }),
     })
 
-    res.json(location)
+    res.json({ success: true, data: location })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -124,13 +129,13 @@ router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, 
   try {
     const location = await Location.findByPk(req.params.id)
     if (!location) {
-      return res.status(404).json({ error: 'Location not found' })
+      return res.status(404).json({ success: false, error: 'Location not found' })
     }
 
     await location.update({ isActive: false })
-    res.json({ message: 'Location deactivated successfully' })
+    res.json({ success: true, message: 'Location deactivated successfully' })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ success: false, error: error.message })
   }
 })
 

@@ -215,8 +215,8 @@ export default function AdminDashboard() {
   const fetchGallery = async () => {
     try {
       setLoading(true)
-      const response = await galleryApi.getAll({ limit: 100 })
-      setGalleryItems(Array.isArray(response) ? response : response.data || [])
+      const items = await galleryApi.getAll({ limit: 100 })
+      setGalleryItems(items)
     } catch (error) {
       console.error('Failed to fetch gallery:', error)
       toast.error('Failed to load gallery items')
@@ -277,8 +277,8 @@ export default function AdminDashboard() {
   const fetchResources = async () => {
     try {
       setLoading(true)
-      const response = await resourcesApi.getAll({ limit: 100 })
-      setResources(Array.isArray(response) ? response : response.data || [])
+      const items = await resourcesApi.getAll({ limit: 100 })
+      setResources(items)
     } catch (error) {
       console.error('Failed to fetch resources:', error)
       toast.error('Failed to load resources')
@@ -332,8 +332,8 @@ export default function AdminDashboard() {
   const fetchPartners = async () => {
     try {
       setLoading(true)
-      const response = await partnersApi.getAll({ limit: 100 })
-      setPartners(Array.isArray(response) ? response : response.data || [])
+      const items = await partnersApi.getAll({ limit: 100 })
+      setPartners(items)
     } catch (error) {
       console.error('Failed to fetch partners:', error)
       toast.error('Failed to load partners')
@@ -386,8 +386,8 @@ export default function AdminDashboard() {
   const fetchEducators = async () => {
     try {
       setLoading(true)
-      const response = await educatorsApi.getAll({ limit: 100 })
-      setEducators(Array.isArray(response) ? response : response.data || [])
+      const items = await educatorsApi.getAll({ limit: 100 })
+      setEducators(items)
     } catch (error) {
       console.error('Failed to fetch educators:', error)
       toast.error('Failed to load educators')
@@ -441,8 +441,8 @@ export default function AdminDashboard() {
   const fetchEvents = async () => {
     try {
       setLoading(true)
-      const response = await eventsApi.getAll({ limit: 100 })
-      setEvents(Array.isArray(response) ? response : response.data || [])
+      const items = await eventsApi.getAll({ limit: 100 })
+      setEvents(items)
     } catch (error) {
       console.error('Failed to fetch events:', error)
       toast.error('Failed to load events')
@@ -496,8 +496,8 @@ export default function AdminDashboard() {
   const fetchFAQs = async () => {
     try {
       setLoading(true)
-      const response = await faqsApi.getAll({ limit: 100 })
-      setFaqs(Array.isArray(response) ? response : response.data || [])
+      const items = await faqsApi.getAll({ limit: 100 })
+      setFaqs(items)
     } catch (error) {
       console.error('Failed to fetch FAQs:', error)
       toast.error('Failed to load FAQs')
@@ -550,8 +550,8 @@ export default function AdminDashboard() {
   const fetchLocations = async () => {
     try {
       setLoading(true)
-      const response = await locationsApi.getAll({ limit: 100 })
-      setLocations(Array.isArray(response) ? response : response.data || [])
+      const items = await locationsApi.getAll({ limit: 100 })
+      setLocations(items)
     } catch (error) {
       console.error('Failed to fetch locations:', error)
       toast.error('Failed to load locations')

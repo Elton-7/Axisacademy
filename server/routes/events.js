@@ -1,8 +1,12 @@
 const express = require('express')
 const { Event } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateUuidParam } = require('../middleware/validateUuidParam')
 
 const router = express.Router()
+
+// Every :id in this router is a UUID; reject anything else as a 400, not a 500.
+router.param('id', validateUuidParam)
 
 /**
  * GET /api/events
@@ -38,13 +42,14 @@ router.get('/', async (req, res) => {
     })
 
     res.json({
+      success: true,
       data: events.rows,
       total: events.count,
       limit: Math.min(parseInt(limit), 500),
       offset: parseInt(offset),
     })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch events' })
+    res.status(500).json({ success: false, error: 'Failed to fetch events' })
   }
 })
 
@@ -56,11 +61,11 @@ router.get('/:id', async (req, res) => {
   try {
     const event = await Event.findByPk(req.params.id)
     if (!event || !event.isActive) {
-      return res.status(404).json({ error: 'Event not found' })
+      return res.status(404).json({ success: false, error: 'Event not found' })
     }
-    res.json(event)
+    res.json({ success: true, data: event })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch event' })
+    res.status(500).json({ success: false, error: 'Failed to fetch event' })
   }
 })
 
@@ -89,7 +94,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
     } = req.body
 
     if (!title || !description || !category || !startDate) {
-      return res.status(400).json({ error: 'title, description, category, and startDate are required' })
+      return res.status(400).json({ success: false, error: 'title, description, category, and startDate are required' })
     }
 
     const event = await Event.create({
@@ -112,9 +117,9 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
       videos: [],
     })
 
-    res.status(201).json(event)
+    res.status(201).json({ success: true, data: event })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -126,7 +131,7 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
   try {
     const event = await Event.findByPk(req.params.id)
     if (!event) {
-      return res.status(404).json({ error: 'Event not found' })
+      return res.status(404).json({ success: false, error: 'Event not found' })
     }
 
     const {
@@ -177,9 +182,9 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
       ...(videos !== undefined && { videos: Array.isArray(videos) ? videos : [] }),
     })
 
-    res.json(event)
+    res.json({ success: true, data: event })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -191,13 +196,13 @@ router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, 
   try {
     const event = await Event.findByPk(req.params.id)
     if (!event) {
-      return res.status(404).json({ error: 'Event not found' })
+      return res.status(404).json({ success: false, error: 'Event not found' })
     }
 
     await event.update({ isActive: false })
-    res.json({ message: 'Event deactivated successfully' })
+    res.json({ success: true, message: 'Event deactivated successfully' })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ success: false, error: error.message })
   }
 })
 

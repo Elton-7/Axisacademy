@@ -1,8 +1,12 @@
 const express = require('express')
 const { Gallery } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateUuidParam } = require('../middleware/validateUuidParam')
 
 const router = express.Router()
+
+// Every :id in this router is a UUID; reject anything else as a 400, not a 500.
+router.param('id', validateUuidParam)
 
 router.get('/', async (req, res) => {
   try {
@@ -28,13 +32,14 @@ router.get('/', async (req, res) => {
     })
 
     res.json({
+      success: true,
       data: galleryItems.rows,
       total: galleryItems.count,
       limit: Math.min(parseInt(limit), 500),
       offset: parseInt(offset),
     })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch gallery items' })
+    res.status(500).json({ success: false, error: 'Failed to fetch gallery items' })
   }
 })
 
@@ -42,12 +47,12 @@ router.get('/:id', async (req, res) => {
   try {
     const item = await Gallery.findByPk(req.params.id)
     if (!item || !item.isActive || !item.consentConfirmed) {
-      return res.status(404).json({ error: 'Gallery item not found' })
+      return res.status(404).json({ success: false, error: 'Gallery item not found' })
     }
 
-    res.json(item)
+    res.json({ success: true, data: item })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch gallery item' })
+    res.status(500).json({ success: false, error: 'Failed to fetch gallery item' })
   }
 })
 
@@ -56,14 +61,15 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
     const { title, type, category, description, url, thumbnail, tags, consentConfirmed, consentReference } = req.body
 
     if (!title || !url) {
-      return res.status(400).json({ error: 'title and url are required' })
+      return res.status(400).json({ success: false, error: 'title and url are required' })
     }
     if (consentConfirmed !== true) {
-      return res.status(400).json({ error: 'Publication consent must be confirmed before media can be added' })
+      return res.status(400).json({ success: false, error: 'Publication consent must be confirmed before media can be added' })
     }
     // A tick with no reference to the signed release is not a record of consent.
     if (!String(consentReference || '').trim()) {
       return res.status(400).json({
+        success: false,
         error: 'Please record the signed media release this consent refers to',
       })
     }
@@ -82,9 +88,9 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
       consentReference: String(consentReference).trim(),
     })
 
-    res.status(201).json(item)
+    res.status(201).json({ success: true, data: item })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -92,7 +98,7 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
   try {
     const item = await Gallery.findByPk(req.params.id)
     if (!item) {
-      return res.status(404).json({ error: 'Gallery item not found' })
+      return res.status(404).json({ success: false, error: 'Gallery item not found' })
     }
 
     const { title, type, category, description, url, thumbnail, tags, consentConfirmed, isActive, sortOrder } = req.body
@@ -100,7 +106,7 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
     const nextIsActive = isActive !== undefined ? isActive : item.isActive
 
     if (nextIsActive && nextConsentConfirmed !== true) {
-      return res.status(400).json({ error: 'Publication consent must be confirmed before media can be published' })
+      return res.status(400).json({ success: false, error: 'Publication consent must be confirmed before media can be published' })
     }
 
     await item.update({
@@ -128,9 +134,9 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
       }),
     })
 
-    res.json(item)
+    res.json({ success: true, data: item })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -138,13 +144,13 @@ router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, 
   try {
     const item = await Gallery.findByPk(req.params.id)
     if (!item) {
-      return res.status(404).json({ error: 'Gallery item not found' })
+      return res.status(404).json({ success: false, error: 'Gallery item not found' })
     }
 
     await item.update({ isActive: false })
-    res.json({ message: 'Gallery item deleted successfully' })
+    res.json({ success: true, message: 'Gallery item deleted successfully' })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ success: false, error: error.message })
   }
 })
 

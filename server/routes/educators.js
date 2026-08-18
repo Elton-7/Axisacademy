@@ -1,8 +1,12 @@
 const express = require('express')
 const { Educator } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateUuidParam } = require('../middleware/validateUuidParam')
 
 const router = express.Router()
+
+// Every :id in this router is a UUID; reject anything else as a 400, not a 500.
+router.param('id', validateUuidParam)
 
 /**
  * GET /api/educators
@@ -35,13 +39,14 @@ router.get('/', async (req, res) => {
     })
 
     res.json({
+      success: true,
       data: educators.rows,
       total: educators.count,
       limit: Math.min(parseInt(limit), 500),
       offset: parseInt(offset),
     })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch educators' })
+    res.status(500).json({ success: false, error: 'Failed to fetch educators' })
   }
 })
 
@@ -53,11 +58,11 @@ router.get('/:id', async (req, res) => {
   try {
     const educator = await Educator.findByPk(req.params.id)
     if (!educator || !educator.isActive) {
-      return res.status(404).json({ error: 'Educator not found' })
+      return res.status(404).json({ success: false, error: 'Educator not found' })
     }
-    res.json(educator)
+    res.json({ success: true, data: educator })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch educator' })
+    res.status(500).json({ success: false, error: 'Failed to fetch educator' })
   }
 })
 
@@ -70,7 +75,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
     const { name, position, category, qualifications, experience, subjects, languages, expertise, biography, photo, email, phone } = req.body
 
     if (!name || !position || !category) {
-      return res.status(400).json({ error: 'name, position, and category are required' })
+      return res.status(400).json({ success: false, error: 'name, position, and category are required' })
     }
 
     const educator = await Educator.create({
@@ -88,9 +93,9 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
       phone,
     })
 
-    res.status(201).json(educator)
+    res.status(201).json({ success: true, data: educator })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -102,7 +107,7 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
   try {
     const educator = await Educator.findByPk(req.params.id)
     if (!educator) {
-      return res.status(404).json({ error: 'Educator not found' })
+      return res.status(404).json({ success: false, error: 'Educator not found' })
     }
 
     const { name, position, category, qualifications, experience, subjects, languages, expertise, biography, photo, email, phone, isActive, sortOrder } = req.body
@@ -124,9 +129,9 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
       ...(sortOrder !== undefined && { sortOrder }),
     })
 
-    res.json(educator)
+    res.json({ success: true, data: educator })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -138,13 +143,13 @@ router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, 
   try {
     const educator = await Educator.findByPk(req.params.id)
     if (!educator) {
-      return res.status(404).json({ error: 'Educator not found' })
+      return res.status(404).json({ success: false, error: 'Educator not found' })
     }
 
     await educator.update({ isActive: false })
-    res.json({ message: 'Educator deactivated successfully' })
+    res.json({ success: true, message: 'Educator deactivated successfully' })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ success: false, error: error.message })
   }
 })
 

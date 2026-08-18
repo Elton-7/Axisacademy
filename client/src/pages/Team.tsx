@@ -30,8 +30,7 @@ export default function Team() {
     const fetchEducators = async () => {
       try {
         setLoading(true)
-        const response = await educatorsApi.getAll()
-        const educatorsList = Array.isArray(response) ? response : response.data || []
+        const educatorsList = await educatorsApi.getAll()
         setEducators(educatorsList)
         setFilteredEducators(educatorsList)
       } catch (err) {

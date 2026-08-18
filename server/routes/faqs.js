@@ -1,8 +1,12 @@
 const express = require('express')
 const { FAQ } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateUuidParam } = require('../middleware/validateUuidParam')
 
 const router = express.Router()
+
+// Every :id in this router is a UUID; reject anything else as a 400, not a 500.
+router.param('id', validateUuidParam)
 
 /**
  * GET /api/faqs
@@ -33,13 +37,14 @@ router.get('/', async (req, res) => {
     })
 
     res.json({
+      success: true,
       data: faqs.rows,
       total: faqs.count,
       limit: Math.min(parseInt(limit), 500),
       offset: parseInt(offset),
     })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch FAQs' })
+    res.status(500).json({ success: false, error: 'Failed to fetch FAQs' })
   }
 })
 
@@ -51,15 +56,15 @@ router.get('/:id', async (req, res) => {
   try {
     const faq = await FAQ.findByPk(req.params.id)
     if (!faq || !faq.isActive) {
-      return res.status(404).json({ error: 'FAQ not found' })
+      return res.status(404).json({ success: false, error: 'FAQ not found' })
     }
 
     // Increment view count
     await faq.increment('viewCount')
 
-    res.json(faq)
+    res.json({ success: true, data: faq })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch FAQ' })
+    res.status(500).json({ success: false, error: 'Failed to fetch FAQ' })
   }
 })
 
@@ -72,7 +77,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
     const { question, answer, category, order } = req.body
 
     if (!question || !answer) {
-      return res.status(400).json({ error: 'question and answer are required' })
+      return res.status(400).json({ success: false, error: 'question and answer are required' })
     }
 
     const faq = await FAQ.create({
@@ -82,9 +87,9 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
       order: order ? parseInt(order) : 0,
     })
 
-    res.status(201).json(faq)
+    res.status(201).json({ success: true, data: faq })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -96,7 +101,7 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
   try {
     const faq = await FAQ.findByPk(req.params.id)
     if (!faq) {
-      return res.status(404).json({ error: 'FAQ not found' })
+      return res.status(404).json({ success: false, error: 'FAQ not found' })
     }
 
     const { question, answer, category, order, isActive } = req.body
@@ -109,9 +114,9 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res
       ...(isActive !== undefined && { isActive }),
     })
 
-    res.json(faq)
+    res.json({ success: true, data: faq })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    res.status(400).json({ success: false, error: error.message })
   }
 })
 
@@ -123,13 +128,13 @@ router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, 
   try {
     const faq = await FAQ.findByPk(req.params.id)
     if (!faq) {
-      return res.status(404).json({ error: 'FAQ not found' })
+      return res.status(404).json({ success: false, error: 'FAQ not found' })
     }
 
     await faq.update({ isActive: false })
-    res.json({ message: 'FAQ deleted successfully' })
+    res.json({ success: true, message: 'FAQ deleted successfully' })
   } catch (error) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ success: false, error: error.message })
   }
 })
 

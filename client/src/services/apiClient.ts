@@ -61,16 +61,15 @@ import {
 } from '../types'
 
 /**
- * The API is not consistent about its response shape: some routes wrap the
- * payload in `{ success, data }` (resources, partners) while others return the
- * bare record (educators, events, faqs, locations, gallery). This normalises
- * both so callers always receive a defined value.
+ * Every API route envelopes its payload as `{ success, data }`. This unwraps it
+ * so callers receive the value itself.
  *
  * An enveloped 2xx response that omits `data` is a server contract violation
  * rather than something 38 call sites should null-check, so that fails loudly.
  *
- * TODO: make the server envelope every response, then simplify this back to
- * reading `.data`.
+ * The bare-payload overload remains because a response that is already the
+ * value passes through untouched — which keeps a stale cached bundle working
+ * against a freshly deployed API, and vice versa.
  */
 function unwrap<T>(payload: ApiListResponse<T>): T[]
 function unwrap<T>(payload: ApiResponse<T>): T
@@ -135,8 +134,8 @@ export const testimonialsApi = {
 // Educators
 export const educatorsApi = {
   async getAll(params?: { category?: string; search?: string; limit?: number; offset?: number }) {
-    const { data } = await api.get<any>('/educators', { params })
-    return data
+    const { data } = await api.get<ApiListResponse<Educator>>('/educators', { params })
+    return unwrap(data)
   },
 
   async getById(id: string) {
@@ -162,8 +161,8 @@ export const educatorsApi = {
 // Events
 export const eventsApi = {
   async getAll(params?: { category?: string; status?: string; search?: string; limit?: number; offset?: number }) {
-    const { data } = await api.get<any>('/events', { params })
-    return data
+    const { data } = await api.get<ApiListResponse<Event>>('/events', { params })
+    return unwrap(data)
   },
 
   async getById(id: string) {
@@ -189,8 +188,8 @@ export const eventsApi = {
 // FAQs
 export const faqsApi = {
   async getAll(params?: { category?: string; search?: string; limit?: number; offset?: number }) {
-    const { data } = await api.get<any>('/faqs', { params })
-    return data
+    const { data } = await api.get<ApiListResponse<FAQ>>('/faqs', { params })
+    return unwrap(data)
   },
 
   async getById(id: string) {
@@ -216,8 +215,8 @@ export const faqsApi = {
 // Locations
 export const locationsApi = {
   async getAll(params?: { type?: string; county?: string; search?: string; limit?: number; offset?: number }) {
-    const { data } = await api.get<any>('/locations', { params })
-    return data
+    const { data } = await api.get<ApiListResponse<Location>>('/locations', { params })
+    return unwrap(data)
   },
 
   async getById(id: string) {
@@ -243,8 +242,8 @@ export const locationsApi = {
 // Gallery
 export const galleryApi = {
   async getAll(params?: { category?: string; type?: string; search?: string; limit?: number; offset?: number }) {
-    const { data } = await api.get<any>('/gallery', { params })
-    return data
+    const { data } = await api.get<ApiListResponse<GalleryItem>>('/gallery', { params })
+    return unwrap(data)
   },
 
   async getById(id: string) {
@@ -270,8 +269,8 @@ export const galleryApi = {
 // Resources
 export const resourcesApi = {
   async getAll(params?: { category?: string; search?: string; limit?: number; offset?: number }) {
-    const { data } = await api.get<any>('/resources', { params })
-    return data
+    const { data } = await api.get<ApiListResponse<Resource>>('/resources', { params })
+    return unwrap(data)
   },
 
   async getById(id: string) {
@@ -297,8 +296,8 @@ export const resourcesApi = {
 // Partners
 export const partnersApi = {
   async getAll(params?: { category?: string; search?: string; limit?: number; offset?: number }) {
-    const { data } = await api.get<any>('/partners', { params })
-    return data
+    const { data } = await api.get<ApiListResponse<Partner>>('/partners', { params })
+    return unwrap(data)
   },
 
   async getById(id: string) {
