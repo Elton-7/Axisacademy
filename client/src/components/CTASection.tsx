@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { GraduationCap, Phone, MessageCircle } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
+import { contact, telHref, consultationMailto, whatsappHref } from '../content/contact'
 
 export default function CTASection() {
   const { ref, isVisible } = useScrollAnimation()
@@ -26,9 +27,9 @@ export default function CTASection() {
                 <p className="max-w-xl text-sm leading-relaxed text-navy/80">
                   Whether you are seeking homeschooling support, academic tutoring, language learning, enrichment programmes, or personalized educational guidance, Axis is ready to help.
                 </p>
-                <a href="tel:0737003007" className="mt-3 inline-flex items-center gap-2 font-semibold text-navy hover:underline">
+                <a href={telHref} className="mt-3 inline-flex items-center gap-2 font-semibold text-navy hover:underline">
                   <Phone className="h-4 w-4" />
-                  Call 0737 003 007
+                  {`Call ${contact.phoneDisplay}`}
                 </a>
               </div>
             </div>
@@ -36,13 +37,13 @@ export default function CTASection() {
             <div className="flex flex-wrap gap-3">
               <a href="/enroll" className="btn-navy">Make an Enquiry</a>
               <a
-                href="mailto:info@axishomeschooling.org?subject=Consultation%20request"
+                href={consultationMailto()}
                 className="btn-secondary border-navy text-navy hover:bg-navy hover:text-white"
               >
                 Book a Consultation
               </a>
               <a
-                href="https://wa.me/254737003007"
+                href={whatsappHref()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-slate-100"

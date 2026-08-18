@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Search, ChevronDown, Loader, HelpCircle } from 'lucide-react'
 import { FAQ, FAQCategory } from '../types'
 import { faqsApi } from '../services/apiClient'
+import { contact, telHref } from '../content/contact'
 
 const CATEGORIES: FAQCategory[] = [
   'General',
@@ -271,10 +272,10 @@ export default function FAQPage() {
               Contact Us
             </a>
             <a
-              href="tel:0737003007"
+              href={telHref}
               className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy transition-colors"
             >
-              Call Us: 0737 003 007
+              Call Us: {contact.phoneDisplay}
             </a>
           </div>
         </div>

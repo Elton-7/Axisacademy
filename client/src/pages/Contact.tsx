@@ -8,6 +8,7 @@ import { contactsApi } from '../services/apiClient'
 import { trackConversion } from '../services/analytics'
 import type { CreateContactRequest } from '../types'
 import { sanitizeContactPayload } from '../utils/sanitize'
+import { contact, telHref, mailtoHref, whatsappHref } from '../content/contact'
 
 interface ContactForm extends CreateContactRequest {
   firstName: string
@@ -96,17 +97,17 @@ export default function Contact() {
                     than on the site, so each channel is a real link — most
                     visitors arrive on a phone and should be one tap away.
                   */}
-                  <a href="tel:0737003007" onClick={() => trackConversion('phone_clicked')} className="flex items-start gap-4 group">
+                  <a href={telHref} onClick={() => trackConversion('phone_clicked')} className="flex items-start gap-4 group">
                     <div className="w-10 h-10 rounded-lg bg-gold-50 flex items-center justify-center flex-shrink-0">
                       <Phone className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-navy-900">Phone</p>
-                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">0737 003 007</p>
+                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">{contact.phoneDisplay}</p>
                     </div>
                   </a>
                   <a
-                    href="https://wa.me/254737003007"
+                    href={whatsappHref()}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => trackConversion('whatsapp_opened')}
@@ -122,13 +123,13 @@ export default function Contact() {
                       </p>
                     </div>
                   </a>
-                  <a href="mailto:info@axishomeschooling.org" className="flex items-start gap-4 group">
+                  <a href={mailtoHref} className="flex items-start gap-4 group">
                     <div className="w-10 h-10 rounded-lg bg-gold-50 flex items-center justify-center flex-shrink-0">
                       <Mail className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-navy-900">Email</p>
-                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">info@axishomeschooling.org</p>
+                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">{contact.email}</p>
                     </div>
                   </a>
                   <div className="flex items-start gap-4">
@@ -158,7 +159,7 @@ export default function Contact() {
                   We typically respond within 24 hours during business days.
                 </p>
                 <a 
-                  href="https://wa.me/254737003007" 
+                  href={whatsappHref()} 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-gold-500 text-sm font-medium hover:underline"
@@ -231,7 +232,7 @@ export default function Contact() {
                         <input
                           {...register('phone', { pattern: { value: /^[0-9+()\s-]{6,20}$/, message: 'Enter a valid phone number' }, maxLength: { value: 20, message: 'Phone must be 20 characters or fewer' } })}
                           className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
-                          placeholder="0737 003 007"
+                          placeholder="{contact.phoneDisplay}"
                         />
                       </div>
                     </div>

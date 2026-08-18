@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone, ChevronDown } from 'lucide-react'
 import { services } from '../content/services'
+import { contact, telHref } from '../content/contact'
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -146,11 +147,11 @@ export default function Navbar() {
           {/* Phone CTA */}
           <div className="hidden items-center gap-4 xl:flex">
             <a
-              href="tel:0737003007"
+              href={telHref}
               className="flex items-center gap-2 rounded-full border border-gold-500 px-5 py-2.5 text-sm font-medium text-gold-500 transition-all duration-300 hover:bg-gold-500 hover:text-navy-900"
             >
               <Phone className="h-4 w-4" />
-              0737 003 007
+              {contact.phoneDisplay}
             </a>
           </div>
 
@@ -206,9 +207,9 @@ export default function Navbar() {
                 <MobileNavItem key={link.href} link={link} pathname={location.pathname} />
               ))}
 
-              <a href="tel:0737003007" className="flex items-center gap-2 py-2 text-gold-500">
+              <a href={telHref} className="flex items-center gap-2 py-2 text-gold-500">
                 <Phone className="h-4 w-4" />
-                0737 003 007
+                {contact.phoneDisplay}
               </a>
             </div>
           </motion.div>

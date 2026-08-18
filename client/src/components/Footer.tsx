@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { Phone, Mail, Globe, Facebook, Instagram, Youtube, Linkedin } from 'lucide-react'
 import NewsletterSignup from './NewsletterSignup'
+import { contact, SITE_URL } from '../content/contact'
 
 const quickLinks = [
   { href: '/about', label: 'About' },
@@ -84,15 +85,15 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-center gap-3 text-sm text-white/50">
                 <Phone className="h-4 w-4 text-gold-500" />
-                0737 003 007
+                {contact.phoneDisplay}
               </li>
               <li className="flex items-center gap-3 text-sm text-white/50">
                 <Mail className="h-4 w-4 text-gold-500" />
-                info@axishomeschooling.org
+                {contact.email}
               </li>
               <li className="flex items-center gap-3 text-sm text-white/50">
                 <Globe className="h-4 w-4 text-gold-500" />
-                AxisHomeschooling.org
+                {SITE_URL.replace(/^https?:\/\//, '')}
               </li>
             </ul>
             <div className="mt-7">

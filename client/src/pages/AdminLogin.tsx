@@ -71,7 +71,7 @@ export default function AdminLogin() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="admin-email" className="mb-2 block text-sm font-medium text-navy-900">Work email</label>
-            <input id="admin-email" type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@axisacademy.org" className="w-full rounded-xl border border-gray-200 px-4 py-3.5 outline-none transition-all placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
+            <input id="admin-email" type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@axislearning.co.ke" className="w-full rounded-xl border border-gray-200 px-4 py-3.5 outline-none transition-all placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
           </div>
           <div>
             <div className="mb-2 flex items-center justify-between"><label htmlFor="admin-password" className="block text-sm font-medium text-navy-900">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-navy-600/60 hover:text-gold-600">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div>
