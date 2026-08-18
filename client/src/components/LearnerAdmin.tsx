@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CalendarPlus, Loader2, Plus, Search, UserPlus, X } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { learnersApi } from '../services/apiClient'
+import { learnersApi, safeguardingApi } from '../services/apiClient'
 import type { AdminLearner, AssignableUser } from '../types'
 
 /**
@@ -125,6 +125,44 @@ export default function LearnerAdmin() {
       const message =
         (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
         'Could not schedule this session.'
+      toast.error(message)
+    }
+  }
+
+  /** Brief §38 — a family's right to a copy of what is held about their child. */
+  const exportLearner = async (learner: AdminLearner) => {
+    try {
+      const data = await safeguardingApi.exportLearner(learner.id)
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `axis-learner-${learner.id}-${new Date().toISOString().slice(0, 10)}.json`
+      link.click()
+      URL.revokeObjectURL(url)
+      toast.success('Subject access export downloaded')
+    } catch (err) {
+      console.error('Failed to export learner data:', err)
+      toast.error('Could not produce the export.')
+    }
+  }
+
+  /** Erasure. Irreversible, so the API also requires the name typed back. */
+  const eraseLearner = async (learner: AdminLearner) => {
+    const typed = window.prompt(
+      `This permanently erases every record for ${learner.name} — sessions, results, messages and assignments. It cannot be undone.
+
+Type the learner's name to confirm:`
+    )
+    if (typed === null) return
+    try {
+      await safeguardingApi.eraseLearner(learner.id, typed.trim())
+      toast.success(`${learner.name} erased`)
+      await load(search)
+    } catch (err) {
+      const message =
+        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
+        'Could not erase this learner.'
       toast.error(message)
     }
   }
@@ -282,12 +320,28 @@ export default function LearnerAdmin() {
                     )}
                   </div>
 
-                  <button
-                    onClick={() => setExpanded(expanded === learner.id ? null : learner.id)}
-                    className="rounded-lg border border-line px-3 py-1.5 text-xs text-ink-muted hover:border-gold-500"
-                  >
-                    {expanded === learner.id ? 'Close' : 'Assign & schedule'}
-                  </button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setExpanded(expanded === learner.id ? null : learner.id)}
+                      className="rounded-lg border border-line px-3 py-1.5 text-xs text-ink-muted hover:border-gold-500"
+                    >
+                      {expanded === learner.id ? 'Close' : 'Assign & schedule'}
+                    </button>
+                    <button
+                      onClick={() => exportLearner(learner)}
+                      title="Download everything held about this learner"
+                      className="rounded-lg border border-line px-3 py-1.5 text-xs text-ink-muted hover:border-gold-500"
+                    >
+                      Export data
+                    </button>
+                    <button
+                      onClick={() => eraseLearner(learner)}
+                      title="Permanently erase this learner's records"
+                      className="rounded-lg border border-line-critical px-3 py-1.5 text-xs text-critical hover:bg-tint-critical"
+                    >
+                      Erase
+                    </button>
+                  </div>
                 </div>
 
                 {expanded === learner.id && (

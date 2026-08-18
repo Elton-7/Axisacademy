@@ -227,6 +227,40 @@ export interface PortalMessageItem {
   createdAt: string
 }
 
+/** Educator vetting (brief §38). */
+export type VettingStatus = 'Not started' | 'In progress' | 'Cleared' | 'Rejected' | 'Suspended'
+
+export interface VettingRow {
+  educatorUserId: number
+  name: string
+  email: string
+  status: VettingStatus
+  goodConductNumber: string | null
+  goodConductExpiresOn: string | null
+  tscNumber: string | null
+  identityVerifiedOn: string | null
+  referencesCheckedOn: string | null
+  /** Cleared and not lapsed — the only state that permits assignment. */
+  cleared: boolean
+  expired: boolean
+  expiringSoon: boolean
+}
+
+export type ConcernStatus = 'Open' | 'Acknowledged' | 'Under review' | 'Resolved' | 'Escalated'
+
+export interface SafeguardingConcern {
+  id: number
+  learnerId: number | null
+  raisedByRole: 'student' | 'tutor' | 'staff' | 'admin'
+  category: string
+  detail: string
+  status: ConcernStatus
+  outcome: string | null
+  createdAt: string
+  learner?: { id: number; name: string } | null
+  raisedBy?: { id: number; name: string; role: string } | null
+}
+
 export interface PortalLearnerRecord {
   learner: Omit<PortalLearner, 'attendance'>
   attendance: AttendanceSummary

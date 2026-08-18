@@ -46,6 +46,9 @@ import {
   PortalMessageItem,
   PortalSession,
   AdminLearner,
+  VettingRow,
+  VettingStatus,
+  SafeguardingConcern,
   AssignableUser,
   LearnerAssignment,
   PortalAssessment,
@@ -527,6 +530,48 @@ export const learnersApi = {
   ) {
     const { data } = await api.post<ApiResponse<PortalSession>>(`/learners/${learnerId}/sessions`, payload)
     return unwrap(data)
+  },
+}
+
+/** Vetting and safeguarding (brief §38). Staff only. */
+export const safeguardingApi = {
+  async getVetting() {
+    const { data } = await api.get<ApiResponse<VettingRow[]>>('/learners/vetting/all')
+    return unwrap(data)
+  },
+
+  async updateVetting(educatorUserId: number, payload: {
+    status?: VettingStatus
+    goodConductNumber?: string
+    goodConductIssuedOn?: string
+    goodConductExpiresOn?: string
+    tscNumber?: string
+    identityVerifiedOn?: string
+    referencesCheckedOn?: string
+    referencesNote?: string
+    notes?: string
+  }) {
+    const { data } = await api.put<ApiResponse<unknown>>(`/learners/vetting/${educatorUserId}`, payload)
+    return unwrap(data)
+  },
+
+  async getConcerns() {
+    const { data } = await api.get<ApiResponse<SafeguardingConcern[]>>('/portal/concerns')
+    return unwrap(data)
+  },
+
+  async updateConcern(id: number, payload: { status?: string; outcome?: string }) {
+    const { data } = await api.patch<ApiResponse<SafeguardingConcern>>(`/portal/concerns/${id}`, payload)
+    return unwrap(data)
+  },
+
+  async exportLearner(learnerId: number) {
+    const { data } = await api.get<ApiResponse<unknown>>(`/data-protection/learners/${learnerId}/export`)
+    return unwrap(data)
+  },
+
+  async eraseLearner(learnerId: number, confirmName: string) {
+    await api.delete(`/data-protection/learners/${learnerId}`, { data: { confirmName } })
   },
 }
 
