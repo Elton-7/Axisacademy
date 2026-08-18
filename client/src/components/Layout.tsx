@@ -4,6 +4,7 @@ import Navbar from './Navbar'
 import Footer from './Footer'
 import WhatsAppFloat from './WhatsAppFloat'
 import ScrollToTop from './ScrollToTop'
+import ScrollManager from './ScrollManager'
 import SEO from './SEO'
 import { initAnalytics, trackPageView } from '../services/analytics'
 
@@ -22,6 +23,8 @@ export default function Layout() {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO />
+      {/* Resets scroll on navigation — a single-page app keeps it otherwise. */}
+      <ScrollManager />
       <Navbar />
       <main className="flex-1">
         <Outlet />
