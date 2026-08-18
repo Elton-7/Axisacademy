@@ -62,8 +62,8 @@ export default function WhyTestimonials() {
               {testimonials.map((t, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: 30 }}
-                  animate={isVisible ? { opacity: 1, x: 0 } : {}}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isVisible ? { opacity: 1, y: 0 } : {}}
                   transition={{ duration: 0.5, delay: 0.25 + i * 0.15 }}
                   className="relative rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6 shadow-sm"
                 >

@@ -68,7 +68,7 @@ export default function Navbar() {
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-20 items-center justify-between">
+        <div className="flex h-20 items-center justify-between gap-6">
           {/* Logo */}
           <Link to="/" className="group flex items-center gap-3">
             <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border-2 border-gold-500 transition-transform group-hover:scale-105">
@@ -76,13 +76,13 @@ export default function Navbar() {
               <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b-2 border-r-2 border-gold-500" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold uppercase leading-tight tracking-[0.15em] text-gold-500">Axis</h1>
+              <span className="block text-lg font-semibold uppercase leading-tight tracking-[0.15em] text-gold-500">Axis</span>
               <p className="text-[0.6rem] uppercase tracking-[0.1em] text-gold-500/80">Learning</p>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden items-center gap-6 xl:flex">
+          <div className="hidden items-center gap-x-5 xl:flex">
             {navLinks.slice(0, 2).map((link) => (
               <NavItem key={link.href} link={link} pathname={location.pathname} />
             ))}
@@ -93,7 +93,7 @@ export default function Navbar() {
                 onClick={() => setIsServicesOpen((open) => !open)}
                 aria-expanded={isServicesOpen}
                 aria-haspopup="true"
-                className={`flex items-center gap-1 text-sm font-medium uppercase tracking-wide transition-colors ${
+                className={`flex items-center gap-1 whitespace-nowrap text-[0.8125rem] font-medium uppercase tracking-tight transition-colors ${
                   isServicesActive ? 'text-gold-500' : 'text-white/90 hover:text-gold-500'
                 }`}
               >
@@ -224,7 +224,7 @@ function NavItem({ link, pathname }: { link: { href: string; label: string }; pa
   return (
     <Link
       to={link.href}
-      className={`relative text-sm font-medium uppercase tracking-wide transition-colors ${
+      className={`relative whitespace-nowrap text-[0.8125rem] font-medium uppercase tracking-tight transition-colors ${
         isActive ? 'text-gold-500' : 'text-white/90 hover:text-gold-500'
       }`}
     >

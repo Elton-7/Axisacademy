@@ -45,7 +45,7 @@ export default function Footer() {
                 <div className="absolute -bottom-1 -right-1 h-3 w-3 border-b-2 border-r-2 border-gold-500" />
               </div>
               <div>
-                <h1 className="text-sm font-semibold uppercase tracking-[0.15em] text-gold-500">Axis</h1>
+                <span className="block text-sm font-semibold uppercase tracking-[0.15em] text-gold-500">Axis</span>
                 <p className="text-[0.55rem] uppercase tracking-[0.1em] text-gold-500/70">Learning</p>
               </div>
             </Link>

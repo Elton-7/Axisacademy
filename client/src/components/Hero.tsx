@@ -127,10 +127,13 @@ export default function Hero() {
                 />
               </div>
               <div className="col-span-2 h-[180px] overflow-hidden rounded-2xl">
+                {/* The previous photo had been removed upstream and rendered as a
+                    broken image. Placeholder until Axis supplies real photography. */}
                 <img
-                  src="https://images.unsplash.com/photo-1529390079861-591f1bfe7d1f?w=800&h=300&fit=crop&q=80"
-                  alt="Activities"
+                  src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=300&fit=crop&q=80"
+                  alt="Learners working together"
                   className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  loading="lazy"
                 />
               </div>
             </div>
