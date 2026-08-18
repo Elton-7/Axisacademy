@@ -120,12 +120,73 @@ export interface User {
   createdAt: string
 }
 
+export type SessionStatus = 'Scheduled' | 'Attended' | 'Missed' | 'Cancelled'
+export type AssessmentType = 'Assignment' | 'Test' | 'Mock Examination' | 'Observation' | 'Progress Report'
+
+export interface AttendanceSummary {
+  attended: number
+  missed: number
+  cancelled: number
+  scheduled: number
+  /** Null until at least one session has reached an outcome. */
+  percentage: number | null
+}
+
+export interface PortalLearner {
+  id: number
+  name: string
+  programme?: string
+  curriculum?: string
+  gradeClass?: string
+  learningModel?: 'online' | 'home-based' | 'centre-based' | 'blended'
+  supportNotes?: string
+  attendance: AttendanceSummary
+}
+
+export interface PortalSession {
+  id: number
+  learnerId?: number
+  subject: string
+  scheduledFor: string
+  durationMinutes: number
+  deliveryMode?: 'online' | 'home-based' | 'centre-based'
+  status: SessionStatus
+  topicsCovered?: string
+  lessonNotes?: string
+  /** Educator-only: a concern is not surfaced to the parent. */
+  concernFlagged?: boolean
+  concernNote?: string
+}
+
+export interface PortalAssessment {
+  id: number
+  learnerId?: number
+  subject: string
+  title: string
+  type: AssessmentType
+  score?: number | null
+  maxScore?: number | null
+  comment?: string
+  learningObjectives?: string
+  assessedOn: string
+  isReleased: boolean
+}
+
 export interface PortalOverview {
   role: 'student' | 'tutor'
+  learners: PortalLearner[]
   programmes: Array<{ id: number; name: string; status: string; ageGroup?: string; createdAt: string }>
-  learners: Array<{ id: number; name: string; programme: string; status: string }>
+  upcomingSessions: PortalSession[]
+  recentAssessments: PortalAssessment[]
   schedule: Array<{ id: number; title: string; date: string }>
   messages: Array<{ id: number; subject: string; preview: string; createdAt: string }>
+}
+
+export interface PortalLearnerRecord {
+  learner: Omit<PortalLearner, 'attendance'>
+  attendance: AttendanceSummary
+  sessions: PortalSession[]
+  assessments: PortalAssessment[]
 }
 
 export interface Newsletter {

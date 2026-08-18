@@ -15,8 +15,34 @@ const Location = require('./Location')
 const Gallery = require('./Gallery')
 const Resource = require('./Resource')
 const Partner = require('./Partner')
+const Learner = require('./Learner')
+const LearnerEducator = require('./LearnerEducator')
+const Session = require('./Session')
+const Assessment = require('./Assessment')
 
-const models = { Service, Testimonial, Contact, Enrollment, Newsletter, User, AuditLog, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner }
+const models = { Service, Testimonial, Contact, Enrollment, Newsletter, User, AuditLog, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner, Learner, LearnerEducator, Session, Assessment }
+
+/**
+ * Portal associations. Every one of these is what keeps the portals safe: reads
+ * are scoped by walking these relationships rather than by filtering in the UI,
+ * so an educator cannot reach a learner they are not assigned to (brief §29).
+ */
+User.hasMany(Learner, { foreignKey: 'parentUserId', as: 'learners' })
+Learner.belongsTo(User, { foreignKey: 'parentUserId', as: 'parent' })
+
+Learner.belongsTo(Enrollment, { foreignKey: 'enrollmentId', as: 'enquiry' })
+
+Learner.hasMany(LearnerEducator, { foreignKey: 'learnerId', as: 'assignments' })
+LearnerEducator.belongsTo(Learner, { foreignKey: 'learnerId', as: 'learner' })
+LearnerEducator.belongsTo(User, { foreignKey: 'educatorUserId', as: 'educator' })
+
+Learner.hasMany(Session, { foreignKey: 'learnerId', as: 'sessions' })
+Session.belongsTo(Learner, { foreignKey: 'learnerId', as: 'learner' })
+Session.belongsTo(User, { foreignKey: 'educatorUserId', as: 'educator' })
+
+Learner.hasMany(Assessment, { foreignKey: 'learnerId', as: 'assessments' })
+Assessment.belongsTo(Learner, { foreignKey: 'learnerId', as: 'learner' })
+Assessment.belongsTo(User, { foreignKey: 'educatorUserId', as: 'educator' })
 
 // Sync all models
 const syncDatabase = async () => {

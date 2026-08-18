@@ -41,6 +41,11 @@ import {
   PipelineStage,
   PipelineSummary,
   PortalOverview,
+  PortalLearnerRecord,
+  PortalSession,
+  PortalAssessment,
+  SessionStatus,
+  AssessmentType,
   ApiResponse,
   ApiListResponse,
 } from '../types'
@@ -402,6 +407,42 @@ export const authApi = {
 export const portalApi = {
   async getOverview() {
     const { data } = await api.get<ApiResponse<PortalOverview>>('/portal/overview')
+    return unwrap(data)
+  },
+
+  async getLearner(id: number) {
+    const { data } = await api.get<ApiResponse<PortalLearnerRecord>>(`/portal/learners/${id}`)
+    return unwrap(data)
+  },
+
+  /** Educator only — marks attendance and records what the session covered. */
+  async updateSession(
+    id: number,
+    payload: {
+      status?: SessionStatus
+      topicsCovered?: string
+      lessonNotes?: string
+      concernFlagged?: boolean
+      concernNote?: string
+    }
+  ) {
+    const { data } = await api.patch<ApiResponse<PortalSession>>(`/portal/sessions/${id}`, payload)
+    return unwrap(data)
+  },
+
+  /** Educator only — recorded as a draft until released to the family. */
+  async recordAssessment(payload: {
+    learnerId: number
+    subject: string
+    title: string
+    type?: AssessmentType
+    score?: number | null
+    maxScore?: number | null
+    comment?: string
+    learningObjectives?: string
+    assessedOn?: string
+  }) {
+    const { data } = await api.post<ApiResponse<PortalAssessment>>('/portal/assessments', payload)
     return unwrap(data)
   },
 }
