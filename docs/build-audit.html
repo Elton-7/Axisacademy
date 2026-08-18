@@ -448,7 +448,7 @@
       <div class="row"><span class="ref">§1</span><span class="what"><b>Introduction</b><span>Framing section, no build surface.</span></span><span class="chip c-na">N/A</span></div>
       <div class="row"><span class="ref">§2</span><span class="what"><b>The Axis Learning brand</b><span>Name and tagline used correctly throughout; nothing is branded "Axis Academy" in the UI. The logo is still a CSS letterform placeholder — no real logo asset supplied.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§3.1</span><span class="what"><b>Public face</b><span>Who/what/where/who-teaches all answerable from the site.</span></span><span class="chip c-built">Built</span></div>
-      <div class="row"><span class="ref">§3.2</span><span class="what"><b>Client acquisition</b><span>Enquire, consultation, WhatsApp float and call CTAs on every page.</span></span><span class="chip c-built">Built</span></div>
+      <div class="row"><span class="ref">§3.2</span><span class="what"><b>Client acquisition</b><span>Enquire, book a consultation, WhatsApp and call on every page — all six consultation CTAs now reach one short booking form that enters the pipeline, rather than the message inbox. <span class="new-flag">latest</span></span></span><span class="chip c-built">Built</span></div>
       <div class="row"><span class="ref">§3.3</span><span class="what"><b>Educational information centre</b><span>Curricula, models and support types now explained without contacting Axis. <span class="new-flag">this session</span></span></span><span class="chip c-built">Built</span></div>
       <div class="row"><span class="ref">§3.4</span><span class="what"><b>Trust-building platform</b><span>Every required surface exists; credibility depends on real photography, testimonials and team profiles replacing seed data.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§3.5</span><span class="what"><b>Future platform foundation</b><span>Learners, educator assignments, sessions and assessments are now modelled and exercised, so learner progress, timetables and reporting have a real base rather than a placeholder. <span class="new-flag">phase 5</span></span></span><span class="chip c-built">Built</span></div>
@@ -496,7 +496,7 @@
 
     <h3>The digital ecosystem</h3>
     <div class="ledger">
-      <div class="row"><span class="ref">§28</span><span class="what"><b>Parent / learner portal</b><span>A parent signs in to their learner’s timetable, attendance, academic record and educator comments, scoped so they can only ever reach their own children. Fees remain out of scope while payments are deferred. <span class="new-flag">phase 5</span></span></span><span class="chip c-built">Built</span></div>
+      <div class="row"><span class="ref">§28</span><span class="what"><b>Parent / learner portal</b><span>A parent signs in to their learner’s timetable, attendance, academic record and educator comments, and can now message Axis and the learner’s educators directly. Scoped so they only ever reach their own children. Fees remain out of scope while payments are deferred. <span class="new-flag">latest</span></span></span><span class="chip c-built">Built</span></div>
       <div class="row"><span class="ref">§29</span><span class="what"><b>Educator portal</b><span>Educators see only learners assigned to them, mark attendance, record what a session covered, log assessments as drafts, and flag a concern to Axis. Access is scoped at the query rather than filtered in the UI. <span class="new-flag">phase 5</span></span></span><span class="chip c-built">Built</span></div>
       <div class="row"><span class="ref">§30</span><span class="what"><b>Administration portal</b><span>Substantial dashboard already managing most content types, with an audit log behind it.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§31</span><span class="what"><b>CRM / client management</b><span>The full journey from new enquiry to active learner, with an admin board showing stage distribution, conversion over decided enquiries, and days-in-stage. A Lost stage was added beyond the brief’s list, because “where are we losing people” cannot be answered without one. <span class="new-flag">phase 4</span></span></span><span class="chip c-built">Built</span></div>
@@ -616,6 +616,15 @@
           so the admin and portal fallback still mounts cleanly. The remaining limit is that API-driven pages
           (Team, Events, Locations, Resources, Gallery) prerender their loading state rather than live
           content: their metadata is correct, but a content publish needs a rebuild to reach the static HTML.
+        </p>
+      </div>
+      <div class="finding">
+        <h4>Booked consultations were bypassing the pipeline <span class="sev s-low">Resolved</span></h4>
+        <p>
+          "Book a Consultation" pointed at two different places, and the one most pages used wrote to
+          the message inbox rather than the enquiry pipeline — so the Consultation Booked stage would
+          have stayed permanently empty at exactly the step worth measuring. All six now reach a short
+          <code>/consultation</code> form that enters the pipeline tagged as a consultation.
         </p>
       </div>
       <div class="finding">
