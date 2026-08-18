@@ -34,8 +34,11 @@ export default function CTASection() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <a href="/enroll" className="btn-navy">Enroll Now</a>
-                <a href="/enroll" className="btn-secondary border-navy text-navy hover:bg-navy hover:text-white">
+              <a href="/enroll" className="btn-navy">Make an Enquiry</a>
+              <a
+                href="mailto:info@axishomeschooling.org?subject=Consultation%20request"
+                className="btn-secondary border-navy text-navy hover:bg-navy hover:text-white"
+              >
                 Book a Consultation
               </a>
               <a

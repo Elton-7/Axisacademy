@@ -48,9 +48,14 @@ export default function Hero() {
             </p>
 
             <div className="mb-8 flex flex-wrap gap-3">
+              {/*
+                The form starts an enquiry, not an enrolment — enrolment happens
+                after a consultation. "Enroll Now" promised something the site
+                does not do.
+              */}
               <a href="/enroll" className="btn-primary">
                 <MessageCircle className="h-4 w-4" />
-                  Enroll Now
+                Make an Enquiry
               </a>
               <a href="/contact" className="btn-secondary">
                 <GraduationCap className="h-4 w-4" />

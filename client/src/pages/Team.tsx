@@ -196,7 +196,7 @@ export default function Team() {
               href="/enroll"
               className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy transition-colors"
             >
-              Enroll Now
+              Make an Enquiry
             </a>
           </div>
         </div>

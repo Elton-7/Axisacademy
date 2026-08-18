@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Loader2, AlertCircle } from 'lucide-react'
+import { Phone, Mail, MapPin, Clock, Send, CheckCircle, Loader2, AlertCircle, MessageCircle } from 'lucide-react'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
@@ -91,24 +91,46 @@ export default function Contact() {
               <div>
                 <h3 className="text-xl font-semibold text-navy-900 mb-6">Contact Information</h3>
                 <div className="space-y-5">
-                  <div className="flex items-start gap-4">
+                  {/*
+                    Consultations are booked by phone, WhatsApp or email rather
+                    than on the site, so each channel is a real link — most
+                    visitors arrive on a phone and should be one tap away.
+                  */}
+                  <a href="tel:0737003007" onClick={() => trackConversion('phone_clicked')} className="flex items-start gap-4 group">
                     <div className="w-10 h-10 rounded-lg bg-gold-50 flex items-center justify-center flex-shrink-0">
                       <Phone className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-navy-900">Phone</p>
-                      <p className="text-navy-600/70 text-sm">0737 003 007</p>
+                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">0737 003 007</p>
                     </div>
-                  </div>
-                  <div className="flex items-start gap-4">
+                  </a>
+                  <a
+                    href="https://wa.me/254737003007"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={() => trackConversion('whatsapp_opened')}
+                    className="flex items-start gap-4 group"
+                  >
+                    <div className="w-10 h-10 rounded-lg bg-gold-50 flex items-center justify-center flex-shrink-0">
+                      <MessageCircle className="w-5 h-5 text-gold-500" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-navy-900">WhatsApp</p>
+                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">
+                        Message us to book a consultation
+                      </p>
+                    </div>
+                  </a>
+                  <a href="mailto:info@axishomeschooling.org" className="flex items-start gap-4 group">
                     <div className="w-10 h-10 rounded-lg bg-gold-50 flex items-center justify-center flex-shrink-0">
                       <Mail className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-navy-900">Email</p>
-                      <p className="text-navy-600/70 text-sm">info@axishomeschooling.org</p>
+                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">info@axishomeschooling.org</p>
                     </div>
-                  </div>
+                  </a>
                   <div className="flex items-start gap-4">
                     <div className="w-10 h-10 rounded-lg bg-gold-50 flex items-center justify-center flex-shrink-0">
                       <MapPin className="w-5 h-5 text-gold-500" />
