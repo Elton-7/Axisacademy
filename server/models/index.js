@@ -59,12 +59,38 @@ SafeguardingConcern.belongsTo(Learner, { foreignKey: 'learnerId', as: 'learner' 
 SafeguardingConcern.belongsTo(User, { foreignKey: 'raisedByUserId', as: 'raisedBy' })
 
 // Sync all models
+/**
+ * Schema synchronisation.
+ *
+ * `alter: true` is right for development and dangerous in production: it
+ * inspects the live schema and rewrites it to match the models, which on a
+ * database holding real learner records can change column types or drop
+ * columns that a model no longer mentions. Production therefore defaults to a
+ * plain sync, which creates missing tables and never modifies existing ones.
+ *
+ * DB_SYNC overrides it deliberately:
+ *   alter  — development default; brings an existing schema into line
+ *   safe   — production default; creates what is missing, touches nothing else
+ *   none   — skip entirely, for when migrations are managed elsewhere
+ *
+ * Failures are fatal rather than logged and ignored. Serving requests against a
+ * half-built schema produces confusing errors much later, at a point where the
+ * cause is no longer obvious.
+ */
 const syncDatabase = async () => {
+  const mode = process.env.DB_SYNC || (process.env.NODE_ENV === 'production' ? 'safe' : 'alter')
+
+  if (mode === 'none') {
+    console.log('Database sync skipped (DB_SYNC=none)')
+    return
+  }
+
   try {
-    await sequelize.sync({ alter: true })
-    console.log('Database synchronized successfully')
+    await sequelize.sync(mode === 'alter' ? { alter: true } : {})
+    console.log(`Database synchronized successfully (mode: ${mode})`)
   } catch (error) {
-    console.error('Database sync error:', error)
+    console.error('Database sync failed:', error.message)
+    throw error
   }
 }
 

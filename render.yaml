@@ -1,0 +1,90 @@
+# Deployment for the Axis Learning API and database.
+#
+# Render is used here because it hosts a Node service and a managed PostgreSQL
+# instance together, issues TLS certificates automatically, and takes daily
+# backups on paid plans. Nothing in the application is tied to it — the server
+# is a plain Dockerfile, so Railway, Fly or a VPS work the same way. Only this
+# file would change.
+#
+# The front end is NOT deployed from here. It is a static build on Netlify,
+# configured by netlify.toml at the repository root.
+#
+# Before the first deploy, set in the Render dashboard:
+#   JWT_SECRET             a long random value, not the development one
+#   ADMIN_EMAIL            and ADMIN_PASSWORD_HASH (bcrypt, generated locally)
+#   SMTP_*                 if enquiry notifications should send
+#   CORS_ORIGIN            the real site origin, once the domain resolves
+
+services:
+  - type: web
+    name: axis-learning-api
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    plan: starter
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Creates missing tables but never alters existing ones. `alter` on a
+      # live database can rewrite columns holding learner records.
+      - key: DB_SYNC
+        value: safe
+
+      # Database connection, supplied by the managed instance below.
+      - key: DB_HOST
+        fromDatabase:
+          name: axis-learning-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: axis-learning-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: axis-learning-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: axis-learning-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: axis-learning-db
+          property: password
+
+      # Generated once by Render and never printed in a build log.
+      - key: JWT_SECRET
+        generateValue: true
+
+      # The browser blocks every API call whose origin is not listed here, so
+      # this must match the deployed site exactly, scheme included.
+      - key: CORS_ORIGIN
+        value: https://www.axislearning.co.ke
+
+      # Used in notification emails to link back to the admin dashboard.
+      - key: SITE_URL
+        value: https://www.axislearning.co.ke
+
+      # Set in the dashboard rather than here: these are secrets.
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: NOTIFICATION_TO
+        sync: false
+      - key: NOTIFICATION_FROM
+        sync: false
+
+databases:
+  - name: axis-learning-db
+    databaseName: axis_learning
+    user: axis
+    plan: basic-256mb

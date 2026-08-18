@@ -16,13 +16,28 @@ if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET must be configured in production')
 }
 
+/**
+ * Every managed host puts a load balancer in front of the app, so the client
+ * address arrives in X-Forwarded-For. Without this, express-rate-limit sees the
+ * proxy's address for every request and puts the whole internet in one bucket —
+ * the first person to hit the login limiter would lock out everybody. It also
+ * means the audit log records the proxy rather than the actual caller.
+ *
+ * Trust exactly one hop: trusting all of them lets a client forge the header.
+ */
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1)
+}
+
 // Middleware
 app.use(helmet())
 app.use(cors({
   origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
   credentials: true
 }))
-app.use(morgan('dev'))
+// 'dev' is colourised and terse; 'combined' is the standard log format
+// production log shippers expect.
+app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use('/api', generalApiLimiter)
@@ -73,13 +88,41 @@ app.use((err, req, res, next) => {
 const startServer = async () => {
   try {
     await syncDatabase()
-    await seedData()
 
-    app.listen(PORT, () => {
-      console.log('Server running on port ' + PORT)
-      console.log('API: http://localhost:' + PORT + '/api')
-      console.log('Health: http://localhost:' + PORT + '/api/health')
+    // Seeding is idempotent — it only fills empty tables — but it can be turned
+    // off for a production database that is managed by hand.
+    if (process.env.SKIP_SEED !== 'true') {
+      await seedData()
+    }
+
+    // Bind to all interfaces: container platforms route to the published port
+    // and a default of localhost would be unreachable from outside.
+    const server = app.listen(PORT, '0.0.0.0', () => {
+      console.log(`Server running on port ${PORT} (${process.env.NODE_ENV || 'development'})`)
+      console.log(`Health: http://localhost:${PORT}/api/health`)
     })
+
+    /**
+     * Container platforms send SIGTERM and then kill the process a short time
+     * later. Without this, in-flight requests are cut off mid-response and the
+     * connection pool is never closed, which shows up as errors on every deploy.
+     */
+    const shutdown = (signal) => {
+      console.log(`${signal} received, shutting down`)
+      server.close(async () => {
+        try {
+          await sequelize.close()
+        } catch (error) {
+          console.error('Error closing the database pool:', error.message)
+        }
+        process.exit(0)
+      })
+      // Do not hang forever if a connection refuses to drain.
+      setTimeout(() => process.exit(1), 10000).unref()
+    }
+
+    process.on('SIGTERM', () => shutdown('SIGTERM'))
+    process.on('SIGINT', () => shutdown('SIGINT'))
   } catch (error) {
     console.error('Failed to start server:', error)
     process.exit(1)
