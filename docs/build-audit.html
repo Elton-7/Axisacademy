@@ -337,14 +337,14 @@
       <span class="tile-sub">Structure exists, content or depth missing</span>
     </div>
     <div class="tile t-absent">
-      <span class="tile-n">1</span>
+      <span class="tile-n">0</span>
       <span class="tile-l">Not started</span>
-      <span class="tile-sub">No implementation in the codebase</span>
+      <span class="tile-sub">Nothing outstanding that is not deliberately deferred</span>
     </div>
     <div class="tile t-deferred">
-      <span class="tile-n">6</span>
-      <span class="tile-l">Process / N/A</span>
-      <span class="tile-sub">Commercial or narrative sections</span>
+      <span class="tile-n">7</span>
+      <span class="tile-l">Deferred / N/A</span>
+      <span class="tile-sub">Deferred by Axis, or narrative sections</span>
     </div>
   </div>
 
@@ -500,7 +500,7 @@
       <div class="row"><span class="ref">§29</span><span class="what"><b>Educator portal</b><span>Tutor login and role separation work. Attendance marking, lesson notes, assignments and reporting are not built.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§30</span><span class="what"><b>Administration portal</b><span>Substantial dashboard already managing most content types, with an audit log behind it.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§31</span><span class="what"><b>CRM / client management</b><span>The full journey from new enquiry to active learner, with an admin board showing stage distribution, conversion over decided enquiries, and days-in-stage. A Lost stage was added beyond the brief’s list, because “where are we losing people” cannot be answered without one. <span class="new-flag">phase 4</span></span></span><span class="chip c-built">Built</span></div>
-      <div class="row"><span class="ref">§32</span><span class="what"><b>Payments</b><span>No M-Pesa, bank or card integration; no invoices or receipts.</span></span><span class="chip c-absent">Not started</span></div>
+      <div class="row"><span class="ref">§32</span><span class="what"><b>Payments</b><span>Deferred by Axis to a future phase. No M-Pesa, bank or card integration, and no invoicing — deliberately, not as an oversight. Fees are handled off-platform for now, so the pipeline ends at enrolment rather than at payment.</span></span><span class="chip c-deferred">Deferred</span></div>
     </div>
 
     <h3>Operations</h3>
@@ -589,7 +589,7 @@
           <ul>
             <li>Parent portal: timetable, attendance, academic area, resources, communication (§28)</li>
             <li>Educator portal: attendance marking, lesson notes, assignments, assessments, reports (§29)</li>
-            <li>Fees, invoices and M-Pesa via Daraja (§32) — start the Safaricom application early</li>
+            <li>Fee visibility for parents, reading from whatever Axis records off-platform — payments themselves are deferred (§32)</li>
           </ul>
         </div>
       </div>
@@ -645,11 +645,12 @@
         </p>
       </div>
       <div class="finding">
-        <h4>Lead times on M-Pesa and WhatsApp <span class="sev s-med">Scheduling</span></h4>
+        <h4>WhatsApp Business API has a lead time <span class="sev s-med">Scheduling</span></h4>
         <p>
-          M-Pesa Daraja go-live needs a paybill or till and Safaricom approval. WhatsApp Business API needs Meta
-          business verification and template approval. Both take weeks of calendar time that no amount of
-          development speed shortens. Start both applications during Phase 2, not when the code is ready.
+          WhatsApp Business API needs Meta business verification and template approval — weeks of calendar
+          time that no amount of development speed shortens. Start that application before the code needs it.
+          The same applies to M-Pesa Daraja whenever payments are picked up: go-live needs a paybill or till
+          and Safaricom approval, so the application should start well ahead of the build, not alongside it.
         </p>
       </div>
       <div class="finding">
@@ -673,8 +674,10 @@
         <h4>No pricing model behind the quotation step <span class="sev s-low">Commercial</span></h4>
         <p>
           The funnel in §26 has a quotation stage between recommendation and enrolment, but no fee structure is
-          defined anywhere. Whether fees vary by curriculum, delivery model, travel distance or educator seniority
-          changes what the CRM and the invoicing need to model.
+          defined anywhere. This matters even with payments deferred: whether fees vary by curriculum, delivery
+          model, travel distance or educator seniority determines what a quotation has to capture, and the
+          pipeline now has a Proposal Sent stage with nothing behind it. Worth settling before it is needed,
+          because it also shapes any future invoicing.
         </p>
       </div>
       <div class="finding">
