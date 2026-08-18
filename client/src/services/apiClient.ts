@@ -43,6 +43,7 @@ import {
   PipelineSummary,
   PortalOverview,
   PortalLearnerRecord,
+  PortalMessageItem,
   PortalSession,
   AdminLearner,
   AssignableUser,
@@ -422,6 +423,19 @@ export const portalApi = {
 
   async getLearner(id: number) {
     const { data } = await api.get<ApiResponse<PortalLearnerRecord>>(`/portal/learners/${id}`)
+    return unwrap(data)
+  },
+
+  async getMessages(learnerId: number) {
+    const { data } = await api.get<ApiResponse<PortalMessageItem[]>>(`/portal/learners/${learnerId}/messages`)
+    return unwrap(data)
+  },
+
+  async sendMessage(learnerId: number, body: string) {
+    const { data } = await api.post<ApiResponse<PortalMessageItem>>(
+      `/portal/learners/${learnerId}/messages`,
+      { body }
+    )
     return unwrap(data)
   },
 

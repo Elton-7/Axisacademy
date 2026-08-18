@@ -10,6 +10,8 @@ const {
   User,
   PortalSchedule,
   PortalMessage,
+  Message,
+  MessageRead,
 } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
@@ -51,6 +53,20 @@ async function resolveLearnerIds(user) {
 async function assertCanReachLearner(user, learnerId) {
   const allowed = await resolveLearnerIds(user)
   return allowed.includes(Number(learnerId))
+}
+
+/**
+ * Messaging widens the audience by one: Axis staff are a party to every
+ * conversation, because "parent and Axis" is one of the three the brief names.
+ * Kept separate from resolveLearnerIds so that widening applies to messaging
+ * only, and never silently grants staff a learner's academic record through an
+ * endpoint that was written for parents and educators.
+ */
+async function canJoinConversation(user, learnerId) {
+  if (user.role === 'admin' || user.role === 'staff') {
+    return Boolean(await Learner.findByPk(learnerId))
+  }
+  return assertCanReachLearner(user, learnerId)
 }
 
 function attendanceSummary(sessions) {
@@ -323,6 +339,91 @@ router.post('/assessments', requireAuth, requireRole('tutor'), async (req, res) 
   } catch (error) {
     console.error('Failed to record assessment:', error)
     res.status(500).json({ success: false, error: 'Failed to record assessment' })
+  }
+})
+
+/**
+ * The conversation about a learner (brief §28).
+ *
+ * Open to the parent, any currently assigned educator, and Axis staff. An
+ * educator who is unassigned loses access to the thread at the same moment they
+ * lose access to everything else about that learner.
+ */
+router.get('/learners/:id/messages', requireAuth, requireRole('student', 'tutor', 'staff', 'admin'), async (req, res) => {
+  try {
+    if (!(await canJoinConversation(req.user, req.params.id))) {
+      return res.status(404).json({ success: false, error: 'Conversation not found' })
+    }
+
+    const messages = await Message.findAll({
+      where: { learnerId: req.params.id },
+      order: [['createdAt', 'ASC']],
+      limit: 200,
+    })
+
+    // Opening the thread marks it read up to now.
+    await MessageRead.upsert({
+      userId: req.user.userId,
+      learnerId: Number(req.params.id),
+      lastReadAt: new Date(),
+    })
+
+    res.json({
+      success: true,
+      data: messages.map((message) => ({
+        id: message.id,
+        body: message.body,
+        senderRole: message.senderRole,
+        senderName: message.senderName,
+        // Lets the client align the thread without exposing anyone's user id.
+        isMine: message.senderUserId === req.user.userId,
+        createdAt: message.createdAt,
+      })),
+    })
+  } catch (error) {
+    console.error('Failed to load the conversation:', error)
+    res.status(500).json({ success: false, error: 'Failed to load the conversation' })
+  }
+})
+
+router.post('/learners/:id/messages', requireAuth, requireRole('student', 'tutor', 'staff', 'admin'), async (req, res) => {
+  try {
+    if (!(await canJoinConversation(req.user, req.params.id))) {
+      return res.status(404).json({ success: false, error: 'Conversation not found' })
+    }
+
+    const body = String(req.body.body || '').trim()
+    if (!body) {
+      return res.status(400).json({ success: false, error: 'A message cannot be empty' })
+    }
+    if (body.length > 4000) {
+      return res.status(400).json({ success: false, error: 'Please keep messages under 4,000 characters' })
+    }
+
+    const sender = await User.findByPk(req.user.userId, { attributes: ['id', 'name'] })
+
+    const message = await Message.create({
+      learnerId: Number(req.params.id),
+      senderUserId: req.user.userId,
+      senderRole: req.user.role,
+      senderName: sender?.name || 'Axis',
+      body,
+    })
+
+    res.status(201).json({
+      success: true,
+      data: {
+        id: message.id,
+        body: message.body,
+        senderRole: message.senderRole,
+        senderName: message.senderName,
+        isMine: true,
+        createdAt: message.createdAt,
+      },
+    })
+  } catch (error) {
+    console.error('Failed to send the message:', error)
+    res.status(500).json({ success: false, error: 'Failed to send the message' })
   }
 })
 

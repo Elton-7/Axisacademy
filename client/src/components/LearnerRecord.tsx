@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AlertTriangle, ClipboardCheck, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import MessageThread from './MessageThread'
 import { portalApi } from '../services/apiClient'
 import type { PortalLearnerRecord, PortalSession, SessionStatus } from '../types'
 
@@ -217,6 +218,8 @@ export default function LearnerRecord({
           </div>
         )}
       </div>
+
+      <MessageThread learnerId={learnerId} />
     </div>
   )
 }

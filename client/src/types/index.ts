@@ -216,6 +216,17 @@ export interface AdminLearner {
   assignments?: LearnerAssignment[]
 }
 
+/** A message in a learner's conversation (brief §28 communication). */
+export interface PortalMessageItem {
+  id: number
+  body: string
+  senderRole: 'student' | 'tutor' | 'staff' | 'admin'
+  senderName: string
+  /** Set by the server so the client can align the thread without user ids. */
+  isMine: boolean
+  createdAt: string
+}
+
 export interface PortalLearnerRecord {
   learner: Omit<PortalLearner, 'attendance'>
   attendance: AttendanceSummary
