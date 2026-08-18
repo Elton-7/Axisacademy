@@ -7,16 +7,23 @@ let serverProcess
 let token
 
 async function waitForHealth() {
-  for (let attempt = 0; attempt < 30; attempt += 1) {
+  // Startup runs sequelize.sync({ alter: true }), and the first run after a
+  // model change has to migrate the schema before it can listen. Fifteen
+  // seconds was not enough for that and failed as though the API were broken.
+  const timeoutMs = Number(process.env.TEST_HEALTH_TIMEOUT_MS) || 60_000
+  const intervalMs = 500
+  const attempts = Math.ceil(timeoutMs / intervalMs)
+
+  for (let attempt = 0; attempt < attempts; attempt += 1) {
     try {
       const response = await fetch(`${baseUrl}/health`)
       if (response.ok) return response.json()
     } catch (error) {
       // The server may still be starting.
     }
-    await new Promise((resolve) => setTimeout(resolve, 500))
+    await new Promise((resolve) => setTimeout(resolve, intervalMs))
   }
-  throw new Error('API did not become healthy in time')
+  throw new Error(`API did not become healthy within ${timeoutMs}ms`)
 }
 
 before(async () => {
