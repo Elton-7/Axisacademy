@@ -11,6 +11,10 @@ server/build/
 client/public/sitemap.xml
 client/public/robots.txt
 
+# Database dumps. Kept locally as a safety net, never in version control —
+# they can contain learner and parent data.
+server/backups/
+
 # Environment files
 .env
 .env.*.local
