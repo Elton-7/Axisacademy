@@ -159,7 +159,7 @@ export default function LearnerAdmin() {
       </div>
 
       {error && (
-        <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">{error}</div>
+        <div className="rounded-xl border border-line-critical bg-tint-critical p-5 text-sm text-critical">{error}</div>
       )}
 
       {showForm && (
@@ -271,7 +271,7 @@ export default function LearnerAdmin() {
                           <button
                             onClick={() => endAssignment(learner, assignment.id, assignment.educator?.name || 'This educator')}
                             aria-label={`End ${assignment.educator?.name}'s assignment`}
-                            className="text-navy-400 hover:text-rose-600"
+                            className="text-navy-400 hover:text-critical"
                           >
                             <X className="h-3 w-3" />
                           </button>

@@ -226,8 +226,8 @@ export default function FAQPage() {
               <Loader className="h-8 w-8 text-gold animate-spin" />
             </div>
           ) : error ? (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-              <p className="text-red-700 font-medium">{error}</p>
+            <div className="bg-tint-critical border border-line-critical rounded-lg p-6 text-center">
+              <p className="text-critical font-medium">{error}</p>
             </div>
           ) : filteredFaqs.length === 0 ? (
             <div className="text-center py-12">

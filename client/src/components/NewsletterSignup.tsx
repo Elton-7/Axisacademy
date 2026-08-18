@@ -51,14 +51,14 @@ export default function NewsletterSignup() {
             className="w-full rounded-lg border border-white/10 bg-surface/5 py-2.5 pl-10 pr-3 text-sm text-white outline-none placeholder:text-white/40 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20"
           />
         </div>
-        {errors.email && <p className="text-xs text-red-300">{errors.email.message}</p>}
+        {errors.email && <p className="text-xs text-critical">{errors.email.message}</p>}
         <button type="submit" disabled={isSubmitting} className="btn-primary inline-flex w-full items-center justify-center gap-2 px-4 py-2.5 text-xs disabled:cursor-not-allowed disabled:opacity-50">
           {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
           {isSubmitting ? 'Subscribing...' : 'Subscribe'}
         </button>
       </form>
       {message && (
-        <div role="status" className={`mt-3 flex items-start gap-2 text-xs ${message.type === 'success' ? 'text-green-300' : 'text-red-300'}`}>
+        <div role="status" className={`mt-3 flex items-start gap-2 text-xs ${message.type === 'success' ? 'text-positive' : 'text-critical'}`}>
           {message.type === 'success' ? <CheckCircle className="mt-0.5 h-4 w-4 shrink-0" /> : <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />}
           <span>{message.text}</span>
         </div>

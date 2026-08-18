@@ -708,10 +708,10 @@ export default function AdminDashboard() {
   const paginatedContacts = contacts
 
   const statCards = [
-    { icon: MessageSquare, label: 'Total Inquiries', value: stats.totalInquiries, color: 'bg-blue-50 text-blue-600' },
-    { icon: Mail, label: 'New Messages', value: stats.newInquiries, color: 'bg-amber-50 text-amber-600' },
-    { icon: TrendingUp, label: 'Responded', value: stats.respondedInquiries, color: 'bg-green-50 text-green-600' },
-    { icon: Users, label: 'Enrolled', value: stats.enrollments, color: 'bg-purple-50 text-purple-600' },
+    { icon: MessageSquare, label: 'Total Inquiries', value: stats.totalInquiries, color: 'bg-tint-blue text-info' },
+    { icon: Mail, label: 'New Messages', value: stats.newInquiries, color: 'bg-tint-amber text-warning' },
+    { icon: TrendingUp, label: 'Responded', value: stats.respondedInquiries, color: 'bg-tint-positive text-positive' },
+    { icon: Users, label: 'Enrolled', value: stats.enrollments, color: 'bg-tint-purple text-purple-600' },
   ]
 
   return (
@@ -735,7 +735,7 @@ export default function AdminDashboard() {
                 </button>
               </>
             )}
-            <button onClick={handleLogout} className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50">
+            <button onClick={handleLogout} className="inline-flex items-center gap-2 rounded-lg border border-line-critical px-4 py-2 text-sm text-critical transition-colors hover:bg-tint-critical">
               <LogOut className="h-4 w-4" />
               Sign out
             </button>
@@ -803,7 +803,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           {auditError ? (
-            <p className="px-6 py-5 text-sm text-red-600">{auditError}</p>
+            <p className="px-6 py-5 text-sm text-critical">{auditError}</p>
           ) : auditLogs.length === 0 ? (
             <p className="px-6 py-5 text-sm text-ink-faint">No administrative activity recorded yet.</p>
           ) : (
@@ -862,12 +862,12 @@ export default function AdminDashboard() {
                   <input type="url" placeholder="Image/Video URL" value={galleryForm.url} onChange={(e) => setGalleryForm({...galleryForm, url: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <input type="url" placeholder="Thumbnail URL (optional)" value={galleryForm.thumbnail} onChange={(e) => setGalleryForm({...galleryForm, thumbnail: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <input type="text" placeholder="Tags (comma-separated)" value={galleryForm.tags} onChange={(e) => setGalleryForm({...galleryForm, tags: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
-                  <div className="space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
+                  <div className="space-y-3 rounded-lg border border-line-warning bg-tint-amber p-3">
                     <label className="flex items-start gap-3 text-sm text-ink-muted">
                       <input type="checkbox" checked={galleryForm.consentConfirmed} onChange={(e) => setGalleryForm({...galleryForm, consentConfirmed: e.target.checked})} className="mt-0.5 h-4 w-4 rounded border-line-strong text-gold-600 focus:ring-gold-500" />
                       <span>I confirm that the appropriate consent has been verified for public publication of this photo or video.</span>
                     </label>
-                    <input type="text" placeholder="Signed media release reference (e.g. MR-2026-014)" value={galleryForm.consentReference} onChange={(e) => setGalleryForm({...galleryForm, consentReference: e.target.value})} className="w-full rounded-lg border border-amber-300 bg-surface px-4 py-2 text-sm outline-none focus:border-gold-500" />
+                    <input type="text" placeholder="Signed media release reference (e.g. MR-2026-014)" value={galleryForm.consentReference} onChange={(e) => setGalleryForm({...galleryForm, consentReference: e.target.value})} className="w-full rounded-lg border border-line-warning bg-surface px-4 py-2 text-sm outline-none focus:border-gold-500" />
                     <p className="text-xs text-ink-muted/70">Recorded with your name and the date, so consent can be evidenced or withdrawn later.</p>
                   </div>
                   <div className="flex gap-2">
@@ -902,7 +902,7 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 text-sm text-ink-muted">{item.type}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{item.category}</td>
                         <td className="px-6 py-4">
-                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${item.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>
+                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${item.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>
                             {item.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
@@ -911,7 +911,7 @@ export default function AdminDashboard() {
                             <button onClick={() => {setEditingGallery(item); setGalleryForm({title: item.title, type: item.type, category: item.category, description: item.description || '', url: item.url, thumbnail: item.thumbnail || '', tags: item.tags?.join(', ') || '', consentConfirmed: item.consentConfirmed, consentReference: item.consentReference || ''})}} className="text-ink-muted hover:text-ink">
                               <Edit className="w-4 h-4" />
                             </button>
-                            <button onClick={() => deleteGalleryItem(item.id)} className="text-red-600 hover:text-red-900">
+                            <button onClick={() => deleteGalleryItem(item.id)} className="text-critical hover:text-critical">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -991,7 +991,7 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 text-sm text-ink-muted">{resource.category}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{resource.author || '—'}</td>
                         <td className="px-6 py-4">
-                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${resource.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>
+                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${resource.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>
                             {resource.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
@@ -1000,7 +1000,7 @@ export default function AdminDashboard() {
                             <button onClick={() => {setEditingResource(resource); setResourceForm({title: resource.title, slug: resource.slug, excerpt: resource.excerpt || '', content: resource.content, category: resource.category, author: resource.author, coverImage: resource.coverImage || '', readTime: resource.readTime || '', tags: resource.tags?.join(', ') || ''})}} className="text-ink-muted hover:text-ink">
                               <Edit className="w-4 h-4" />
                             </button>
-                            <button onClick={() => deleteResource(resource.id)} className="text-red-600 hover:text-red-900">
+                            <button onClick={() => deleteResource(resource.id)} className="text-critical hover:text-critical">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -1082,7 +1082,7 @@ export default function AdminDashboard() {
                           {partner.phone && <p className="text-xs text-ink-faint">{partner.phone}</p>}
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${partner.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>
+                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${partner.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>
                             {partner.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
@@ -1091,7 +1091,7 @@ export default function AdminDashboard() {
                             <button onClick={() => {setEditingPartner(partner); setPartnerForm({name: partner.name, logo: partner.logo || '', category: partner.category, description: partner.description || '', website: partner.website || '', contact: partner.contact || '', email: partner.email || '', phone: partner.phone || '', focusAreas: partner.focusAreas?.join(', ') || ''})}} className="text-ink-muted hover:text-ink">
                               <Edit className="w-4 h-4" />
                             </button>
-                            <button onClick={() => deletePartner(partner.id)} className="text-red-600 hover:text-red-900">
+                            <button onClick={() => deletePartner(partner.id)} className="text-critical hover:text-critical">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -1162,8 +1162,8 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 text-sm font-medium text-ink">{educator.name}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{educator.position}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{educator.category}</td>
-                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${educator.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>{educator.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingEducator(educator); setEducatorForm({name: educator.name, position: educator.position, category: educator.category, qualifications: educator.qualifications || '', experience: educator.experience || '', subjects: educator.subjects?.join(', ') || '', languages: educator.languages?.join(', ') || '', expertise: educator.expertise || '', biography: educator.biography || '', photo: educator.photo || '', email: educator.email || '', phone: educator.phone || ''})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteEducator(educator.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${educator.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>{educator.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingEducator(educator); setEducatorForm({name: educator.name, position: educator.position, category: educator.category, qualifications: educator.qualifications || '', experience: educator.experience || '', subjects: educator.subjects?.join(', ') || '', languages: educator.languages?.join(', ') || '', expertise: educator.expertise || '', biography: educator.biography || '', photo: educator.photo || '', email: educator.email || '', phone: educator.phone || ''})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteEducator(educator.id)} className="text-critical hover:text-critical"><Trash2 className="w-4 h-4" /></button></div></td>
                       </tr>
                     ))}
                   </tbody>
@@ -1235,8 +1235,8 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 text-sm font-medium text-ink">{event.title}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{event.category}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{new Date(event.startDate).toLocaleDateString()}</td>
-                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${event.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>{event.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingEvent(event); setEventForm({title: event.title, description: event.description, category: event.category, startDate: event.startDate, endDate: event.endDate || '', venue: event.venue || '', location: event.location || '', capacity: event.capacity?.toString() || '', ageGroup: event.ageGroup || '', programme: event.programme || '', priceKES: event.priceKES?.toString() || '', registrationDeadline: event.registrationDeadline || '', registrationLink: event.registrationLink || '', poster: event.poster || '', status: event.status})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteEvent(event.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${event.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>{event.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingEvent(event); setEventForm({title: event.title, description: event.description, category: event.category, startDate: event.startDate, endDate: event.endDate || '', venue: event.venue || '', location: event.location || '', capacity: event.capacity?.toString() || '', ageGroup: event.ageGroup || '', programme: event.programme || '', priceKES: event.priceKES?.toString() || '', registrationDeadline: event.registrationDeadline || '', registrationLink: event.registrationLink || '', poster: event.poster || '', status: event.status})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteEvent(event.id)} className="text-critical hover:text-critical"><Trash2 className="w-4 h-4" /></button></div></td>
                       </tr>
                     ))}
                   </tbody>
@@ -1292,8 +1292,8 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 text-sm font-medium text-ink max-w-xs line-clamp-2">{faq.question}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{faq.category}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{faq.viewCount}</td>
-                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${faq.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>{faq.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingFAQ(faq); setFaqForm({question: faq.question, answer: faq.answer, category: faq.category, order: faq.order.toString()})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteFAQ(faq.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${faq.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>{faq.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingFAQ(faq); setFaqForm({question: faq.question, answer: faq.answer, category: faq.category, order: faq.order.toString()})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteFAQ(faq.id)} className="text-critical hover:text-critical"><Trash2 className="w-4 h-4" /></button></div></td>
                       </tr>
                     ))}
                   </tbody>
@@ -1356,8 +1356,8 @@ export default function AdminDashboard() {
                         <td className="px-6 py-4 text-sm font-medium text-ink">{location.name}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{location.type}</td>
                         <td className="px-6 py-4 text-sm text-ink-muted">{location.city || '—'}</td>
-                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${location.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>{location.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingLocation(location); setLocationForm({name: location.name, type: location.type, address: location.address || '', city: location.city || '', county: location.county || '', phone: location.phone || '', email: location.email || '', description: location.description || '', programmes: location.programmes?.join(', ') || '', photo: location.photo || '', latitude: location.latitude?.toString() || '', longitude: location.longitude?.toString() || ''})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteLocation(location.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${location.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>{location.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingLocation(location); setLocationForm({name: location.name, type: location.type, address: location.address || '', city: location.city || '', county: location.county || '', phone: location.phone || '', email: location.email || '', description: location.description || '', programmes: location.programmes?.join(', ') || '', photo: location.photo || '', latitude: location.latitude?.toString() || '', longitude: location.longitude?.toString() || ''})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteLocation(location.id)} className="text-critical hover:text-critical"><Trash2 className="w-4 h-4" /></button></div></td>
                       </tr>
                     ))}
                   </tbody>
@@ -1379,7 +1379,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               {subscriberError ? (
-                <p className="px-6 py-5 text-sm text-red-600">{subscriberError}</p>
+                <p className="px-6 py-5 text-sm text-critical">{subscriberError}</p>
               ) : subscribers.length === 0 ? (
                 <p className="px-6 py-5 text-sm text-ink-faint">No newsletter subscribers yet.</p>
               ) : (
@@ -1398,7 +1398,7 @@ export default function AdminDashboard() {
                           <td className="px-6 py-3 text-sm text-ink">{subscriber.email}</td>
                           <td className="px-6 py-3 text-sm text-ink-muted">{new Date(subscriber.subscribedAt).toLocaleDateString()}</td>
                           <td className="px-6 py-3">
-                            <span className={`rounded-full px-2 py-1 text-xs font-medium ${subscriber.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>
+                            <span className={`rounded-full px-2 py-1 text-xs font-medium ${subscriber.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>
                               {subscriber.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </td>
@@ -1418,7 +1418,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
               {enrollmentError ? (
-                <p className="px-6 py-5 text-sm text-red-600">{enrollmentError}</p>
+                <p className="px-6 py-5 text-sm text-critical">{enrollmentError}</p>
               ) : enrollments.length === 0 ? (
                 <p className="px-6 py-5 text-sm text-ink-faint">No enrollment applications yet.</p>
               ) : (
@@ -1540,9 +1540,9 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedContact(contact)}>
                           <span className={`text-xs px-2 py-1 rounded-full font-medium capitalize ${
-                            contact.status === 'new' ? 'bg-amber-50 text-amber-700' :
-                            contact.status === 'read' ? 'bg-blue-50 text-blue-700' :
-                            contact.status === 'replied' ? 'bg-green-50 text-green-700' :
+                            contact.status === 'new' ? 'bg-tint-amber text-warning' :
+                            contact.status === 'read' ? 'bg-tint-blue text-info' :
+                            contact.status === 'replied' ? 'bg-tint-positive text-positive' :
                             'bg-surface-sunk text-ink-muted'
                           }`}>
                             {contact.status}

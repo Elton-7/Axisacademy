@@ -64,7 +64,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
             </div>
             <div className="flex flex-wrap gap-2">
               {educator.subjects.slice(0, 3).map((subject) => (
-                <span key={subject} className="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded">
+                <span key={subject} className="text-xs bg-tint-emerald text-positive px-2 py-1 rounded">
                   {subject}
                 </span>
               ))}
@@ -84,7 +84,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
             </div>
             <div className="flex flex-wrap gap-2">
               {educator.languages.slice(0, 3).map((lang) => (
-                <span key={lang} className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded">
+                <span key={lang} className="text-xs bg-tint-purple text-purple-700 px-2 py-1 rounded">
                   {lang}
                 </span>
               ))}

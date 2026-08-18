@@ -87,7 +87,7 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
             <p className="mt-2 text-sm text-ink-muted/70">{config.description}</p>
           </div>
 
-          {error && <div role="alert" className="mb-5 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /><span>{error}</span></div>}
+          {error && <div role="alert" className="mb-5 flex items-start gap-2 rounded-xl border border-line-critical bg-tint-critical px-3 py-3 text-sm text-critical"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /><span>{error}</span></div>}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div><label htmlFor={`${role}-email`} className="mb-2 block text-sm font-medium text-ink">Email address</label><input id={`${role}-email`} type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-faint focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>

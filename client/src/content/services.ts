@@ -58,7 +58,7 @@ export const services: Service[] = [
     summary:
       'Academic learning and homeschooling support across the curricula families in Kenya actually use — delivered at home, at an Axis centre, online, or as a blend of all three.',
     icon: BookOpen,
-    accent: 'bg-blue-50',
+    accent: 'bg-tint-blue',
     highlights: [
       'CBC, Montessori, Cambridge, IGCSE, A Levels & IB',
       'Educator comes to you, or learner comes to Axis',
@@ -142,7 +142,7 @@ export const services: Service[] = [
     summary:
       'Targeted tuition for learners who need to catch up, keep up, or get ahead — one-to-one or in small groups, in the subjects that matter most right now.',
     icon: GraduationCap,
-    accent: 'bg-emerald-50',
+    accent: 'bg-tint-emerald',
     highlights: [
       'Mathematics, sciences, languages and humanities',
       'One-to-one and small-group sessions',
@@ -204,7 +204,7 @@ export const services: Service[] = [
     summary:
       'Individualised educational support for learners with different educational and developmental needs — focused on understanding the learner, adapting learning, and building confidence and independence.',
     icon: HeartHandshake,
-    accent: 'bg-teal-50',
+    accent: 'bg-tint-teal',
     highlights: [
       'Learner-centred discovery and planning',
       'Adapted learning approaches and materials',
@@ -281,7 +281,7 @@ export const services: Service[] = [
     summary:
       'Language learning that opens international doors while keeping learners rooted in African identity, culture and linguistic diversity.',
     icon: Languages,
-    accent: 'bg-purple-50',
+    accent: 'bg-tint-purple',
     highlights: [
       'French, Spanish, German, Mandarin, Japanese, Korean, Arabic',
       'Kiswahili, Dholuo, Kikuyu, Luhya, Kamba and more',
@@ -358,7 +358,7 @@ export const services: Service[] = [
     summary:
       'Active opportunities that develop the parts of a learner a classroom cannot reach — physical confidence, teamwork, resilience and discipline.',
     icon: Trophy,
-    accent: 'bg-rose-50',
+    accent: 'bg-tint-rose',
     highlights: [
       'Football, basketball, athletics and volleyball',
       'Swimming, skating and tennis',
@@ -413,7 +413,7 @@ export const services: Service[] = [
     summary:
       'Enrichment that helps a learner discover confidence, creativity, communication, leadership and talent — the things that make a learner more than a set of grades.',
     icon: Star,
-    accent: 'bg-amber-50',
+    accent: 'bg-tint-amber',
     highlights: [
       'Chess, scrabble, draughts and strategy games',
       'Music, singing, dance, drama and theatre',
@@ -480,7 +480,7 @@ export const services: Service[] = [
     summary:
       'When schools close, learning does not have to stop. Structured holiday programmes for revision, catch-up, reinforcement and preparation for the term ahead.',
     icon: CalendarDays,
-    accent: 'bg-orange-50',
+    accent: 'bg-tint-orange',
     highlights: [
       'Revision and catch-up support',
       'Reading, writing, mathematics and languages',
@@ -539,7 +539,7 @@ export const services: Service[] = [
     summary:
       'Focused preparation for learners approaching major assessments — covering content, technique, timing and the confidence to walk into the room prepared.',
     icon: ClipboardCheck,
-    accent: 'bg-indigo-50',
+    accent: 'bg-tint-indigo',
     highlights: [
       'KCSE, IGCSE, Cambridge assessments and A Levels',
       'Past papers and mock examinations',
@@ -602,7 +602,7 @@ export const services: Service[] = [
     summary:
       'Come to Axis even when you cannot name the problem. We understand the learner, identify the educational challenge, and recommend the appropriate pathway.',
     icon: Compass,
-    accent: 'bg-yellow-50',
+    accent: 'bg-tint-yellow',
     highlights: [
       'Start without knowing which service you need',
       'Understand strengths, challenges and aspirations',

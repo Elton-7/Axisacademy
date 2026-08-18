@@ -32,6 +32,31 @@ export default {
         'ink-muted': themed('--ink-muted'),
         'ink-faint': themed('--ink-faint'),
 
+        /* Accent and status tints, so a coloured panel keeps its hue in both
+           themes instead of staying a pale wash on a dark page. */
+        tint: {
+          blue: themed('--tint-blue'),
+          emerald: themed('--tint-emerald'),
+          teal: themed('--tint-teal'),
+          purple: themed('--tint-purple'),
+          rose: themed('--tint-rose'),
+          amber: themed('--tint-amber'),
+          orange: themed('--tint-orange'),
+          indigo: themed('--tint-indigo'),
+          yellow: themed('--tint-yellow'),
+          sky: themed('--tint-sky'),
+          violet: themed('--tint-violet'),
+          critical: themed('--tint-critical'),
+          positive: themed('--tint-positive'),
+        },
+        critical: themed('--on-critical'),
+        positive: themed('--on-positive'),
+        warning: themed('--on-warning'),
+        info: themed('--on-info'),
+        'line-critical': themed('--line-critical'),
+        'line-positive': themed('--line-positive'),
+        'line-warning': themed('--line-warning'),
+
         navy: {
           50: '#f4f6fa',
           100: '#e5e9f2',

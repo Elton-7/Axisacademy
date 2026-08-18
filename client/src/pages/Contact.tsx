@@ -179,14 +179,14 @@ export default function Contact() {
                     animate={{ opacity: 1, scale: 1 }}
                     className="text-center py-12"
                   >
-                    <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
+                    <CheckCircle className="w-16 h-16 text-positive mx-auto mb-4" />
                     <h3 className="text-2xl font-semibold text-ink mb-2">Message Sent!</h3>
                     <p className="text-ink-muted/70">We'll get back to you within 24 hours.</p>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
                     {submitError && (
-                      <div role="alert" className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                      <div role="alert" className="flex items-start gap-3 rounded-lg border border-line-critical bg-tint-critical px-4 py-3 text-sm text-critical">
                         <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
                         <p>{submitError}</p>
                       </div>
@@ -199,7 +199,7 @@ export default function Contact() {
                           className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="John"
                         />
-                        {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>}
+                        {errors.firstName && <p className="text-critical text-xs mt-1">{errors.firstName.message}</p>}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-ink mb-2">Last Name *</label>
@@ -208,7 +208,7 @@ export default function Contact() {
                           className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="Doe"
                         />
-                        {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>}
+                        {errors.lastName && <p className="text-critical text-xs mt-1">{errors.lastName.message}</p>}
                       </div>
                     </div>
 
@@ -225,7 +225,7 @@ export default function Contact() {
                           className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="john@example.com"
                         />
-                        {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+                        {errors.email && <p className="text-critical text-xs mt-1">{errors.email.message}</p>}
                       </div>
                       <div>
                         <label className="block text-sm font-medium text-ink mb-2">Phone</label>
@@ -261,7 +261,7 @@ export default function Contact() {
                         className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                         placeholder="How can we help?"
                       />
-                      {errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject.message}</p>}
+                      {errors.subject && <p className="text-critical text-xs mt-1">{errors.subject.message}</p>}
                     </div>
 
                     <div>
@@ -273,7 +273,7 @@ export default function Contact() {
                         className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all resize-none"
                         placeholder="Tell us about your learning goals..."
                       />
-                      {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>}
+                      {errors.message && <p className="text-critical text-xs mt-1">{errors.message.message}</p>}
                     </div>
 
                     <button

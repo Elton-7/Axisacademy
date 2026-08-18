@@ -7,11 +7,15 @@ interface EventCardProps {
   index?: number
 }
 
+/**
+ * The badge shares the panel tint rather than using a fixed -100 shade, which
+ * stayed near-white in dark mode and read as a bright chip on a dark card.
+ */
 const statusColors: Record<EventStatus, { bg: string; text: string; badge: string }> = {
-  Upcoming: { bg: 'bg-blue-50', text: 'text-blue-700', badge: 'bg-blue-100' },
-  Ongoing: { bg: 'bg-green-50', text: 'text-green-700', badge: 'bg-green-100' },
-  Completed: { bg: 'bg-surface-sunk', text: 'text-slate-700', badge: 'bg-surface-muted' },
-  Cancelled: { bg: 'bg-red-50', text: 'text-red-700', badge: 'bg-red-100' },
+  Upcoming: { bg: 'bg-tint-blue', text: 'text-info', badge: 'bg-tint-blue' },
+  Ongoing: { bg: 'bg-tint-positive', text: 'text-positive', badge: 'bg-tint-positive' },
+  Completed: { bg: 'bg-surface-sunk', text: 'text-ink-muted', badge: 'bg-surface-muted' },
+  Cancelled: { bg: 'bg-tint-critical', text: 'text-critical', badge: 'bg-tint-critical' },
 }
 
 export default function EventCard({ event, index = 0 }: EventCardProps) {

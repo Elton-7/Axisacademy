@@ -20,6 +20,32 @@
     --gold-50: 251 248 239;
     --gold-600: 171 139 58;
     --gold-700: 138 110 44;
+
+    /* Accent tints. Pale washes in light, deep muted versions of the same hue
+       in dark — so a coloured panel stays recognisably that colour instead of
+       becoming a bright patch on a dark page. */
+    --tint-blue: 239 246 255;
+    --tint-emerald: 236 253 245;
+    --tint-teal: 240 253 250;
+    --tint-purple: 250 245 255;
+    --tint-rose: 255 241 242;
+    --tint-amber: 255 251 235;
+    --tint-orange: 255 247 237;
+    --tint-indigo: 238 242 255;
+    --tint-yellow: 254 252 232;
+    --tint-sky: 240 249 255;
+    --tint-violet: 245 243 255;
+    --tint-critical: 254 242 242;
+    --tint-positive: 240 253 244;
+
+    /* Foreground and edge for the status tints. */
+    --on-critical: 185 28 28;
+    --on-positive: 21 128 61;
+    --on-warning: 180 83 9;
+    --on-info: 29 78 216;
+    --line-critical: 254 202 202;
+    --line-positive: 187 247 208;
+    --line-warning: 253 230 138;
   }
 
   .dark {
@@ -35,6 +61,28 @@
     --gold-50: 30 26 16;
     --gold-600: 212 185 106;
     --gold-700: 224 198 124;
+
+    --tint-blue: 20 33 56;
+    --tint-emerald: 15 38 32;
+    --tint-teal: 14 37 38;
+    --tint-purple: 33 25 50;
+    --tint-rose: 45 24 30;
+    --tint-amber: 42 33 16;
+    --tint-orange: 44 30 18;
+    --tint-indigo: 26 29 58;
+    --tint-yellow: 40 36 15;
+    --tint-sky: 16 33 50;
+    --tint-violet: 30 27 54;
+    --tint-critical: 47 20 22;
+    --tint-positive: 16 40 26;
+
+    --on-critical: 248 155 155;
+    --on-positive: 122 219 158;
+    --on-warning: 233 179 96;
+    --on-info: 138 180 248;
+    --line-critical: 92 38 41;
+    --line-positive: 33 74 50;
+    --line-warning: 92 68 25;
   }
 
   html {

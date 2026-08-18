@@ -65,7 +65,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
           </div>
           <button
             onClick={handleLogout}
-            className="inline-flex items-center gap-2 rounded-lg border border-red-200 px-4 py-2 text-sm text-red-600 hover:bg-red-50"
+            className="inline-flex items-center gap-2 rounded-lg border border-line-critical px-4 py-2 text-sm text-critical hover:bg-tint-critical"
           >
             <LogOut className="h-4 w-4" /> Sign out
           </button>
@@ -90,7 +90,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
         {loading ? (
           <div className="rounded-2xl bg-surface p-8 text-sm text-ink-muted">Loading your workspace...</div>
         ) : error ? (
-          <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-8 text-sm text-red-700">
+          <div role="alert" className="rounded-2xl border border-line-critical bg-tint-critical p-8 text-sm text-critical">
             {error}
           </div>
         ) : (
@@ -147,7 +147,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
                       {overview.programmes.map((item) => (
                         <li key={item.id} className="flex items-center justify-between text-sm">
                           <span className="text-ink-muted">{item.name}</span>
-                          <span className="rounded-full bg-amber-50 px-2 py-1 text-xs capitalize text-amber-700">
+                          <span className="rounded-full bg-tint-amber px-2 py-1 text-xs capitalize text-warning">
                             {item.status}
                           </span>
                         </li>

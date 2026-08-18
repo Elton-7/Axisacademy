@@ -129,7 +129,7 @@ export default function Gallery() {
           {loading ? (
             <div className="flex justify-center py-20"><Loader className="h-8 w-8 animate-spin text-gold" /></div>
           ) : error ? (
-            <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-700">{error}</div>
+            <div className="rounded-2xl border border-line-critical bg-tint-critical p-6 text-center text-critical">{error}</div>
           ) : filteredItems.length === 0 ? (
             <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted/70">
               <Sparkles className="mx-auto mb-4 h-12 w-12 text-ink-muted/30" />

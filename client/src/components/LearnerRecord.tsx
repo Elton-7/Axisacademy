@@ -12,10 +12,10 @@ import type { PortalLearnerRecord, PortalSession, SessionStatus } from '../types
  */
 
 const statusTone: Record<SessionStatus, string> = {
-  Scheduled: 'bg-surface-muted text-slate-700',
-  Attended: 'bg-emerald-50 text-emerald-700',
-  Missed: 'bg-rose-50 text-rose-700',
-  Cancelled: 'bg-amber-50 text-amber-700',
+  Scheduled: 'bg-surface-muted text-ink-muted',
+  Attended: 'bg-tint-emerald text-positive',
+  Missed: 'bg-tint-rose text-critical',
+  Cancelled: 'bg-tint-amber text-warning',
 }
 
 const formatDateTime = (value: string) =>
@@ -45,7 +45,7 @@ function SessionRow({
           <p className="mt-1 text-xs italic text-ink-faint">{session.lessonNotes}</p>
         )}
         {session.concernFlagged && (
-          <p className="mt-1 flex items-center gap-1 text-xs font-medium text-rose-600">
+          <p className="mt-1 flex items-center gap-1 text-xs font-medium text-critical">
             <AlertTriangle className="h-3 w-3" /> Concern raised with Axis
           </p>
         )}
@@ -123,7 +123,7 @@ export default function LearnerRecord({
 
   if (error || !record) {
     return (
-      <div className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
+      <div className="rounded-xl border border-line-critical bg-tint-critical p-5 text-sm text-critical">
         {error || 'This record is unavailable.'}
       </div>
     )
@@ -195,7 +195,7 @@ export default function LearnerRecord({
                   <p className="text-sm font-medium text-ink">
                     {assessment.title}
                     {!assessment.isReleased && (
-                      <span className="ml-2 rounded bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                      <span className="ml-2 rounded bg-tint-amber px-2 py-0.5 text-xs font-semibold text-warning">
                         Draft
                       </span>
                     )}

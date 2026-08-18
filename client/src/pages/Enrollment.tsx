@@ -57,7 +57,7 @@ export default function Enrollment() {
     return (
       <div className="min-h-screen bg-surface-sunk px-4 pt-32 pb-16">
         <div className="mx-auto max-w-2xl rounded-2xl bg-surface px-8 py-16 text-center shadow-sm">
-          <CheckCircle className="mx-auto mb-5 h-16 w-16 text-green-500" />
+          <CheckCircle className="mx-auto mb-5 h-16 w-16 text-positive" />
           <h1 className="mb-3 text-3xl font-semibold text-ink">Application received</h1>
           <p className="mb-8 text-ink-muted/70">Thank you. Our team will contact you within 24 hours to discuss the next steps.</p>
           <div className="flex flex-wrap justify-center gap-3">
@@ -81,18 +81,18 @@ export default function Enrollment() {
 
       <section className="bg-surface-sunk px-4 py-16 sm:px-6 lg:px-8">
         <form onSubmit={handleSubmit(onSubmit)} noValidate className="mx-auto max-w-3xl space-y-6 rounded-2xl bg-surface p-8 shadow-sm md:p-10">
-          {submitError && <div role="alert" className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"><AlertCircle className="mt-0.5 h-5 w-5 shrink-0" /><span>{submitError}</span></div>}
+          {submitError && <div role="alert" className="flex items-start gap-3 rounded-lg border border-line-critical bg-tint-critical px-4 py-3 text-sm text-critical"><AlertCircle className="mt-0.5 h-5 w-5 shrink-0" /><span>{submitError}</span></div>}
 
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <label htmlFor="studentName" className="mb-2 block text-sm font-medium text-ink">Learner's name *</label>
               <input id="studentName" {...register('studentName', { required: 'Learner name is required', validate: value => value.trim().length > 0 || 'Learner name is required', maxLength: { value: 100, message: 'Name must be 100 characters or fewer' } })} className={inputClass} />
-              {errors.studentName && <p className="mt-1 text-xs text-red-500">{errors.studentName.message}</p>}
+              {errors.studentName && <p className="mt-1 text-xs text-critical">{errors.studentName.message}</p>}
             </div>
             <div>
               <label htmlFor="parentName" className="mb-2 block text-sm font-medium text-ink">Parent/guardian name</label>
               <input id="parentName" {...register('parentName', { maxLength: { value: 100, message: 'Name must be 100 characters or fewer' } })} className={inputClass} />
-              {errors.parentName && <p className="mt-1 text-xs text-red-500">{errors.parentName.message}</p>}
+              {errors.parentName && <p className="mt-1 text-xs text-critical">{errors.parentName.message}</p>}
             </div>
           </div>
 
@@ -100,12 +100,12 @@ export default function Enrollment() {
             <div>
               <label htmlFor="learnerAge" className="mb-2 block text-sm font-medium text-ink">Learner age</label>
               <input id="learnerAge" type="number" min="1" max="100" {...register('learnerAge', { valueAsNumber: true, min: { value: 1, message: 'Age must be at least 1' }, max: { value: 100, message: 'Enter a valid age' } })} className={inputClass} />
-              {errors.learnerAge && <p className="mt-1 text-xs text-red-500">{errors.learnerAge.message}</p>}
+              {errors.learnerAge && <p className="mt-1 text-xs text-critical">{errors.learnerAge.message}</p>}
             </div>
             <div className="md:col-span-2">
               <label htmlFor="location" className="mb-2 block text-sm font-medium text-ink">Your location</label>
               <input id="location" autoComplete="address-level2" placeholder="e.g. Garden City, Nairobi" {...register('location', { maxLength: { value: 120, message: 'Location must be 120 characters or fewer' } })} className={inputClass} />
-              {errors.location && <p className="mt-1 text-xs text-red-500">{errors.location.message}</p>}
+              {errors.location && <p className="mt-1 text-xs text-critical">{errors.location.message}</p>}
             </div>
           </div>
 
@@ -113,12 +113,12 @@ export default function Enrollment() {
             <div>
               <label htmlFor="email" className="mb-2 block text-sm font-medium text-ink">Email *</label>
               <input id="email" type="email" autoComplete="email" {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Enter a valid email address' }, maxLength: { value: 100, message: 'Email must be 100 characters or fewer' } })} className={inputClass} />
-              {errors.email && <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>}
+              {errors.email && <p className="mt-1 text-xs text-critical">{errors.email.message}</p>}
             </div>
             <div>
               <label htmlFor="phone" className="mb-2 block text-sm font-medium text-ink">Phone</label>
               <input id="phone" {...register('phone', { pattern: { value: /^[0-9+()\s-]{6,20}$/, message: 'Enter a valid phone number' }, maxLength: { value: 20, message: 'Phone must be 20 characters or fewer' } })} className={inputClass} />
-              {errors.phone && <p className="mt-1 text-xs text-red-500">{errors.phone.message}</p>}
+              {errors.phone && <p className="mt-1 text-xs text-critical">{errors.phone.message}</p>}
             </div>
           </div>
 
@@ -126,7 +126,7 @@ export default function Enrollment() {
             <div>
               <label htmlFor="currentSchool" className="mb-2 block text-sm font-medium text-ink">Current school <span className="font-normal text-ink-muted/60">(optional)</span></label>
               <input id="currentSchool" {...register('currentSchool', { maxLength: { value: 160, message: 'School name must be 160 characters or fewer' } })} className={inputClass} />
-              {errors.currentSchool && <p className="mt-1 text-xs text-red-500">{errors.currentSchool.message}</p>}
+              {errors.currentSchool && <p className="mt-1 text-xs text-critical">{errors.currentSchool.message}</p>}
             </div>
             <div>
               <label htmlFor="curriculum" className="mb-2 block text-sm font-medium text-ink">Current curriculum <span className="font-normal text-ink-muted/60">(optional)</span></label>
@@ -141,12 +141,12 @@ export default function Enrollment() {
             <div>
               <label htmlFor="gradeClass" className="mb-2 block text-sm font-medium text-ink">Grade or class <span className="font-normal text-ink-muted/60">(optional)</span></label>
               <input id="gradeClass" placeholder="e.g. Grade 5 or Year 10" {...register('gradeClass', { maxLength: { value: 80, message: 'Grade or class must be 80 characters or fewer' } })} className={inputClass} />
-              {errors.gradeClass && <p className="mt-1 text-xs text-red-500">{errors.gradeClass.message}</p>}
+              {errors.gradeClass && <p className="mt-1 text-xs text-critical">{errors.gradeClass.message}</p>}
             </div>
             <div>
               <label htmlFor="subjects" className="mb-2 block text-sm font-medium text-ink">Subjects or interests <span className="font-normal text-ink-muted/60">(optional)</span></label>
               <input id="subjects" placeholder="e.g. Maths, French, chess" {...register('subjects', { maxLength: { value: 500, message: 'Please keep this under 500 characters' } })} className={inputClass} />
-              {errors.subjects && <p className="mt-1 text-xs text-red-500">{errors.subjects.message}</p>}
+              {errors.subjects && <p className="mt-1 text-xs text-critical">{errors.subjects.message}</p>}
             </div>
           </div>
 
@@ -170,7 +170,7 @@ export default function Enrollment() {
           <div>
             <label htmlFor="learningNeeds" className="mb-2 block text-sm font-medium text-ink">What support would help this learner? <span className="font-normal text-ink-muted/60">(optional)</span></label>
             <textarea id="learningNeeds" rows={3} {...register('learningNeeds', { maxLength: { value: 2000, message: 'Please keep this under 2,000 characters' } })} className={`${inputClass} resize-none`} placeholder="Share learning goals, strengths, or challenges. Please do not include medical or diagnostic records here." />
-            {errors.learningNeeds && <p className="mt-1 text-xs text-red-500">{errors.learningNeeds.message}</p>}
+            {errors.learningNeeds && <p className="mt-1 text-xs text-critical">{errors.learningNeeds.message}</p>}
           </div>
 
           <div className="grid gap-6 md:grid-cols-2">
@@ -189,7 +189,7 @@ export default function Enrollment() {
                 <option value="Learner Discovery & Consultancy">Learner Discovery & Consultancy</option>
                 <option value="Other / not sure">Other / not sure</option>
               </select>
-              {errors.programme && <p className="mt-1 text-xs text-red-500">{errors.programme.message}</p>}
+              {errors.programme && <p className="mt-1 text-xs text-critical">{errors.programme.message}</p>}
             </div>
             <div>
               <label htmlFor="ageGroup" className="mb-2 block text-sm font-medium text-ink">Learner age group *</label>
@@ -199,21 +199,21 @@ export default function Enrollment() {
                 <option value="teenager">Teenager</option>
                 <option value="adult">Adult</option>
               </select>
-              {errors.ageGroup && <p className="mt-1 text-xs text-red-500">{errors.ageGroup.message}</p>}
+              {errors.ageGroup && <p className="mt-1 text-xs text-critical">{errors.ageGroup.message}</p>}
             </div>
           </div>
 
           <div>
             <label htmlFor="notes" className="mb-2 block text-sm font-medium text-ink">Additional information</label>
             <textarea id="notes" rows={5} {...register('notes', { maxLength: { value: 2000, message: 'Notes must be 2,000 characters or fewer' } })} className={`${inputClass} resize-none`} placeholder="Tell us about learning goals, preferred schedule, or support needs..." />
-            {errors.notes && <p className="mt-1 text-xs text-red-500">{errors.notes.message}</p>}
+            {errors.notes && <p className="mt-1 text-xs text-critical">{errors.notes.message}</p>}
           </div>
 
           <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-surface-sunk p-4 text-sm text-ink-muted">
             <input type="checkbox" {...register('contactConsent', { required: 'Please confirm that Axis may contact you' })} className="mt-0.5 h-4 w-4 rounded border-line-strong text-gold-500 focus:ring-gold-500" />
             <span>I confirm that I am the parent, guardian, or adult learner, and I agree that Axis Learning may contact me about this enquiry. Read our <Link to="/privacy" className="font-medium text-ink underline">privacy approach</Link>.</span>
           </label>
-          {errors.contactConsent && <p className="text-xs text-red-500">{errors.contactConsent.message}</p>}
+          {errors.contactConsent && <p className="text-xs text-critical">{errors.contactConsent.message}</p>}
 
           <button type="submit" disabled={isSubmitting} className="btn-primary inline-flex items-center gap-2 disabled:cursor-not-allowed disabled:opacity-50">
             {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}

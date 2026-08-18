@@ -14,15 +14,15 @@ import type { Enrollment, PipelineStage, PipelineSummary } from '../types'
 const ACTIVE_STAGES = PIPELINE_STAGES.filter((stage) => stage !== 'Lost')
 
 const stageTone: Record<PipelineStage, string> = {
-  'New Enquiry': 'bg-blue-50 text-blue-800 border-blue-200',
-  Contacted: 'bg-sky-50 text-sky-800 border-sky-200',
-  'Consultation Booked': 'bg-indigo-50 text-indigo-800 border-indigo-200',
-  'Consultation Completed': 'bg-violet-50 text-violet-800 border-violet-200',
-  'Proposal Sent': 'bg-amber-50 text-amber-800 border-amber-200',
-  'Awaiting Decision': 'bg-orange-50 text-orange-800 border-orange-200',
-  Enrolled: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  'Active Learner': 'bg-green-50 text-green-800 border-green-200',
-  Lost: 'bg-rose-50 text-rose-800 border-rose-200',
+  'New Enquiry': 'bg-tint-blue text-info border-blue-200',
+  Contacted: 'bg-tint-sky text-sky-800 border-sky-200',
+  'Consultation Booked': 'bg-tint-indigo text-indigo-800 border-indigo-200',
+  'Consultation Completed': 'bg-tint-violet text-violet-800 border-violet-200',
+  'Proposal Sent': 'bg-tint-amber text-warning border-line-warning',
+  'Awaiting Decision': 'bg-tint-orange text-orange-800 border-orange-200',
+  Enrolled: 'bg-tint-emerald text-positive border-line-positive',
+  'Active Learner': 'bg-tint-positive text-positive border-line-positive',
+  Lost: 'bg-tint-rose text-critical border-line-critical',
 }
 
 function daysSince(iso?: string) {
@@ -112,7 +112,7 @@ export default function PipelineBoard() {
 
   if (error) {
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-red-200 bg-red-50 p-6 text-sm text-red-700">
+      <div className="flex items-center gap-3 rounded-xl border border-line-critical bg-tint-critical p-6 text-sm text-critical">
         <AlertCircle className="h-5 w-5 flex-shrink-0" />
         {error}
       </div>
@@ -134,13 +134,13 @@ export default function PipelineBoard() {
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
               <TrendingUp className="h-4 w-4" /> Enrolled
             </div>
-            <p className="mt-2 text-3xl font-semibold tabular-nums text-emerald-700">{summary.totals.enrolled}</p>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-positive">{summary.totals.enrolled}</p>
           </div>
           <div className="rounded-xl border border-line bg-surface p-5">
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
               <TrendingDown className="h-4 w-4" /> Lost
             </div>
-            <p className="mt-2 text-3xl font-semibold tabular-nums text-rose-700">{summary.totals.lost}</p>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-critical">{summary.totals.lost}</p>
           </div>
           <div className="rounded-xl border border-line bg-surface p-5">
             <div className="text-xs font-semibold uppercase tracking-wide text-ink-faint">Conversion</div>
@@ -225,7 +225,7 @@ export default function PipelineBoard() {
                     <span
                       className={`text-xs tabular-nums ${
                         stalled >= 14 && enrollment.pipelineStage !== 'Active Learner' && enrollment.pipelineStage !== 'Lost'
-                          ? 'font-semibold text-rose-600'
+                          ? 'font-semibold text-critical'
                           : 'text-ink-faint'
                       }`}
                     >

@@ -86,7 +86,7 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
           <Loader2 className="h-5 w-5 animate-spin text-gold-500" />
         </div>
       ) : error ? (
-        <p className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p>
+        <p className="rounded-lg border border-line-critical bg-tint-critical p-4 text-sm text-critical">{error}</p>
       ) : (
         <>
           <div className="max-h-96 space-y-3 overflow-y-auto pr-1">

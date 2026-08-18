@@ -113,7 +113,7 @@ export default function Consultation() {
       <section className="bg-surface-sunk px-4 py-16 sm:px-6 lg:px-8">
         {submitted ? (
           <div className="mx-auto max-w-2xl rounded-2xl bg-surface p-10 text-center shadow-sm">
-            <CheckCircle className="mx-auto mb-5 h-14 w-14 text-emerald-500" />
+            <CheckCircle className="mx-auto mb-5 h-14 w-14 text-positive" />
             <h2 className="text-2xl font-semibold text-ink">Thank you — we have your request</h2>
             <p className="mx-auto mt-4 max-w-md leading-relaxed text-ink-muted">
               An Axis education consultant will contact you to confirm a time, normally within one
@@ -135,7 +135,7 @@ export default function Consultation() {
             className="mx-auto max-w-2xl space-y-6 rounded-2xl bg-surface p-8 shadow-sm md:p-10"
           >
             {submitError && (
-              <div role="alert" className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div role="alert" className="flex items-start gap-3 rounded-lg border border-line-critical bg-tint-critical px-4 py-3 text-sm text-critical">
                 <AlertCircle className="mt-0.5 h-5 w-5 shrink-0" />
                 <span>{submitError}</span>
               </div>
@@ -147,7 +147,7 @@ export default function Consultation() {
                   Your name *
                 </label>
                 <input id="parentName" autoComplete="name" {...register('parentName', { required: 'Please tell us your name' })} className={inputClass} />
-                {errors.parentName && <p className="mt-1 text-xs text-red-600">{errors.parentName.message}</p>}
+                {errors.parentName && <p className="mt-1 text-xs text-critical">{errors.parentName.message}</p>}
               </div>
               <div>
                 <label htmlFor="phone" className="mb-2 block text-sm font-medium text-ink">
@@ -171,7 +171,7 @@ export default function Consultation() {
                 })}
                 className={inputClass}
               />
-              {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
+              {errors.email && <p className="mt-1 text-xs text-critical">{errors.email.message}</p>}
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
@@ -200,7 +200,7 @@ export default function Consultation() {
                 className={`${inputClass} resize-none`}
                 placeholder="In your own words — what is going well, what is not, or what you are hoping to change. There is no wrong answer here."
               />
-              {errors.notes && <p className="mt-1 text-xs text-red-600">{errors.notes.message}</p>}
+              {errors.notes && <p className="mt-1 text-xs text-critical">{errors.notes.message}</p>}
             </div>
 
             <div className="rounded-xl bg-surface-sunk p-5">
@@ -246,7 +246,7 @@ export default function Consultation() {
                 anyone else — see our <Link to="/privacy" className="font-medium text-gold-700 underline">privacy and child safety</Link> page.
               </span>
             </label>
-            {errors.contactConsent && <p className="text-xs text-red-600">{errors.contactConsent.message}</p>}
+            {errors.contactConsent && <p className="text-xs text-critical">{errors.contactConsent.message}</p>}
 
             <button
               type="submit"
