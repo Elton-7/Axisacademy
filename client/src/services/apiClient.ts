@@ -43,6 +43,9 @@ import {
   PortalOverview,
   PortalLearnerRecord,
   PortalSession,
+  AdminLearner,
+  AssignableUser,
+  LearnerAssignment,
   PortalAssessment,
   SessionStatus,
   AssessmentType,
@@ -443,6 +446,65 @@ export const portalApi = {
     assessedOn?: string
   }) {
     const { data } = await api.post<ApiResponse<PortalAssessment>>('/portal/assessments', payload)
+    return unwrap(data)
+  },
+}
+
+/** Learner administration (brief §30). Staff only. */
+export const learnersApi = {
+  async getAll(params?: { search?: string }) {
+    const { data } = await api.get<ApiResponse<AdminLearner[]>>('/learners', { params })
+    return unwrap(data)
+  },
+
+  async getAssignableUsers(role: 'student' | 'tutor') {
+    const { data } = await api.get<ApiResponse<AssignableUser[]>>('/learners/assignable-users', {
+      params: { role },
+    })
+    return unwrap(data)
+  },
+
+  async create(payload: {
+    name: string
+    parentUserId: number
+    programme?: string
+    curriculum?: string
+    gradeClass?: string
+    learningModel?: string | null
+    supportNotes?: string
+  }) {
+    const { data } = await api.post<ApiResponse<AdminLearner>>('/learners', payload)
+    return unwrap(data)
+  },
+
+  async update(id: number, payload: Partial<Omit<AdminLearner, 'id' | 'createdAt'>>) {
+    const { data } = await api.put<ApiResponse<AdminLearner>>(`/learners/${id}`, payload)
+    return unwrap(data)
+  },
+
+  async assignEducator(learnerId: number, educatorUserId: number, subject?: string) {
+    const { data } = await api.post<ApiResponse<LearnerAssignment>>(
+      `/learners/${learnerId}/educators`,
+      { educatorUserId, subject }
+    )
+    return unwrap(data)
+  },
+
+  async endAssignment(learnerId: number, assignmentId: number) {
+    await api.delete(`/learners/${learnerId}/educators/${assignmentId}`)
+  },
+
+  async scheduleSession(
+    learnerId: number,
+    payload: {
+      subject: string
+      scheduledFor: string
+      durationMinutes?: number
+      deliveryMode?: string | null
+      educatorUserId?: number | null
+    }
+  ) {
+    const { data } = await api.post<ApiResponse<PortalSession>>(`/learners/${learnerId}/sessions`, payload)
     return unwrap(data)
   },
 }

@@ -53,6 +53,7 @@ app.use('/api/stats', require('./routes/stats'))
 app.use('/api/newsletter', require('./routes/newsletter'))
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/portal', require('./routes/portal'))
+app.use('/api/learners', require('./routes/learners'))
 app.use('/api/audit', require('./routes/audit'))
 
 // 404 handler

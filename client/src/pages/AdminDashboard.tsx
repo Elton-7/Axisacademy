@@ -3,11 +3,12 @@ import { motion } from 'framer-motion'
 import { Users, MessageSquare, TrendingUp, Mail, Phone, Calendar, Search, Filter, Download, LogOut, RefreshCw, X, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
 import PipelineBoard from '../components/PipelineBoard'
+import LearnerAdmin from '../components/LearnerAdmin'
 import { auditApi, authApi, contactsApi, enrollmentsApi, newsletterApi, statsApi, galleryApi, resourcesApi, partnersApi, educatorsApi, eventsApi, faqsApi, locationsApi } from '../services/apiClient'
 import type { AuditLog, Contact, DashboardStats, Enrollment, Newsletter, GalleryItem, Resource, Partner, Educator, Event, FAQ, Location, GalleryType, GalleryCategory, ResourceCategory, PartnerCategory, EducatorCategory, EventCategory, EventStatus, FAQCategory, LocationType } from '../types'
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pipeline' | 'gallery' | 'resources' | 'partners' | 'educators' | 'events' | 'faqs' | 'locations'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pipeline' | 'learners' | 'gallery' | 'resources' | 'partners' | 'educators' | 'events' | 'faqs' | 'locations'>('dashboard')
   
   // Dashboard state
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -744,7 +745,7 @@ export default function AdminDashboard() {
         {/* Tab Navigation */}
         <div className="bg-white rounded-xl border border-gray-100 mb-6 overflow-hidden">
           <div className="flex border-b border-gray-100 overflow-x-auto">
-            {(['dashboard', 'pipeline', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations'] as const).map((tab) => (
+            {(['dashboard', 'pipeline', 'learners', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -824,6 +825,9 @@ export default function AdminDashboard() {
 
         {/* Pipeline Tab — brief §31 */}
         {activeTab === 'pipeline' && <PipelineBoard />}
+
+        {/* Learners Tab — brief §30 */}
+        {activeTab === 'learners' && <LearnerAdmin />}
 
         {/* Gallery Tab */}
         {activeTab === 'gallery' && (

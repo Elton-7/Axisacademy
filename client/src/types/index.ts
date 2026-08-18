@@ -182,6 +182,38 @@ export interface PortalOverview {
   messages: Array<{ id: number; subject: string; preview: string; createdAt: string }>
 }
 
+/** Administration views of a learner (brief §30). */
+export interface AssignableUser {
+  id: number
+  name: string
+  email: string
+  role: 'student' | 'tutor'
+}
+
+export interface LearnerAssignment {
+  id: number
+  learnerId: number
+  educatorUserId: number
+  subject?: string | null
+  isActive: boolean
+  educator?: AssignableUser
+}
+
+export interface AdminLearner {
+  id: number
+  name: string
+  parentUserId: number
+  programme?: string | null
+  curriculum?: string | null
+  gradeClass?: string | null
+  learningModel?: 'online' | 'home-based' | 'centre-based' | 'blended' | null
+  supportNotes?: string | null
+  isActive: boolean
+  createdAt: string
+  parent?: AssignableUser
+  assignments?: LearnerAssignment[]
+}
+
 export interface PortalLearnerRecord {
   learner: Omit<PortalLearner, 'attendance'>
   attendance: AttendanceSummary
