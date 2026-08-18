@@ -479,7 +479,7 @@
 
     <h3>Proof &amp; content</h3>
     <div class="ledger">
-      <div class="row"><span class="ref">§19</span><span class="what"><b>Our activities</b><span>The brief explicitly rejects a stock-photo website. The hero and resources pages currently run on Unsplash imagery.</span></span><span class="chip c-partial">Partial</span></div>
+      <div class="row"><span class="ref">§19</span><span class="what"><b>Our activities</b><span>All stock photography is gone: the hero collage and the resources fallback were Unsplash images of nobody connected to Axis. The layouts are sized to take real photographs the moment they arrive, which is now the single highest-impact thing Axis can supply. <span class="new-flag">latest</span></span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§20</span><span class="what"><b>Photo &amp; video gallery</b><span>Deliberately left unseeded — §19 rejects a stock-photo site, so placeholder images would be worse than none. The empty state now explains that real, consented media is being collected. Upload flow and consent controls still to build.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§21</span><span class="what"><b>Testimonials</b><span>Model, admin management and homepage display all work. Content is placeholder — and the brief is clear that generic testimonials defeat the purpose.</span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§22</span><span class="what"><b>Partnerships</b><span>Full partner model with logos, links and partnership nature.</span></span><span class="chip c-built">Built</span></div>
@@ -512,7 +512,7 @@
       <div class="row"><span class="ref">§37</span><span class="what"><b>Materials from Axis</b><span>Blocked on the client. Nothing from this list has been supplied yet.</span></span><span class="chip c-na">Awaiting</span></div>
       <div class="row"><span class="ref">§38</span><span class="what"><b>Child safety, privacy &amp; data protection</b><span>Role-based access, hashed passwords, rate limiting, audit logging and a privacy page, plus consent provenance on media — who confirmed it, when, and against which signed release, required before anything can be published. Backups and the retention schedule are still open. <span class="new-flag">phase 4</span></span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§39</span><span class="what"><b>Ownership of the platform</b><span>Commercial matter — see the recommendation below on account ownership.</span></span><span class="chip c-na">Process</span></div>
-      <div class="row"><span class="ref">§40</span><span class="what"><b>Visual character</b><span>Cards, icons, clean type, strong CTAs and subtle animation are all there. The imagery is not yet real.</span></span><span class="chip c-partial">Partial</span></div>
+      <div class="row"><span class="ref">§40</span><span class="what"><b>Visual character</b><span>Cards, icons, clean type, strong CTAs and subtle animation, now with a full light and dark theme driven by design tokens rather than per-component variants. Stock photography has been removed rather than replaced — §19 rejects it, so the hero gives that space to what Axis actually offers until real images arrive. <span class="new-flag">latest</span></span></span><span class="chip c-partial">Partial</span></div>
       <div class="row"><span class="ref">§41</span><span class="what"><b>The parent experience</b><span>Narrative objective, measured by the funnel above.</span></span><span class="chip c-na">N/A</span></div>
       <div class="row"><span class="ref">§42</span><span class="what"><b>The bigger Axis vision</b><span>Narrative section.</span></span><span class="chip c-na">N/A</span></div>
       <div class="row"><span class="ref">§43</span><span class="what"><b>Developer recommendations</b><span>Answered by this document.</span></span><span class="chip c-built">Built</span></div>
@@ -593,6 +593,18 @@
           </ul>
         </div>
       </div>
+      <div class="phase">
+        <span class="phase-id">Phase 6<em>Done</em></span>
+        <div>
+          <h4>Truth, polish and theming</h4>
+          <ul>
+            <li>Removed every unauthorised partnership claim, fabricated educator, invented testimonial and imaginary learning centre</li>
+            <li>Removed stock photography and the claims the site contradicted itself on</li>
+            <li>Repaired the navigation, heading outline, mobile overflow and sixteen links that reloaded the whole app</li>
+            <li>Light and dark theme across every page, driven by tokens, verified for contrast in both</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -616,6 +628,20 @@
           so the admin and portal fallback still mounts cleanly. The remaining limit is that API-driven pages
           (Team, Events, Locations, Resources, Gallery) prerender their loading state rather than live
           content: their metadata is correct, but a content publish needs a rebuild to reach the static HTML.
+        </p>
+      </div>
+      <div class="finding">
+        <h4>The site published claims that were not ours to make <span class="sev s-high">Removed</span></h4>
+        <p>
+          An audit against the brief's own words found invented content presented as fact. Partnerships
+          were claimed with ten real organisations — Google for Education, Microsoft Education, the
+          British Council, Safaricom, the Kenya Red Cross, and the government bodies KICD and KNEC —
+          none of them authorised, against §22. Nine educators were fabricated, with doctorates and
+          working @axislearning.com addresses that do not exist. Testimonials were attributed to
+          "Parent" and "Learner", the exact failure §21 names. Twenty learning centres were invented,
+          which §15 warns against directly. The hero advertised "24/7 Flexible scheduling" while the
+          contact page stated Mon-Sat 8am-6pm. All of it is removed; those pages now say plainly that
+          the real content is being collected.
         </p>
       </div>
       <div class="finding">
@@ -726,8 +752,11 @@
 
   <footer>
     Prepared against the Axis Learning Website Development Brief by Shadrack Mutonga Otiko,
-    Axis Learning / Guraxis Limited. Status reflects the repository as inspected on 17 August 2026;
-    "Built" means verified present and working, not that final content has been supplied.
+    Axis Learning / Guraxis Limited. Status reflects the repository as at 18 August 2026.
+    "Built" means verified present and working — in most cases against a live PostgreSQL
+    database — not that final content has been supplied. Payments are deferred by Axis, and
+    the pages that read as empty are empty on purpose: invented partners, educators and
+    testimonials were removed rather than improved.
   </footer>
 
 </div>
