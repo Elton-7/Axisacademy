@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { Op } = require('sequelize')
-const { Learner, LearnerEducator, Session, User } = require('../models')
+const { Learner, LearnerEducator, Session, User, EducatorVetting } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
 
@@ -158,6 +158,25 @@ router.post('/:id/educators', ...staffOnly, async (req, res) => {
       return res.status(400).json({ success: false, error: 'The educator must be an existing educator account' })
     }
 
+    /**
+     * Vetting gate (brief §38). Assignment is what gives an educator access to a
+     * child's record and puts them in front of that child, so it is refused
+     * unless clearance is current. Enforced here rather than in the admin screen
+     * because the screen is not the only way to reach this endpoint.
+     */
+    const vetting = await EducatorVetting.findOne({ where: { educatorUserId } })
+    if (!vetting || !vetting.isCurrentlyCleared()) {
+      const reason = !vetting
+        ? 'has no vetting record'
+        : vetting.status !== 'Cleared'
+          ? `is marked ${vetting.status.toLowerCase()}`
+          : 'has a certificate of good conduct that has expired'
+      return res.status(422).json({
+        success: false,
+        error: `${educator.name} ${reason}. Complete vetting before assigning them to a learner.`,
+      })
+    }
+
     // Re-activate rather than duplicate when a previous assignment is restored.
     const [assignment, created] = await LearnerEducator.findOrCreate({
       where: { learnerId: learner.id, educatorUserId, subject: subject || null },
@@ -239,6 +258,123 @@ router.post('/:id/sessions', ...staffOnly, async (req, res) => {
   } catch (error) {
     console.error('Failed to schedule session:', error)
     res.status(500).json({ success: false, error: 'Failed to schedule session' })
+  }
+})
+
+/**
+ * Vetting administration (brief §38).
+ *
+ * Kept alongside learner administration because the two are inseparable: this
+ * is the record that decides who may be put in front of a child.
+ */
+router.get('/vetting/all', ...staffOnly, async (req, res) => {
+  try {
+    const educators = await User.findAll({
+      where: { role: 'tutor' },
+      attributes: USER_FIELDS,
+      include: [{ model: EducatorVetting, as: 'vetting', required: false }],
+      order: [['name', 'ASC']],
+    })
+
+    const today = new Date().toISOString().slice(0, 10)
+    const soon = new Date(Date.now() + 60 * 86_400_000).toISOString().slice(0, 10)
+
+    res.json({
+      success: true,
+      data: educators.map((educator) => {
+        const v = educator.vetting
+        const expiry = v?.goodConductExpiresOn || null
+        return {
+          educatorUserId: educator.id,
+          name: educator.name,
+          email: educator.email,
+          status: v?.status || 'Not started',
+          goodConductNumber: v?.goodConductNumber || null,
+          goodConductExpiresOn: expiry,
+          tscNumber: v?.tscNumber || null,
+          identityVerifiedOn: v?.identityVerifiedOn || null,
+          referencesCheckedOn: v?.referencesCheckedOn || null,
+          cleared: v ? v.isCurrentlyCleared() : false,
+          // Surfaced so Axis can renew before an educator is blocked mid-term.
+          expired: Boolean(expiry && expiry < today),
+          expiringSoon: Boolean(expiry && expiry >= today && expiry <= soon),
+        }
+      }),
+    })
+  } catch (error) {
+    console.error('Failed to list vetting records:', error)
+    res.status(500).json({ success: false, error: 'Failed to list vetting records' })
+  }
+})
+
+router.put('/vetting/:educatorUserId', ...staffOnly, async (req, res) => {
+  try {
+    const educator = await User.findByPk(req.params.educatorUserId)
+    if (!educator || educator.role !== 'tutor') {
+      return res.status(404).json({ success: false, error: 'Educator not found' })
+    }
+
+    const {
+      status, goodConductNumber, goodConductIssuedOn, goodConductExpiresOn,
+      tscNumber, identityVerifiedOn, referencesCheckedOn, referencesNote, notes,
+    } = req.body
+
+    // Clearing someone is the decision that matters, so it carries its own
+    // evidence requirements rather than being a free-text status change.
+    if (status === 'Cleared') {
+      if (!String(goodConductNumber || '').trim()) {
+        return res.status(400).json({ success: false, error: 'A certificate of good conduct number is required to clear an educator' })
+      }
+      if (!goodConductExpiresOn) {
+        return res.status(400).json({ success: false, error: 'An expiry date is required, so clearance cannot silently last forever' })
+      }
+      if (new Date(goodConductExpiresOn) < new Date(new Date().toISOString().slice(0, 10))) {
+        return res.status(400).json({ success: false, error: 'That certificate has already expired' })
+      }
+      if (!referencesCheckedOn) {
+        return res.status(400).json({ success: false, error: 'Record when references were checked before clearing an educator' })
+      }
+    }
+
+    const [vetting] = await EducatorVetting.findOrCreate({
+      where: { educatorUserId: educator.id },
+      defaults: { educatorUserId: educator.id },
+    })
+
+    const wasCleared = vetting.isCurrentlyCleared()
+
+    await vetting.update({
+      ...(status !== undefined && { status }),
+      ...(goodConductNumber !== undefined && { goodConductNumber }),
+      ...(goodConductIssuedOn !== undefined && { goodConductIssuedOn: goodConductIssuedOn || null }),
+      ...(goodConductExpiresOn !== undefined && { goodConductExpiresOn: goodConductExpiresOn || null }),
+      ...(tscNumber !== undefined && { tscNumber }),
+      ...(identityVerifiedOn !== undefined && { identityVerifiedOn: identityVerifiedOn || null }),
+      ...(referencesCheckedOn !== undefined && { referencesCheckedOn: referencesCheckedOn || null }),
+      ...(referencesNote !== undefined && { referencesNote }),
+      ...(notes !== undefined && { notes }),
+      ...(status === 'Cleared' && { clearedByUserId: req.user.userId, clearedAt: new Date() }),
+    })
+
+    /**
+     * Withdrawing clearance must take effect immediately. An educator who is
+     * suspended or rejected loses every active assignment, and with it their
+     * access to those learners' records and conversations.
+     */
+    if (wasCleared && !vetting.isCurrentlyCleared()) {
+      const [ended] = await LearnerEducator.update(
+        { isActive: false },
+        { where: { educatorUserId: educator.id, isActive: true } }
+      )
+      await recordAudit(req, 'vetting_withdrawn', 'user', educator.id, { status, assignmentsEnded: ended })
+    } else {
+      await recordAudit(req, 'vetting_updated', 'user', educator.id, { status })
+    }
+
+    res.json({ success: true, data: vetting })
+  } catch (error) {
+    console.error('Failed to update vetting:', error)
+    res.status(500).json({ success: false, error: 'Failed to update vetting' })
   }
 })
 

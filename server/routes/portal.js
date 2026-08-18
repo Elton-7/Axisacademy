@@ -12,6 +12,7 @@ const {
   PortalMessage,
   Message,
   MessageRead,
+  SafeguardingConcern,
 } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
@@ -273,7 +274,7 @@ router.patch('/sessions/:id', requireAuth, requireRole('tutor'), async (req, res
       return res.status(404).json({ success: false, error: 'Session not found' })
     }
 
-    const { status, topicsCovered, lessonNotes, concernFlagged, concernNote } = req.body
+    const { status, topicsCovered, lessonNotes, concernFlagged, concernNote, checkInAt, checkOutAt, adultPresent } = req.body
     const allowedStatuses = ['Scheduled', 'Attended', 'Missed', 'Cancelled']
 
     if (status !== undefined && !allowedStatuses.includes(status)) {
@@ -286,12 +287,46 @@ router.patch('/sessions/:id', requireAuth, requireRole('tutor'), async (req, res
       })
     }
 
+    /**
+     * Home-based safeguarding (brief §38).
+     *
+     * An educator alone with a child in a private home is the highest-risk part
+     * of the service. A home-based session cannot be recorded as attended
+     * without a check-in, a check-out and confirmation that a responsible adult
+     * was present — so the record is made at the time rather than reconstructed
+     * later, and the absence of one is itself visible.
+     */
+    if (status === 'Attended' && session.deliveryMode === 'home-based') {
+      const nextIn = checkInAt ?? session.checkInAt
+      const nextOut = checkOutAt ?? session.checkOutAt
+      const nextAdult = adultPresent ?? session.adultPresent
+
+      if (!nextIn || !nextOut) {
+        return res.status(400).json({
+          success: false,
+          error: 'Record your arrival and departure times before marking a home-based session attended',
+        })
+      }
+      if (new Date(nextOut) < new Date(nextIn)) {
+        return res.status(400).json({ success: false, error: 'Departure cannot be before arrival' })
+      }
+      if (nextAdult !== true) {
+        return res.status(400).json({
+          success: false,
+          error: 'Confirm that a responsible adult was present, or flag a concern instead',
+        })
+      }
+    }
+
     await session.update({
       ...(status !== undefined && { status, markedAt: new Date(), markedByUserId: req.user.userId }),
       ...(topicsCovered !== undefined && { topicsCovered }),
       ...(lessonNotes !== undefined && { lessonNotes }),
       ...(concernFlagged !== undefined && { concernFlagged }),
       ...(concernNote !== undefined && { concernNote }),
+      ...(checkInAt !== undefined && { checkInAt: checkInAt || null }),
+      ...(checkOutAt !== undefined && { checkOutAt: checkOutAt || null }),
+      ...(adultPresent !== undefined && { adultPresent }),
     })
 
     if (concernFlagged === true) {
@@ -424,6 +459,109 @@ router.post('/learners/:id/messages', requireAuth, requireRole('student', 'tutor
   } catch (error) {
     console.error('Failed to send the message:', error)
     res.status(500).json({ success: false, error: 'Failed to send the message' })
+  }
+})
+
+/**
+ * Raising a safeguarding concern (brief §38).
+ *
+ * Deliberately not the message thread. Someone worried about a child's safety
+ * should not have to write it where the person they are worried about can read
+ * it, so concerns go only to Axis staff. A parent may raise one about their own
+ * learner; an educator about a learner they are assigned to.
+ */
+router.post('/concerns', requireAuth, requireRole('student', 'tutor'), async (req, res) => {
+  try {
+    const { learnerId, sessionId, category, detail } = req.body
+
+    if (!String(detail || '').trim()) {
+      return res.status(400).json({ success: false, error: 'Please describe what you are concerned about' })
+    }
+    // A concern about a learner is only accepted from someone connected to them.
+    if (learnerId && !(await assertCanReachLearner(req.user, learnerId))) {
+      return res.status(404).json({ success: false, error: 'Learner not found' })
+    }
+
+    const concern = await SafeguardingConcern.create({
+      learnerId: learnerId || null,
+      sessionId: sessionId || null,
+      raisedByUserId: req.user.userId,
+      raisedByRole: req.user.role,
+      category: category || 'Other',
+      detail: String(detail).trim(),
+      status: 'Open',
+    })
+
+    await recordAudit(req, 'safeguarding_concern_raised', 'learner', learnerId || null, {
+      concernId: concern.id,
+      category: concern.category,
+    })
+
+    res.status(201).json({
+      success: true,
+      // Deliberately minimal: the person raising it does not need the record
+      // back, only the reassurance that it reached Axis.
+      data: { id: concern.id, status: concern.status, createdAt: concern.createdAt },
+    })
+  } catch (error) {
+    console.error('Failed to record the concern:', error)
+    res.status(500).json({ success: false, error: 'Failed to record the concern' })
+  }
+})
+
+/** Staff view of concerns. Educators and parents can never read this. */
+router.get('/concerns', requireAuth, requireRole('admin', 'staff'), async (req, res) => {
+  try {
+    const concerns = await SafeguardingConcern.findAll({
+      include: [
+        { model: Learner, as: 'learner', attributes: ['id', 'name'], required: false },
+        { model: User, as: 'raisedBy', attributes: ['id', 'name', 'role'], required: false },
+      ],
+      order: [['createdAt', 'DESC']],
+      limit: 200,
+    })
+    res.json({ success: true, data: concerns })
+  } catch (error) {
+    console.error('Failed to load concerns:', error)
+    res.status(500).json({ success: false, error: 'Failed to load concerns' })
+  }
+})
+
+router.patch('/concerns/:id', requireAuth, requireRole('admin', 'staff'), async (req, res) => {
+  try {
+    const concern = await SafeguardingConcern.findByPk(req.params.id)
+    if (!concern) return res.status(404).json({ success: false, error: 'Concern not found' })
+
+    const { status, outcome } = req.body
+    const allowed = ['Open', 'Acknowledged', 'Under review', 'Resolved', 'Escalated']
+    if (status !== undefined && !allowed.includes(status)) {
+      return res.status(400).json({ success: false, error: 'Invalid status' })
+    }
+    // A concern cannot be closed without a record of what was done about it.
+    if (status === 'Resolved' && !String(outcome ?? concern.outcome ?? '').trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Record what was done before resolving a safeguarding concern',
+      })
+    }
+
+    await concern.update({
+      ...(status !== undefined && { status }),
+      ...(outcome !== undefined && { outcome }),
+      ...(status === 'Acknowledged' && !concern.acknowledgedAt && {
+        acknowledgedAt: new Date(),
+        acknowledgedByUserId: req.user.userId,
+      }),
+      ...(status === 'Resolved' && { resolvedAt: new Date() }),
+    })
+
+    await recordAudit(req, 'safeguarding_concern_updated', 'learner', concern.learnerId, {
+      concernId: concern.id, status,
+    })
+    res.json({ success: true, data: concern })
+  } catch (error) {
+    console.error('Failed to update the concern:', error)
+    res.status(500).json({ success: false, error: 'Failed to update the concern' })
   }
 })
 

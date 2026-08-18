@@ -21,8 +21,10 @@ const Session = require('./Session')
 const Assessment = require('./Assessment')
 const Message = require('./Message')
 const MessageRead = require('./MessageRead')
+const EducatorVetting = require('./EducatorVetting')
+const SafeguardingConcern = require('./SafeguardingConcern')
 
-const models = { Service, Testimonial, Contact, Enrollment, Newsletter, User, AuditLog, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner, Learner, LearnerEducator, Session, Assessment, Message, MessageRead }
+const models = { Service, Testimonial, Contact, Enrollment, Newsletter, User, AuditLog, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner, Learner, LearnerEducator, Session, Assessment, Message, MessageRead, EducatorVetting, SafeguardingConcern }
 
 /**
  * Portal associations. Every one of these is what keeps the portals safe: reads
@@ -49,6 +51,12 @@ Assessment.belongsTo(User, { foreignKey: 'educatorUserId', as: 'educator' })
 Learner.hasMany(Message, { foreignKey: 'learnerId', as: 'messages' })
 Message.belongsTo(Learner, { foreignKey: 'learnerId', as: 'learner' })
 Message.belongsTo(User, { foreignKey: 'senderUserId', as: 'sender' })
+
+User.hasOne(EducatorVetting, { foreignKey: 'educatorUserId', as: 'vetting' })
+EducatorVetting.belongsTo(User, { foreignKey: 'educatorUserId', as: 'educator' })
+
+SafeguardingConcern.belongsTo(Learner, { foreignKey: 'learnerId', as: 'learner' })
+SafeguardingConcern.belongsTo(User, { foreignKey: 'raisedByUserId', as: 'raisedBy' })
 
 // Sync all models
 const syncDatabase = async () => {

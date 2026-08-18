@@ -1,4 +1,4 @@
-import { ShieldCheck, LockKeyhole, UsersRound, Image } from 'lucide-react'
+import { ShieldCheck, LockKeyhole, UsersRound, Image, BadgeCheck, HomeIcon, Scale, Clock } from 'lucide-react'
 
 const sections = [
   {
@@ -18,8 +18,28 @@ const sections = [
   },
   {
     icon: ShieldCheck,
-    title: 'Future accounts and portals',
-    text: 'Parent, learner, educator, and staff accounts will use role-based access. Families and educators should only be able to view the information relevant to their authorised role.',
+    title: 'Accounts and portals',
+    text: 'Parent, learner, educator and staff accounts use role-based access. A parent can reach only their own learners. An educator can reach only the learners they are currently assigned to, and that access ends the moment the assignment does.',
+  },
+  {
+    icon: BadgeCheck,
+    title: 'How educators are vetted',
+    text: 'An educator cannot be assigned to a learner until vetting is complete and current: a Certificate of Good Conduct with its expiry recorded, identity verified, references checked, and TSC registration where it applies. Clearance is not permanent — when it lapses or is withdrawn, the educator is removed from every learner immediately.',
+  },
+  {
+    icon: HomeIcon,
+    title: 'Home-based sessions',
+    text: 'Where an educator teaches at your home, the session cannot be recorded as attended without an arrival time, a departure time, and confirmation that a responsible adult was present. Any parent, learner or educator can raise a safeguarding concern directly with Axis; those go only to Axis staff and are never visible to educators.',
+  },
+  {
+    icon: Scale,
+    title: 'Your rights over your data',
+    text: 'Guraxis Limited is the data controller for information held about your family. You may ask what we hold about your learner and receive a full copy, ask us to correct it, or ask us to erase it. Contact us and we will action the request. Where you are not satisfied, you may complain to the Office of the Data Protection Commissioner.',
+  },
+  {
+    icon: Clock,
+    title: 'How long we keep information',
+    text: 'We do not keep personal data indefinitely. Enquiries that never become an enrolment, and general website messages, are deleted on a set schedule. Records of who accessed or changed a learner’s information are kept longer, because they are how we stay accountable for that access.',
   },
 ]
 

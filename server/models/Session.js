@@ -82,6 +82,31 @@ const Session = sequelize.define('Session', {
     allowNull: true,
     field: 'concern_note',
   },
+  /**
+   * Home-based safeguarding (brief §38).
+   *
+   * An adult alone with a child in a private home is the highest-risk part of
+   * the service and the brief does not address it. A home-based session cannot
+   * be marked attended without a check-in, a check-out and confirmation that a
+   * responsible adult was present — so the record exists at the time, not
+   * reconstructed afterwards.
+   */
+  checkInAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'check_in_at',
+  },
+  checkOutAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'check_out_at',
+  },
+  adultPresent: {
+    type: DataTypes.BOOLEAN,
+    allowNull: true,
+    field: 'adult_present',
+    comment: 'A responsible adult was present for a home-based session.',
+  },
   markedAt: {
     type: DataTypes.DATE,
     allowNull: true,
