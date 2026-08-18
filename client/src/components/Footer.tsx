@@ -21,9 +21,15 @@ const quickLinks = [
   { href: '/privacy', label: 'Privacy & Child Safety' },
 ]
 
+/**
+ * All three entrances sit together. Leaving the staff one unlinked hid it from
+ * Axis without hiding it from anyone else — the panel is protected by the API
+ * refusing unauthorised requests, not by the absence of a link.
+ */
 const portalLinks = [
-  { href: '/portal/student', label: 'Student Portal' },
-  { href: '/portal/tutor', label: 'Tutor Portal' },
+  { href: '/portal/student', label: 'Parent & Learner Portal' },
+  { href: '/portal/tutor', label: 'Educator Portal' },
+  { href: '/admin/login', label: 'Staff Login' },
 ]
 
 const socialLinks = [
