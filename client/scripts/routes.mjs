@@ -26,6 +26,7 @@ export const staticRoutes = [
   { path: '/partners', priority: '0.6', changefreq: 'monthly' },
   { path: '/faq', priority: '0.7', changefreq: 'monthly' },
   { path: '/contact', priority: '0.8', changefreq: 'monthly' },
+  { path: '/consultation', priority: '0.9', changefreq: 'monthly' },
   { path: '/enroll', priority: '0.9', changefreq: 'monthly' },
   { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
 ]

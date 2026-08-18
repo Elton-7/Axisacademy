@@ -106,14 +106,25 @@ async function send({ subject, heading, fields, footer }) {
 
 function notifyNewEnquiry(enrollment) {
   const adminUrl = SITE_URL ? `${SITE_URL.replace(/\/$/, '')}/admin` : 'the Axis admin dashboard'
+  const isConsultation = enrollment.requestType === 'consultation'
+
+  // A consultation request is time-sensitive in a way a general enquiry is not:
+  // the family has said when they are free, so the subject line says so.
+  const who = enrollment.studentName || enrollment.parentName || 'a family'
 
   return send({
     subject: headerSafe(
-      `New enquiry: ${enrollment.studentName || 'a learner'}${enrollment.programme ? ` — ${enrollment.programme}` : ''}`
+      isConsultation
+        ? `Consultation request: ${who}${enrollment.preferredDays ? ` — prefers ${enrollment.preferredDays}` : ''}`
+        : `New enquiry: ${who}${enrollment.programme ? ` — ${enrollment.programme}` : ''}`
     ),
-    heading: 'New learner enquiry',
-    footer: `Open ${adminUrl} to respond and move this enquiry through the pipeline.`,
+    heading: isConsultation ? 'New consultation request' : 'New learner enquiry',
+    footer: isConsultation
+      ? `Confirm a time with this family, then mark the enquiry as Consultation Booked in ${adminUrl}.`
+      : `Open ${adminUrl} to respond and move this enquiry through the pipeline.`,
     fields: [
+      ['Request', isConsultation ? 'Consultation' : 'Enquiry'],
+      ['Preferred contact', enrollment.preferredChannel],
       ['Learner', enrollment.studentName],
       ['Parent or guardian', enrollment.parentName],
       ['Email', enrollment.email],

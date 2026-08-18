@@ -18,6 +18,7 @@ import {
   CreateContactRequest,
   UpdateContactStatusRequest,
   CreateEnrollmentRequest,
+  CreateConsultationRequest,
   CreateServiceRequest,
   UpdateServiceRequest,
   CreateTestimonialRequest,
@@ -350,6 +351,12 @@ export const enrollmentsApi = {
 
   async create(payload: CreateEnrollmentRequest) {
     const { data } = await api.post<ApiResponse<Enrollment>>('/enrollments', payload)
+    return unwrap(data)
+  },
+
+  /** Short consultation request — lands in the same pipeline, tagged. */
+  async requestConsultation(payload: CreateConsultationRequest) {
+    const { data } = await api.post<ApiResponse<Enrollment>>('/enrollments/consultation', payload)
     return unwrap(data)
   },
 

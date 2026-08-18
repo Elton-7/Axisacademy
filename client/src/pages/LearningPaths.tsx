@@ -146,7 +146,7 @@ export default function LearningPaths() {
               How Learner Discovery works
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/contact" className="btn-secondary">
+            <Link to="/consultation" className="btn-secondary">
               Book a consultation
             </Link>
           </div>

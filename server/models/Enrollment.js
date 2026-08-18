@@ -7,9 +7,15 @@ const Enrollment = sequelize.define('Enrollment', {
     primaryKey: true,
     autoIncrement: true
   },
+  /**
+   * Optional because a consultation request often arrives before the family has
+   * decided what to tell us about the learner — brief §13 is explicit that a
+   * parent should be able to approach Axis without knowing what they need. The
+   * full enquiry form still requires it at the route level.
+   */
   studentName: {
     type: DataTypes.STRING(100),
-    allowNull: false
+    allowNull: true
   },
   parentName: {
     type: DataTypes.STRING(100)
@@ -68,6 +74,23 @@ const Enrollment = sequelize.define('Enrollment', {
   status: {
     type: DataTypes.ENUM('pending', 'approved', 'rejected', 'waitlist'),
     defaultValue: 'pending'
+  },
+  /**
+   * What the family actually asked for. Both land in the same pipeline — a
+   * consultation is the start of the same journey — but they need answering
+   * differently, and Axis needs to be able to tell them apart at a glance.
+   */
+  requestType: {
+    type: DataTypes.ENUM('enquiry', 'consultation'),
+    allowNull: false,
+    defaultValue: 'enquiry',
+    field: 'request_type'
+  },
+  /** How the family would prefer to be reached for the consultation itself. */
+  preferredChannel: {
+    type: DataTypes.ENUM('whatsapp', 'phone', 'email', 'in-person'),
+    allowNull: true,
+    field: 'preferred_channel'
   },
   /**
    * Brief §31 — the client journey, kept separate from `status`, which records

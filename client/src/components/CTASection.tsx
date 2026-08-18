@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { GraduationCap, Phone, MessageCircle } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
-import { contact, telHref, consultationMailto, whatsappHref } from '../content/contact'
+import { contact, telHref, whatsappHref } from '../content/contact'
 
 export default function CTASection() {
   const { ref, isVisible } = useScrollAnimation()
@@ -37,7 +37,7 @@ export default function CTASection() {
             <div className="flex flex-wrap gap-3">
               <a href="/enroll" className="btn-navy">Make an Enquiry</a>
               <a
-                href={consultationMailto()}
+                href="/consultation"
                 className="btn-secondary border-navy text-navy hover:bg-navy hover:text-white"
               >
                 Book a Consultation

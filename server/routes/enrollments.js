@@ -74,6 +74,59 @@ router.post(
   }
 )
 
+/**
+ * A consultation request (brief §3.2, §13).
+ *
+ * Separate from the full enquiry form because it asks for far less: a parent
+ * should be able to ask for a conversation without first knowing which
+ * programme, curriculum or age band applies. Only a name, a way to reach them
+ * and consent are required.
+ *
+ * It lands in the same pipeline as an enquiry — a consultation is the start of
+ * the same journey — tagged so Axis can tell the two apart.
+ */
+router.post(
+  '/consultation',
+  [
+    body('parentName').trim().notEmpty().withMessage('Please tell us your name').isLength({ max: 100 }).withMessage('Name is too long'),
+    body('email').isEmail().withMessage('A valid email is required').normalizeEmail(),
+    body('phone').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 20 }).withMessage('Phone is too long'),
+    body('studentName').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 100 }).withMessage('Learner name is too long'),
+    body('learnerAge').optional({ nullable: true, checkFalsy: true }).isInt({ min: 1, max: 100 }).withMessage('Learner age must be between 1 and 100').toInt(),
+    body('notes').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 2000 }).withMessage('Please keep this under 2,000 characters'),
+    body('preferredDays').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 120 }).withMessage('Preferred days are too long'),
+    body('preferredTimes').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 120 }).withMessage('Preferred times are too long'),
+    body('preferredChannel').optional({ nullable: true, checkFalsy: true }).isIn(['whatsapp', 'phone', 'email', 'in-person']).withMessage('Choose how you would like to be contacted'),
+    body('contactConsent').isBoolean().toBoolean().equals('true').withMessage('Please confirm that Axis may contact you about this request'),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ success: false, errors: errors.array() })
+    }
+
+    try {
+      const enrollment = await Enrollment.create({
+        ...req.body,
+        requestType: 'consultation',
+        // The stage stays New Enquiry until Axis has actually agreed a time.
+        // 'Consultation Booked' should mean a slot is in the diary, not that
+        // somebody asked for one.
+        pipelineStage: 'New Enquiry',
+      })
+
+      notifyNewEnquiry(enrollment).catch((error) =>
+        console.error('Failed to notify of consultation request:', error)
+      )
+
+      res.status(201).json({ success: true, data: enrollment })
+    } catch (error) {
+      console.error('Failed to record consultation request:', error)
+      res.status(500).json({ success: false, error: 'Failed to record consultation request' })
+    }
+  }
+)
+
 // Get enrollment by ID
 router.get('/:id', requireAuth, requireRole('admin', 'staff'), async (req, res) => {
   try {

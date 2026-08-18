@@ -57,6 +57,8 @@ export interface Enrollment {
   contactConsent: boolean
   notes?: string
   status: 'pending' | 'approved' | 'rejected' | 'waitlist'
+  requestType: 'enquiry' | 'consultation'
+  preferredChannel?: 'whatsapp' | 'phone' | 'email' | 'in-person'
   pipelineStage: PipelineStage
   stageChangedAt?: string
   stageNote?: string
@@ -289,6 +291,20 @@ export interface CreateEnrollmentRequest {
   preferredTimes?: string
   contactConsent: boolean
   notes?: string
+}
+
+/** The short consultation form (brief §3.2, §13) — far less than a full enquiry. */
+export interface CreateConsultationRequest {
+  parentName: string
+  email: string
+  phone?: string
+  studentName?: string
+  learnerAge?: number
+  notes?: string
+  preferredDays?: string
+  preferredTimes?: string
+  preferredChannel?: 'whatsapp' | 'phone' | 'email' | 'in-person'
+  contactConsent: boolean
 }
 
 export interface CreateServiceRequest {

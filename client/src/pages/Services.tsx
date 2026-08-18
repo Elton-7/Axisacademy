@@ -98,7 +98,7 @@ export default function Services() {
               <Link to="/services/learner-discovery" className="btn-primary">
                 How Learner Discovery works
               </Link>
-              <Link to="/contact" className="btn-secondary">
+              <Link to="/consultation" className="btn-secondary">
                 Book a consultation
               </Link>
             </div>

@@ -58,7 +58,7 @@ export default function Hero() {
                 <MessageCircle className="h-4 w-4" />
                 Make an Enquiry
               </a>
-              <a href="/contact" className="btn-secondary">
+              <a href="/consultation" className="btn-secondary">
                 <GraduationCap className="h-4 w-4" />
                 Book a Consultation
               </a>

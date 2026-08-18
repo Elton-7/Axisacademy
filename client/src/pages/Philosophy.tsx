@@ -194,7 +194,7 @@ export default function Philosophy() {
               Start with Learner Discovery
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/contact" className="btn-navy border border-white/20 bg-white/10 hover:bg-white/20">
+            <Link to="/consultation" className="btn-navy border border-white/20 bg-white/10 hover:bg-white/20">
               Book a consultation
             </Link>
           </div>

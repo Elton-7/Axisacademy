@@ -68,7 +68,7 @@ export default function PipelineBoard() {
     let note: string | undefined
     if (stage === 'Lost') {
       const reason = window.prompt(
-        `Why was the enquiry for ${enrollment.studentName} lost?\n\nThis is what makes the pipeline worth keeping.`
+        `Why was the enquiry for ${enrollment.studentName || enrollment.parentName || 'this family'} lost?\n\nThis is what makes the pipeline worth keeping.`
       )
       if (reason === null) return
       if (!reason.trim()) {
@@ -92,7 +92,7 @@ export default function PipelineBoard() {
     try {
       await enrollmentsApi.updateStage(enrollment.id, stage, note)
       setSummary(await enrollmentsApi.getPipelineSummary())
-      toast.success(`${enrollment.studentName} moved to ${stage}`)
+      toast.success(`${enrollment.studentName || enrollment.parentName || 'Enquiry'} moved to ${stage}`)
     } catch (err) {
       console.error('Failed to move the enquiry:', err)
       setEnrollments(previous)
@@ -202,10 +202,19 @@ export default function PipelineBoard() {
               return (
                 <div key={enrollment.id} className="flex flex-wrap items-center gap-4 px-6 py-4">
                   <div className="min-w-[12rem] flex-1">
-                    <p className="font-medium text-navy-900">{enrollment.studentName}</p>
+                    <p className="flex items-center gap-2 font-medium text-navy-900">
+                      {/* A consultation request may not name the learner yet. */}
+                      {enrollment.studentName || enrollment.parentName || 'Unnamed enquiry'}
+                      {enrollment.requestType === 'consultation' && (
+                        <span className="rounded-full bg-gold-50 px-2 py-0.5 text-xs font-semibold text-gold-700">
+                          Consultation
+                        </span>
+                      )}
+                    </p>
                     <p className="text-sm text-navy-600/70">
-                      {enrollment.programme}
-                      {enrollment.parentName ? ` · ${enrollment.parentName}` : ''}
+                      {enrollment.programme || 'No programme named'}
+                      {enrollment.parentName && enrollment.studentName ? ` · ${enrollment.parentName}` : ''}
+                      {enrollment.preferredChannel ? ` · prefers ${enrollment.preferredChannel}` : ''}
                     </p>
                     {enrollment.stageNote && (
                       <p className="mt-1 text-xs italic text-navy-500">{enrollment.stageNote}</p>
@@ -235,7 +244,7 @@ export default function PipelineBoard() {
                     disabled={saving === enrollment.id}
                     onChange={(event) => moveStage(enrollment, event.target.value as PipelineStage)}
                     className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-gold-500 disabled:opacity-50"
-                    aria-label={`Pipeline stage for ${enrollment.studentName}`}
+                    aria-label={`Pipeline stage for ${enrollment.studentName || enrollment.parentName || `enquiry ${enrollment.id}`}`}
                   >
                     {ACTIVE_STAGES.map((stage) => (
                       <option key={stage} value={stage}>

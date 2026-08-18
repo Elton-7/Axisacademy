@@ -6,6 +6,7 @@ import Home from './pages/Home'
 import About from './pages/About'
 import Services from './pages/Services'
 import ServiceDetail from './pages/ServiceDetail'
+import Consultation from './pages/Consultation'
 import Philosophy from './pages/Philosophy'
 import LearningPaths from './pages/LearningPaths'
 import EducatorNetwork from './pages/EducatorNetwork'
@@ -88,6 +89,7 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="privacy" element={<Privacy />} />
           <Route path="enroll" element={<Enrollment />} />
+          <Route path="consultation" element={<Consultation />} />
           <Route path="admin/login" element={<AdminLogin />} />
           <Route path="admin" element={<ProtectedAdminRoute />} />
           <Route path="portal/student" element={<PortalLogin role="student" />} />

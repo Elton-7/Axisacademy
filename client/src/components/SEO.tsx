@@ -62,6 +62,10 @@ const pages: Record<string, { title: string; description: string }> = {
     title: 'Start Learner Discovery | Axis Learning',
     description: 'Tell Axis Learning about your learner and begin a conversation about the right educational pathway.',
   },
+  '/consultation': {
+    title: 'Book a Consultation | Axis Learning',
+    description: 'Talk to an Axis Learning education consultant about your learner. Tell us when suits you and we will confirm a time by WhatsApp, phone or email.',
+  },
   '/contact': {
     title: 'Contact Axis Learning',
     description: 'Talk to Axis Learning about a learner, programme, consultation, or personalised educational pathway.',

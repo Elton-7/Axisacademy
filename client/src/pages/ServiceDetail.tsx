@@ -135,7 +135,7 @@ export default function ServiceDetail() {
                 <MessageCircle className="h-4 w-4" />
                 Enquire now
               </Link>
-              <Link to="/contact" className="btn-navy border border-white/20 bg-white/10 hover:bg-white/20">
+              <Link to="/consultation" className="btn-navy border border-white/20 bg-white/10 hover:bg-white/20">
                 <Phone className="h-4 w-4" />
                 Book a consultation
               </Link>
