@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Calendar, Clock, Users, BookOpen, CheckCircle } from 'lucide-react'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 
 const programmes = [
   {
@@ -159,9 +160,9 @@ export default function Programmes() {
                     ))}
                   </ul>
 
-                  <a href="/enroll" className="btn-primary w-full text-center">
+                  <Link to="/enroll" className="btn-primary w-full text-center">
                   Enquire about this programme
-                  </a>
+                  </Link>
                 </div>
               </motion.div>
             ))}

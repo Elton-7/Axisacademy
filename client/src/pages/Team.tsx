@@ -4,6 +4,7 @@ import { Search, Filter, Loader, Network, MapPin, SlidersHorizontal } from 'luci
 import { Educator, EducatorCategory } from '../types'
 import { educatorsApi } from '../services/apiClient'
 import EducatorCard from '../components/EducatorCard'
+import { Link } from 'react-router-dom'
 
 const CATEGORIES: EducatorCategory[] = [
   'Leadership',
@@ -163,10 +164,24 @@ export default function Team() {
               <p className="text-red-700 font-medium">{error}</p>
             </div>
           ) : filteredEducators.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-lg text-navy/60">
-                {searchQuery ? 'No educators match your search. Try a different query.' : 'No educators found.'}
-              </p>
+            <div className="py-12 text-center">
+              {educators.length === 0 ? (
+                <>
+                  <p className="text-lg font-semibold text-navy">Our educator profiles are being prepared.</p>
+                  <p className="mx-auto mt-2 max-w-lg text-navy/60">
+                    Axis works through a growing national network of teachers, tutors, language
+                    educators, coaches and specialists. Individual profiles will appear here as each
+                    educator's details and photograph are confirmed.
+                  </p>
+                  <Link to="/educator-network" className="mt-6 inline-block font-semibold text-gold-700 hover:underline">
+                    How the educator network works
+                  </Link>
+                </>
+              ) : (
+                <p className="text-lg text-navy/60">
+                  {searchQuery ? 'No educators match your search. Try a different query.' : 'No educators in this category.'}
+                </p>
+              )}
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -186,18 +201,18 @@ export default function Team() {
             Connect with one of our educators and start your personalized learning journey today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/enroll?programme=Learner%20Discovery%20%26%20Consultancy"
+            <Link
+              to="/enroll?programme=Learner%20Discovery%20%26%20Consultancy"
               className="px-8 py-3 bg-gold text-navy font-semibold rounded-lg hover:bg-gold/90 transition-colors"
             >
               Find the right educator
-            </a>
-            <a
-              href="/enroll"
+            </Link>
+            <Link
+              to="/enroll"
               className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy transition-colors"
             >
               Make an Enquiry
-            </a>
+            </Link>
           </div>
         </div>
       </section>

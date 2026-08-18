@@ -134,7 +134,17 @@ export default function Partners() {
           ) : filteredPartners.length === 0 ? (
             <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-navy/70">
               <Sparkles className="mx-auto mb-4 h-12 w-12 text-navy/30" />
-              No partners match your current filters.
+              {partners.length === 0 ? (
+                <>
+                  <p className="font-semibold text-navy">Our partnerships are being confirmed.</p>
+                  <p className="mx-auto mt-2 max-w-md text-sm">
+                    We name an organisation here only once they have agreed to it in writing, so this
+                    page stays empty until those confirmations are in hand.
+                  </p>
+                </>
+              ) : (
+                'No partners match your current filters.'
+              )}
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">

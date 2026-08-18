@@ -2,6 +2,7 @@ import { motion } from 'framer-motion'
 import { Phone, GraduationCap, MessageCircle, User, Clock, Heart, Sparkles, Languages, ArrowRight } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
 import { contact, telHref } from '../content/contact'
+import { Link } from 'react-router-dom'
 
 /**
  * What Axis offers, rather than claims about how well it does it.
@@ -86,14 +87,14 @@ export default function Hero() {
                 after a consultation. "Enroll Now" promised something the site
                 does not do.
               */}
-              <a href="/enroll" className="btn-primary">
+              <Link to="/enroll" className="btn-primary">
                 <MessageCircle className="h-4 w-4" />
                 Make an Enquiry
-              </a>
-              <a href="/consultation" className="btn-secondary">
+              </Link>
+              <Link to="/consultation" className="btn-secondary">
                 <GraduationCap className="h-4 w-4" />
                 Book a Consultation
-              </a>
+              </Link>
               <a href={telHref} className="btn-navy bg-white/10 border border-white/20 hover:bg-white/20">
                 <Phone className="h-4 w-4" />
                 {`Call ${contact.phoneDisplay}`}
@@ -160,13 +161,13 @@ export default function Hero() {
                     </div>
                   ))}
                 </div>
-                <a
-                  href="/services"
+                <Link
+                  to="/services"
                   className="mt-6 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-500 transition-colors hover:text-gold-400"
                 >
                   All nine services
                   <ArrowRight className="h-4 w-4" />
-                </a>
+                </Link>
               </div>
             </div>
           </motion.div>

@@ -4,6 +4,7 @@ import { User, Clock, Network, Globe, Lightbulb, TrendingUp, Users, Heart, Leaf 
 import { useScrollAnimation } from '../hooks'
 import { testimonialsApi } from '../services/apiClient'
 import type { Testimonial } from '../types'
+import { Link } from 'react-router-dom'
 
 const reasons = [
   { icon: User, label: 'Personalized Learning' },
@@ -76,12 +77,12 @@ export default function WhyTestimonials() {
                   testimonials from families and learners, and they will appear here once they
                   have been given with permission.
                 </p>
-                <a
-                  href="/consultation"
+                <Link
+                  to="/consultation"
                   className="mt-5 inline-block text-sm font-semibold text-gold-700 hover:underline"
                 >
                   Speak to a family already with Axis
-                </a>
+                </Link>
               </div>
             ) : (
               <div className="space-y-6">

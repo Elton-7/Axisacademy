@@ -9,6 +9,7 @@ import { enrollmentsApi } from '../services/apiClient'
 import { trackConversion } from '../services/analytics'
 import { contact, telHref, whatsappHref, SITE_URL } from '../content/contact'
 import type { CreateConsultationRequest } from '../types'
+import { Link } from 'react-router-dom'
 
 /**
  * Booking a consultation (brief §3.2, §13).
@@ -242,7 +243,7 @@ export default function Consultation() {
               />
               <span>
                 Axis Learning may contact me about this request. We will not share your details with
-                anyone else — see our <a href="/privacy" className="font-medium text-gold-700 underline">privacy and child safety</a> page.
+                anyone else — see our <Link to="/privacy" className="font-medium text-gold-700 underline">privacy and child safety</Link> page.
               </span>
             </label>
             {errors.contactConsent && <p className="text-xs text-red-600">{errors.contactConsent.message}</p>}

@@ -4,6 +4,7 @@ import { Search, Filter, Loader, Calendar } from 'lucide-react'
 import { Event, EventCategory, EventStatus } from '../types'
 import { eventsApi } from '../services/apiClient'
 import EventCard from '../components/EventCard'
+import { Link } from 'react-router-dom'
 
 const CATEGORIES: EventCategory[] = [
   'Holiday Tuition',
@@ -225,18 +226,18 @@ export default function Events() {
             Looking for a specific programme or have questions about our events? Get in touch with us today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/contact"
+            <Link
+              to="/contact"
               className="px-8 py-3 bg-gold text-navy font-semibold rounded-lg hover:bg-gold/90 transition-colors"
             >
               Contact Us
-            </a>
-            <a
-              href="/enroll"
+            </Link>
+            <Link
+              to="/enroll"
               className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy transition-colors"
             >
               Make an Enquiry
-            </a>
+            </Link>
           </div>
         </div>
       </section>

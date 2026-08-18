@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { Target, Eye } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
+import { Link } from 'react-router-dom'
 
 export default function AboutSection() {
   const { ref, isVisible } = useScrollAnimation()
@@ -40,9 +41,9 @@ export default function AboutSection() {
                 Our programmes blend academic excellence, practical skills, creativity, confidence-building, and personal development to help learners thrive in school, career, and life.
               </p>
             </div>
-            <a href="/about" className="btn-navy mt-8 inline-flex">
+            <Link to="/about" className="btn-navy mt-8 inline-flex">
               Learn More About Us
-            </a>
+            </Link>
           </motion.div>
 
           <div className="flex flex-col gap-6">

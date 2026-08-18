@@ -5,6 +5,7 @@ import { Search, ChevronDown, Loader, HelpCircle } from 'lucide-react'
 import { FAQ, FAQCategory } from '../types'
 import { faqsApi } from '../services/apiClient'
 import { contact, telHref } from '../content/contact'
+import { Link } from 'react-router-dom'
 
 const CATEGORIES: FAQCategory[] = [
   'General',
@@ -234,12 +235,12 @@ export default function FAQPage() {
               <p className="text-lg text-navy/60 mb-6">
                 {searchQuery ? 'No FAQs match your search. Try different keywords.' : 'No FAQs found.'}
               </p>
-              <a
-                href="/contact"
+              <Link
+                to="/contact"
                 className="inline-block px-6 py-2 bg-gold text-navy font-semibold rounded-lg hover:bg-gold/90 transition-colors"
               >
                 Contact Us for Help
-              </a>
+              </Link>
             </div>
           ) : (
             <div className="space-y-3">
@@ -265,12 +266,12 @@ export default function FAQPage() {
             Our education consultants are here to help. Reach out to us and we'll guide you through the best learning pathway for your learner.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/contact"
+            <Link
+              to="/contact"
               className="px-8 py-3 bg-gold text-navy font-semibold rounded-lg hover:bg-gold/90 transition-colors"
             >
               Contact Us
-            </a>
+            </Link>
             <a
               href={telHref}
               className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy transition-colors"
