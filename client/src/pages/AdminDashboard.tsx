@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Users, MessageSquare, TrendingUp, Mail, Phone, Calendar, Search, Filter, Download, LogOut, RefreshCw, X, Plus, Edit, Trash2, Image as ImageIcon } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { apiErrorMessage } from '../utils/apiError'
 import PipelineBoard from '../components/PipelineBoard'
 import LearnerAdmin from '../components/LearnerAdmin'
 import Safeguarding from '../components/Safeguarding'
@@ -257,7 +258,7 @@ export default function AdminDashboard() {
       setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false, consentReference: '' })
     } catch (error) {
       console.error('Failed to save gallery item:', error)
-      toast.error('Failed to save gallery item')
+      toast.error(apiErrorMessage(error, 'Failed to save gallery item'))
     }
   }
 
@@ -269,7 +270,7 @@ export default function AdminDashboard() {
       toast.success('Gallery item deleted')
     } catch (error) {
       console.error('Failed to delete gallery item:', error)
-      toast.error('Failed to delete gallery item')
+      toast.error(apiErrorMessage(error, 'Failed to delete gallery item'))
     }
   }
 
@@ -312,7 +313,7 @@ export default function AdminDashboard() {
       setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })
     } catch (error) {
       console.error('Failed to save resource:', error)
-      toast.error('Failed to save resource')
+      toast.error(apiErrorMessage(error, 'Failed to save resource'))
     }
   }
 
@@ -324,7 +325,7 @@ export default function AdminDashboard() {
       toast.success('Resource deleted')
     } catch (error) {
       console.error('Failed to delete resource:', error)
-      toast.error('Failed to delete resource')
+      toast.error(apiErrorMessage(error, 'Failed to delete resource'))
     }
   }
 
@@ -366,7 +367,7 @@ export default function AdminDashboard() {
       setPartnerForm({ name: '', logo: '', category: 'Corporate', description: '', website: '', contact: '', email: '', phone: '', focusAreas: '' })
     } catch (error) {
       console.error('Failed to save partner:', error)
-      toast.error('Failed to save partner')
+      toast.error(apiErrorMessage(error, 'Failed to save partner'))
     }
   }
 
@@ -378,7 +379,7 @@ export default function AdminDashboard() {
       toast.success('Partner deleted')
     } catch (error) {
       console.error('Failed to delete partner:', error)
-      toast.error('Failed to delete partner')
+      toast.error(apiErrorMessage(error, 'Failed to delete partner'))
     }
   }
 
@@ -421,7 +422,7 @@ export default function AdminDashboard() {
       setEducatorForm({ name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: '' })
     } catch (error) {
       console.error('Failed to save educator:', error)
-      toast.error('Failed to save educator')
+      toast.error(apiErrorMessage(error, 'Failed to save educator'))
     }
   }
 
@@ -433,7 +434,7 @@ export default function AdminDashboard() {
       toast.success('Educator deleted')
     } catch (error) {
       console.error('Failed to delete educator:', error)
-      toast.error('Failed to delete educator')
+      toast.error(apiErrorMessage(error, 'Failed to delete educator'))
     }
   }
 
@@ -476,7 +477,7 @@ export default function AdminDashboard() {
       setEventForm({ title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming' })
     } catch (error) {
       console.error('Failed to save event:', error)
-      toast.error('Failed to save event')
+      toast.error(apiErrorMessage(error, 'Failed to save event'))
     }
   }
 
@@ -488,7 +489,7 @@ export default function AdminDashboard() {
       toast.success('Event deleted')
     } catch (error) {
       console.error('Failed to delete event:', error)
-      toast.error('Failed to delete event')
+      toast.error(apiErrorMessage(error, 'Failed to delete event'))
     }
   }
 
@@ -530,7 +531,7 @@ export default function AdminDashboard() {
       setFaqForm({ question: '', answer: '', category: 'General', order: '' })
     } catch (error) {
       console.error('Failed to save FAQ:', error)
-      toast.error('Failed to save FAQ')
+      toast.error(apiErrorMessage(error, 'Failed to save FAQ'))
     }
   }
 
@@ -542,7 +543,7 @@ export default function AdminDashboard() {
       toast.success('FAQ deleted')
     } catch (error) {
       console.error('Failed to delete FAQ:', error)
-      toast.error('Failed to delete FAQ')
+      toast.error(apiErrorMessage(error, 'Failed to delete FAQ'))
     }
   }
 
@@ -586,7 +587,7 @@ export default function AdminDashboard() {
       setLocationForm({ name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: '' })
     } catch (error) {
       console.error('Failed to save location:', error)
-      toast.error('Failed to save location')
+      toast.error(apiErrorMessage(error, 'Failed to save location'))
     }
   }
 
@@ -598,7 +599,7 @@ export default function AdminDashboard() {
       toast.success('Location deleted')
     } catch (error) {
       console.error('Failed to delete location:', error)
-      toast.error('Failed to delete location')
+      toast.error(apiErrorMessage(error, 'Failed to delete location'))
     }
   }
 
@@ -690,7 +691,7 @@ export default function AdminDashboard() {
       toast.success('Status updated successfully')
     } catch (error) {
       console.error('Failed to update status:', error)
-      toast.error('Failed to update status')
+      toast.error(apiErrorMessage(error, 'Failed to update status'))
     }
   }
 
@@ -701,7 +702,7 @@ export default function AdminDashboard() {
       toast.success('Enrollment status updated successfully')
     } catch (error) {
       console.error('Failed to update enrollment status:', error)
-      toast.error('Failed to update enrollment status')
+      toast.error(apiErrorMessage(error, 'Failed to update enrollment status'))
     }
   }
 

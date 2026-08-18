@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const { body, validationResult } = require('express-validator')
+const { body } = require('express-validator')
+const { handleValidation } = require('../middleware/validate')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { authLimiter } = require('../middleware/rateLimiter')
@@ -88,12 +89,8 @@ router.post(
     body('email').isEmail().withMessage('Valid email is required'),
     body('password').notEmpty().withMessage('Password is required'),
   ],
+  handleValidation,
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() })
-    }
-
     const email = req.body.email.toLowerCase().trim()
     const { password } = req.body
     const user = await User.findOne({ where: { email } })

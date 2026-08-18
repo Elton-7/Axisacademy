@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const { body, validationResult } = require('express-validator')
+const { body } = require('express-validator')
+const { handleValidation } = require('../middleware/validate')
 const { newsletterLimiter } = require('../middleware/rateLimiter')
 const Newsletter = require('../models/Newsletter')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
@@ -25,12 +26,8 @@ router.post(
   '/subscribe',
   newsletterLimiter,
   [body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail()],
+  handleValidation,
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() })
-    }
-
     try {
       const email = req.body.email
       const [subscription] = await Newsletter.findOrCreate({
@@ -57,12 +54,8 @@ router.post(
   '/unsubscribe',
   newsletterLimiter,
   [body('email').trim().isEmail().withMessage('Valid email is required').normalizeEmail()],
+  handleValidation,
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() })
-    }
-
   try {
     const subscription = await Newsletter.findOne({ where: { email: req.body.email } })
     if (subscription) {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { KeyRound, Loader2, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { apiErrorMessage } from '../utils/apiError'
 import { accountsApi } from '../services/apiClient'
 import type { Account, AccountRole } from '../types'
 
@@ -57,10 +58,7 @@ export default function Accounts() {
   }, [])
 
   /** Surface the API's own refusal rather than a generic failure. */
-  const fail = (err: unknown, fallback: string) => {
-    const data = (err as { response?: { data?: { error?: string; errors?: { msg: string }[] } } })?.response?.data
-    toast.error(data?.error || data?.errors?.[0]?.msg || fallback)
-  }
+  const fail = (err: unknown, fallback: string) => toast.error(apiErrorMessage(err, fallback))
 
   const create = async () => {
     if (!form.name.trim() || !form.email.trim()) {

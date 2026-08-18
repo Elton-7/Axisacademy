@@ -2,11 +2,30 @@ const express = require('express')
 const { Partner } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
+const { body } = require('express-validator')
+const {
+  text, enumField, urlField, emailField, intField, dateField, boolField, arrayField,
+  handleValidation,
+} = require('../middleware/validate')
 
 const router = express.Router()
 
 // Every :id in this router is a UUID; reject anything else as a 400, not a 500.
 router.param('id', validateUuidParam)
+
+const rules = (partial) => [
+  text(Partner, 'name', { required: true, partial }),
+  enumField(Partner, 'category', { required: true, partial }),
+  urlField(Partner, 'logo', { partial }),
+  text(Partner, 'description', { partial }),
+  urlField(Partner, 'website', { partial }),
+  text(Partner, 'contact', { partial }),
+  emailField('email'),
+  text(Partner, 'phone', { partial }),
+  arrayField('focusAreas'),
+  boolField('isActive'),
+  intField('sortOrder'),
+]
 
 router.get('/', async (req, res) => {
   try {
@@ -58,13 +77,9 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), handleValidation, async (req, res) => {
   try {
     const { name, logo, category, description, website, contact, email, phone, focusAreas } = req.body
-
-    if (!name) {
-      return res.status(400).json({ success: false, error: 'name is required' })
-    }
 
     const partner = await Partner.create({
       name: name.trim(),
@@ -84,7 +99,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
   }
 })
 
-router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), handleValidation, async (req, res) => {
   try {
     const partner = await Partner.findByPk(req.params.id)
     if (!partner) {

@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router()
 const crypto = require('crypto')
 const bcrypt = require('bcryptjs')
-const { body, validationResult } = require('express-validator')
+const { body } = require('express-validator')
+const { handleValidation } = require('../middleware/validate')
 const { User, LearnerEducator, Learner } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
@@ -58,12 +59,8 @@ router.post(
     body('email').isEmail().withMessage('A valid email is required').normalizeEmail(),
     body('role').isIn(['admin', 'staff', 'tutor', 'student']).withMessage('Choose a valid role'),
   ],
+  handleValidation,
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() })
-    }
-
     try {
       const { name, email, role } = req.body
       const existing = await User.findOne({ where: { email: email.toLowerCase().trim() } })

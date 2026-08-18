@@ -2,11 +2,30 @@ const express = require('express')
 const { Gallery } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
+const { body } = require('express-validator')
+const {
+  text, enumField, urlField, emailField, intField, dateField, boolField, arrayField,
+  handleValidation,
+} = require('../middleware/validate')
 
 const router = express.Router()
 
 // Every :id in this router is a UUID; reject anything else as a 400, not a 500.
 router.param('id', validateUuidParam)
+
+const rules = (partial) => [
+  text(Gallery, 'title', { required: true, partial }),
+  enumField(Gallery, 'type', { required: true, partial }),
+  enumField(Gallery, 'category', { required: true, partial }),
+  text(Gallery, 'description', { partial }),
+  urlField(Gallery, 'url', { required: true, partial }),
+  urlField(Gallery, 'thumbnail', { partial }),
+  arrayField('tags'),
+  boolField('consentConfirmed'),
+  text(Gallery, 'consentReference', { partial }),
+  boolField('isActive'),
+  intField('sortOrder'),
+]
 
 router.get('/', async (req, res) => {
   try {
@@ -56,13 +75,10 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), handleValidation, async (req, res) => {
   try {
     const { title, type, category, description, url, thumbnail, tags, consentConfirmed, consentReference } = req.body
 
-    if (!title || !url) {
-      return res.status(400).json({ success: false, error: 'title and url are required' })
-    }
     if (consentConfirmed !== true) {
       return res.status(400).json({ success: false, error: 'Publication consent must be confirmed before media can be added' })
     }
@@ -94,7 +110,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
   }
 })
 
-router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), handleValidation, async (req, res) => {
   try {
     const item = await Gallery.findByPk(req.params.id)
     if (!item) {

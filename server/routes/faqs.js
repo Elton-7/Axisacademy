@@ -2,11 +2,24 @@ const express = require('express')
 const { FAQ } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
+const { body } = require('express-validator')
+const {
+  text, enumField, urlField, emailField, intField, dateField, boolField, arrayField,
+  handleValidation,
+} = require('../middleware/validate')
 
 const router = express.Router()
 
 // Every :id in this router is a UUID; reject anything else as a 400, not a 500.
 router.param('id', validateUuidParam)
+
+const rules = (partial) => [
+  text(FAQ, 'question', { required: true, partial }),
+  text(FAQ, 'answer', { required: true, partial }),
+  enumField(FAQ, 'category', { partial }),
+  intField('order'),
+  boolField('isActive'),
+]
 
 /**
  * GET /api/faqs
@@ -72,13 +85,9 @@ router.get('/:id', async (req, res) => {
  * POST /api/faqs
  * Admin only - Create new FAQ
  */
-router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), handleValidation, async (req, res) => {
   try {
     const { question, answer, category, order } = req.body
-
-    if (!question || !answer) {
-      return res.status(400).json({ success: false, error: 'question and answer are required' })
-    }
 
     const faq = await FAQ.create({
       question: question.trim(),
@@ -97,7 +106,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
  * PUT /api/faqs/:id
  * Admin only - Update FAQ
  */
-router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), handleValidation, async (req, res) => {
   try {
     const faq = await FAQ.findByPk(req.params.id)
     if (!faq) {

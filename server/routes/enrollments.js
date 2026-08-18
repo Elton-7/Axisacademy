@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const { body, validationResult } = require('express-validator')
+const { body } = require('express-validator')
+const { handleValidation } = require('../middleware/validate')
 const Enrollment = require('../models/Enrollment')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
@@ -52,12 +53,8 @@ router.post(
     body('contactConsent').isBoolean().toBoolean().equals('true').withMessage('Please confirm that Axis may contact you about this enquiry'),
     body('notes').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 2000 }).withMessage('Notes are too long'),
   ],
+  handleValidation,
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() })
-    }
-
     try {
       const enrollment = await Enrollment.create(req.body)
 
@@ -99,12 +96,8 @@ router.post(
     body('preferredChannel').optional({ nullable: true, checkFalsy: true }).isIn(['whatsapp', 'phone', 'email', 'in-person']).withMessage('Choose how you would like to be contacted'),
     body('contactConsent').isBoolean().toBoolean().equals('true').withMessage('Please confirm that Axis may contact you about this request'),
   ],
+  handleValidation,
   async (req, res) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() })
-    }
-
     try {
       const enrollment = await Enrollment.create({
         ...req.body,

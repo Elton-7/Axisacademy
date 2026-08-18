@@ -2,11 +2,31 @@ const express = require('express')
 const { Resource } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
+const { body } = require('express-validator')
+const {
+  text, enumField, urlField, emailField, intField, dateField, boolField, arrayField,
+  handleValidation,
+} = require('../middleware/validate')
 
 const router = express.Router()
 
 // Every :id in this router is a UUID; reject anything else as a 400, not a 500.
 router.param('id', validateUuidParam)
+
+const rules = (partial) => [
+  text(Resource, 'title', { required: true, partial }),
+  text(Resource, 'slug', { required: true, partial }),
+  text(Resource, 'content', { required: true, partial }),
+  enumField(Resource, 'category', { required: true, partial }),
+  text(Resource, 'author', { required: true, partial }),
+  text(Resource, 'excerpt', { partial }),
+  urlField(Resource, 'coverImage', { partial }),
+  text(Resource, 'readTime', { partial }),
+  arrayField('tags'),
+  dateField('publishedAt'),
+  boolField('isActive'),
+  intField('sortOrder'),
+]
 
 router.get('/', async (req, res) => {
   try {
@@ -58,13 +78,9 @@ router.get('/:id', async (req, res) => {
   }
 })
 
-router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), handleValidation, async (req, res) => {
   try {
     const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, publishedAt } = req.body
-
-    if (!title || !content) {
-      return res.status(400).json({ success: false, error: 'title and content are required' })
-    }
 
     const resource = await Resource.create({
       title: title.trim(),
@@ -85,7 +101,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
   }
 })
 
-router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), handleValidation, async (req, res) => {
   try {
     const resource = await Resource.findByPk(req.params.id)
     if (!resource) {

@@ -2,11 +2,41 @@ const express = require('express')
 const { Event } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
+const { body } = require('express-validator')
+const {
+  text, enumField, urlField, emailField, intField, dateField, boolField, arrayField,
+  handleValidation,
+} = require('../middleware/validate')
 
 const router = express.Router()
 
 // Every :id in this router is a UUID; reject anything else as a 400, not a 500.
 router.param('id', validateUuidParam)
+
+const rules = (partial) => [
+  text(Event, 'title', { required: true, partial }),
+  text(Event, 'description', { required: true, partial }),
+  enumField(Event, 'category', { required: true, partial }),
+  dateField('startDate', { required: true, partial }),
+  dateField('endDate'),
+  dateField('registrationDeadline'),
+  text(Event, 'venue', { partial }),
+  text(Event, 'location', { partial }),
+  text(Event, 'ageGroup', { partial }),
+  text(Event, 'programme', { partial }),
+  intField('capacity', { min: 1 }),
+  body('priceKES').optional({ values: 'falsy' }).isFloat({ min: 0 })
+    .withMessage('Price must be zero or more'),
+  urlField(Event, 'registrationLink', { partial }),
+  urlField(Event, 'poster', { partial }),
+  arrayField('photos'),
+  arrayField('videos'),
+  text(Event, 'results', { partial }),
+  text(Event, 'recap', { partial }),
+  enumField(Event, 'status', { partial }),
+  boolField('isActive'),
+  intField('sortOrder'),
+]
 
 /**
  * GET /api/events
@@ -73,7 +103,7 @@ router.get('/:id', async (req, res) => {
  * POST /api/events
  * Admin only - Create new event
  */
-router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), handleValidation, async (req, res) => {
   try {
     const {
       title,
@@ -92,10 +122,6 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
       poster,
       status,
     } = req.body
-
-    if (!title || !description || !category || !startDate) {
-      return res.status(400).json({ success: false, error: 'title, description, category, and startDate are required' })
-    }
 
     const event = await Event.create({
       title: title.trim(),
@@ -127,7 +153,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), async (req, res) 
  * PUT /api/events/:id
  * Admin only - Update event
  */
-router.put('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, res) => {
+router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), handleValidation, async (req, res) => {
   try {
     const event = await Event.findByPk(req.params.id)
     if (!event) {
