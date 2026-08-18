@@ -66,7 +66,7 @@ export default function Hero() {
             animate={isVisible ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, ease: 'easeOut' }}
           >
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-white/10 px-4 py-2 text-sm text-gold-light backdrop-blur-sm">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-surface/10 px-4 py-2 text-sm text-gold-light backdrop-blur-sm">
               <Sparkles className="h-4 w-4" />
               Learn · Think · Create · Explore · Thrive
             </div>
@@ -95,7 +95,7 @@ export default function Hero() {
                 <GraduationCap className="h-4 w-4" />
                 Book a Consultation
               </Link>
-              <a href={telHref} className="btn-navy bg-white/10 border border-white/20 hover:bg-white/20">
+              <a href={telHref} className="btn-navy bg-surface/10 border border-white/20 hover:bg-surface/20">
                 <Phone className="h-4 w-4" />
                 {`Call ${contact.phoneDisplay}`}
               </a>
@@ -103,7 +103,7 @@ export default function Hero() {
 
             <div className="mb-8 grid gap-3 sm:grid-cols-3">
               {highlights.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur-sm">
+                <div key={item.label} className="rounded-2xl border border-white/10 bg-surface/10 p-4 backdrop-blur-sm">
                   <p className="text-lg font-semibold text-gold-500">{item.value}</p>
                   <p className="text-sm text-white/70">{item.label}</p>
                 </div>
@@ -149,7 +149,7 @@ export default function Hero() {
             <div className="relative mx-auto max-w-xl">
               <div className="absolute -left-8 -top-8 h-48 w-48 rounded-full border-2 border-gold-500/30" />
 
-              <div className="relative rounded-3xl border border-white/10 bg-white/[0.04] p-8 backdrop-blur-sm">
+              <div className="relative rounded-3xl border border-white/10 bg-surface/[0.04] p-8 backdrop-blur-sm">
                 <p className="font-mono text-xs uppercase tracking-[0.2em] text-gold-500">
                   What we do
                 </p>

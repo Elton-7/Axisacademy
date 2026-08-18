@@ -33,13 +33,13 @@ function AccordionItem({ faq, isOpen, onToggle, index }: AccordionItemProps) {
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
-      className="border border-slate-200 rounded-lg overflow-hidden hover:border-gold/50 transition-colors"
+      className="border border-line rounded-lg overflow-hidden hover:border-gold/50 transition-colors"
     >
       <button
         onClick={onToggle}
-        className="w-full px-6 py-4 text-left bg-white hover:bg-slate-50 transition-colors flex items-center justify-between gap-3"
+        className="w-full px-6 py-4 text-left bg-surface hover:bg-surface-sunk transition-colors flex items-center justify-between gap-3"
       >
-        <span className="font-semibold text-navy flex-1">{faq.question}</span>
+        <span className="font-semibold text-ink flex-1">{faq.question}</span>
         <motion.div
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
@@ -55,7 +55,7 @@ function AccordionItem({ faq, isOpen, onToggle, index }: AccordionItemProps) {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <div className="px-6 py-4 bg-slate-50 text-navy/70 leading-relaxed whitespace-pre-wrap border-t border-slate-200">
+        <div className="px-6 py-4 bg-surface-sunk text-ink-muted/70 leading-relaxed whitespace-pre-wrap border-t border-line">
           {faq.answer}
         </div>
       </motion.div>
@@ -165,31 +165,31 @@ export default function FAQPage() {
       </section>
 
       {/* Search & Filter Section */}
-      <section className="bg-white border-b border-slate-200 py-8 sticky top-0 z-40">
+      <section className="bg-surface border-b border-line py-8 sticky top-0 z-40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
               <input
                 type="text"
                 placeholder="Search FAQs..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+                className="w-full pl-12 pr-4 py-2 border border-line-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
               />
             </div>
 
             {/* Category Filter */}
             <div>
-              <label className="text-xs font-semibold text-navy/70 mb-2 block">CATEGORY</label>
+              <label className="text-xs font-semibold text-ink-muted/70 mb-2 block">CATEGORY</label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSelectedCategory('all')}
                   className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
                     selectedCategory === 'all'
                       ? 'bg-navy text-white'
-                      : 'bg-slate-100 text-navy hover:bg-slate-200'
+                      : 'bg-surface-muted text-ink hover:bg-line'
                   }`}
                 >
                   All
@@ -200,8 +200,8 @@ export default function FAQPage() {
                     onClick={() => setSelectedCategory(category)}
                     className={`px-4 py-2 rounded-full font-medium text-sm transition-colors whitespace-nowrap ${
                       selectedCategory === category
-                        ? 'bg-gold text-navy'
-                        : 'bg-slate-100 text-navy hover:bg-slate-200'
+                        ? 'bg-gold text-navy-surface'
+                        : 'bg-surface-muted text-ink hover:bg-line'
                     }`}
                   >
                     {category}
@@ -211,7 +211,7 @@ export default function FAQPage() {
             </div>
 
             {/* Results count */}
-            <p className="text-sm text-navy/60">
+            <p className="text-sm text-ink-muted/60">
               Showing {filteredFaqs.length} of {faqs.length} questions
             </p>
           </div>
@@ -219,7 +219,7 @@ export default function FAQPage() {
       </section>
 
       {/* FAQs Section */}
-      <section className="py-16 bg-slate-50 min-h-[60vh]">
+      <section className="py-16 bg-surface-sunk min-h-[60vh]">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center items-center py-20">
@@ -231,13 +231,13 @@ export default function FAQPage() {
             </div>
           ) : filteredFaqs.length === 0 ? (
             <div className="text-center py-12">
-              <HelpCircle className="h-12 w-12 text-navy/30 mx-auto mb-4" />
-              <p className="text-lg text-navy/60 mb-6">
+              <HelpCircle className="h-12 w-12 text-ink-muted/30 mx-auto mb-4" />
+              <p className="text-lg text-ink-muted/60 mb-6">
                 {searchQuery ? 'No FAQs match your search. Try different keywords.' : 'No FAQs found.'}
               </p>
               <Link
                 to="/contact"
-                className="inline-block px-6 py-2 bg-gold text-navy font-semibold rounded-lg hover:bg-gold/90 transition-colors"
+                className="inline-block px-6 py-2 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
               >
                 Contact Us for Help
               </Link>
@@ -268,13 +268,13 @@ export default function FAQPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/contact"
-              className="px-8 py-3 bg-gold text-navy font-semibold rounded-lg hover:bg-gold/90 transition-colors"
+              className="px-8 py-3 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
             >
               Contact Us
             </Link>
             <a
               href={telHref}
-              className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy transition-colors"
+              className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-surface hover:text-ink transition-colors"
             >
               Call Us: {contact.phoneDisplay}
             </a>

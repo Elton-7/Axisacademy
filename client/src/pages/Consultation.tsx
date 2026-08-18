@@ -24,7 +24,7 @@ import { Link } from 'react-router-dom'
  */
 
 const inputClass =
-  'w-full rounded-lg border border-gray-200 px-4 py-2.5 text-sm outline-none transition-colors focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20'
+  'w-full rounded-lg border border-line px-4 py-2.5 text-sm outline-none transition-colors focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20'
 
 type FormValues = CreateConsultationRequest
 
@@ -88,9 +88,9 @@ export default function Consultation() {
       </section>
 
       {/* Talk now, for anyone who would rather not fill in a form */}
-      <section className="border-b border-gray-100 bg-white py-8">
+      <section className="border-b border-line bg-surface py-8">
         <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 px-4 sm:flex-row sm:justify-center">
-          <p className="text-sm text-navy-600">Would rather just talk?</p>
+          <p className="text-sm text-ink-muted">Would rather just talk?</p>
           <a
             href={whatsappHref('Hello Axis Learning, I would like to book a consultation about my learner.')}
             target="_blank"
@@ -103,19 +103,19 @@ export default function Consultation() {
           <a
             href={telHref}
             onClick={() => trackConversion('phone_clicked')}
-            className="inline-flex items-center gap-2 rounded-full border border-navy-200 px-5 py-2.5 text-sm font-semibold text-navy-900 transition-colors hover:border-gold-500"
+            className="inline-flex items-center gap-2 rounded-full border border-navy-200 px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-gold-500"
           >
             <Phone className="h-4 w-4" /> {contact.phoneDisplay}
           </a>
         </div>
       </section>
 
-      <section className="bg-gray-50 px-4 py-16 sm:px-6 lg:px-8">
+      <section className="bg-surface-sunk px-4 py-16 sm:px-6 lg:px-8">
         {submitted ? (
-          <div className="mx-auto max-w-2xl rounded-2xl bg-white p-10 text-center shadow-sm">
+          <div className="mx-auto max-w-2xl rounded-2xl bg-surface p-10 text-center shadow-sm">
             <CheckCircle className="mx-auto mb-5 h-14 w-14 text-emerald-500" />
-            <h2 className="text-2xl font-semibold text-navy-900">Thank you — we have your request</h2>
-            <p className="mx-auto mt-4 max-w-md leading-relaxed text-navy-600">
+            <h2 className="text-2xl font-semibold text-ink">Thank you — we have your request</h2>
+            <p className="mx-auto mt-4 max-w-md leading-relaxed text-ink-muted">
               An Axis education consultant will contact you to confirm a time, normally within one
               working day. If it is urgent, message us on WhatsApp and we will pick it up sooner.
             </p>
@@ -132,7 +132,7 @@ export default function Consultation() {
           <form
             onSubmit={handleSubmit(onSubmit)}
             noValidate
-            className="mx-auto max-w-2xl space-y-6 rounded-2xl bg-white p-8 shadow-sm md:p-10"
+            className="mx-auto max-w-2xl space-y-6 rounded-2xl bg-surface p-8 shadow-sm md:p-10"
           >
             {submitError && (
               <div role="alert" className="flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
@@ -143,14 +143,14 @@ export default function Consultation() {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label htmlFor="parentName" className="mb-2 block text-sm font-medium text-navy-900">
+                <label htmlFor="parentName" className="mb-2 block text-sm font-medium text-ink">
                   Your name *
                 </label>
                 <input id="parentName" autoComplete="name" {...register('parentName', { required: 'Please tell us your name' })} className={inputClass} />
                 {errors.parentName && <p className="mt-1 text-xs text-red-600">{errors.parentName.message}</p>}
               </div>
               <div>
-                <label htmlFor="phone" className="mb-2 block text-sm font-medium text-navy-900">
+                <label htmlFor="phone" className="mb-2 block text-sm font-medium text-ink">
                   Phone or WhatsApp
                 </label>
                 <input id="phone" type="tel" autoComplete="tel" placeholder="07XX XXX XXX" {...register('phone')} className={inputClass} />
@@ -158,7 +158,7 @@ export default function Consultation() {
             </div>
 
             <div>
-              <label htmlFor="email" className="mb-2 block text-sm font-medium text-navy-900">
+              <label htmlFor="email" className="mb-2 block text-sm font-medium text-ink">
                 Email *
               </label>
               <input
@@ -176,21 +176,21 @@ export default function Consultation() {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
-                <label htmlFor="studentName" className="mb-2 block text-sm font-medium text-navy-900">
-                  Learner’s name <span className="font-normal text-navy-600/60">(optional)</span>
+                <label htmlFor="studentName" className="mb-2 block text-sm font-medium text-ink">
+                  Learner’s name <span className="font-normal text-ink-muted/60">(optional)</span>
                 </label>
                 <input id="studentName" {...register('studentName')} className={inputClass} />
               </div>
               <div>
-                <label htmlFor="learnerAge" className="mb-2 block text-sm font-medium text-navy-900">
-                  Learner’s age <span className="font-normal text-navy-600/60">(optional)</span>
+                <label htmlFor="learnerAge" className="mb-2 block text-sm font-medium text-ink">
+                  Learner’s age <span className="font-normal text-ink-muted/60">(optional)</span>
                 </label>
                 <input id="learnerAge" type="number" min={1} max={100} {...register('learnerAge')} className={inputClass} />
               </div>
             </div>
 
             <div>
-              <label htmlFor="notes" className="mb-2 block text-sm font-medium text-navy-900">
+              <label htmlFor="notes" className="mb-2 block text-sm font-medium text-ink">
                 What is on your mind?
               </label>
               <textarea
@@ -203,26 +203,26 @@ export default function Consultation() {
               {errors.notes && <p className="mt-1 text-xs text-red-600">{errors.notes.message}</p>}
             </div>
 
-            <div className="rounded-xl bg-gray-50 p-5">
-              <p className="mb-4 flex items-center gap-2 text-sm font-medium text-navy-900">
+            <div className="rounded-xl bg-surface-sunk p-5">
+              <p className="mb-4 flex items-center gap-2 text-sm font-medium text-ink">
                 <Clock className="h-4 w-4 text-gold-600" /> When suits you?
               </p>
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="preferredDays" className="mb-2 block text-sm text-navy-700">
+                  <label htmlFor="preferredDays" className="mb-2 block text-sm text-ink-muted">
                     Preferred days
                   </label>
                   <input id="preferredDays" placeholder="e.g. Weekday mornings" {...register('preferredDays')} className={inputClass} />
                 </div>
                 <div>
-                  <label htmlFor="preferredTimes" className="mb-2 block text-sm text-navy-700">
+                  <label htmlFor="preferredTimes" className="mb-2 block text-sm text-ink-muted">
                     Preferred times
                   </label>
                   <input id="preferredTimes" placeholder="e.g. After 4pm" {...register('preferredTimes')} className={inputClass} />
                 </div>
               </div>
               <div className="mt-5">
-                <label htmlFor="preferredChannel" className="mb-2 block text-sm text-navy-700">
+                <label htmlFor="preferredChannel" className="mb-2 block text-sm text-ink-muted">
                   How would you like us to reach you?
                 </label>
                 <select id="preferredChannel" {...register('preferredChannel')} className={inputClass}>
@@ -235,11 +235,11 @@ export default function Consultation() {
               </div>
             </div>
 
-            <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-slate-50 p-4 text-sm text-navy-600">
+            <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-surface-sunk p-4 text-sm text-ink-muted">
               <input
                 type="checkbox"
                 {...register('contactConsent', { required: 'Please confirm that Axis may contact you' })}
-                className="mt-0.5 h-4 w-4 rounded border-gray-300 text-gold-600 focus:ring-gold-500"
+                className="mt-0.5 h-4 w-4 rounded border-line-strong text-gold-600 focus:ring-gold-500"
               />
               <span>
                 Axis Learning may contact me about this request. We will not share your details with
@@ -257,7 +257,7 @@ export default function Consultation() {
               {isSubmitting ? 'Sending...' : 'Request a consultation'}
             </button>
 
-            <p className="text-center text-xs text-navy-500">
+            <p className="text-center text-xs text-ink-faint">
               We normally confirm a time within one working day. Nothing is charged for a consultation.
             </p>
           </form>

@@ -141,13 +141,13 @@ export default function LearnerAdmin() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[14rem]">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-faint" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && load(search)}
             placeholder="Search learners by name..."
-            className="w-full rounded-lg border border-gray-200 py-2 pl-9 pr-3 text-sm outline-none focus:border-gold-500"
+            className="w-full rounded-lg border border-line py-2 pl-9 pr-3 text-sm outline-none focus:border-gold-500"
           />
         </div>
         <button
@@ -163,19 +163,19 @@ export default function LearnerAdmin() {
       )}
 
       {showForm && (
-        <div className="rounded-xl border border-gray-100 bg-white p-6">
-          <h3 className="mb-4 text-lg font-semibold text-navy-900">New learner</h3>
+        <div className="rounded-xl border border-line bg-surface p-6">
+          <h3 className="mb-4 text-lg font-semibold text-ink">New learner</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <input
               placeholder="Learner name *"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm outline-none focus:border-gold-500"
+              className="rounded-lg border border-line px-4 py-2 text-sm outline-none focus:border-gold-500"
             />
             <select
               value={form.parentUserId}
               onChange={(e) => setForm({ ...form, parentUserId: e.target.value })}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm outline-none focus:border-gold-500"
+              className="rounded-lg border border-line px-4 py-2 text-sm outline-none focus:border-gold-500"
             >
               <option value="">Parent account *</option>
               {parents.map((parent) => (
@@ -188,24 +188,24 @@ export default function LearnerAdmin() {
               placeholder="Programme"
               value={form.programme}
               onChange={(e) => setForm({ ...form, programme: e.target.value })}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm outline-none focus:border-gold-500"
+              className="rounded-lg border border-line px-4 py-2 text-sm outline-none focus:border-gold-500"
             />
             <input
               placeholder="Curriculum"
               value={form.curriculum}
               onChange={(e) => setForm({ ...form, curriculum: e.target.value })}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm outline-none focus:border-gold-500"
+              className="rounded-lg border border-line px-4 py-2 text-sm outline-none focus:border-gold-500"
             />
             <input
               placeholder="Grade or class"
               value={form.gradeClass}
               onChange={(e) => setForm({ ...form, gradeClass: e.target.value })}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm outline-none focus:border-gold-500"
+              className="rounded-lg border border-line px-4 py-2 text-sm outline-none focus:border-gold-500"
             />
             <select
               value={form.learningModel}
               onChange={(e) => setForm({ ...form, learningModel: e.target.value })}
-              className="rounded-lg border border-gray-200 px-4 py-2 text-sm outline-none focus:border-gold-500"
+              className="rounded-lg border border-line px-4 py-2 text-sm outline-none focus:border-gold-500"
             >
               <option value="">Learning model</option>
               <option value="online">Online</option>
@@ -219,7 +219,7 @@ export default function LearnerAdmin() {
             rows={2}
             value={form.supportNotes}
             onChange={(e) => setForm({ ...form, supportNotes: e.target.value })}
-            className="mt-4 w-full resize-none rounded-lg border border-gray-200 px-4 py-2 text-sm outline-none focus:border-gold-500"
+            className="mt-4 w-full resize-none rounded-lg border border-line px-4 py-2 text-sm outline-none focus:border-gold-500"
           />
           <div className="mt-4 flex gap-2">
             <button
@@ -231,7 +231,7 @@ export default function LearnerAdmin() {
             </button>
             <button
               onClick={() => { setShowForm(false); setForm(emptyForm) }}
-              className="rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-300"
+              className="rounded-lg bg-line px-4 py-2 text-sm text-ink-muted hover:bg-gray-300"
             >
               Cancel
             </button>
@@ -239,22 +239,22 @@ export default function LearnerAdmin() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
+      <div className="overflow-hidden rounded-xl border border-line bg-surface">
         {learners.length === 0 ? (
-          <p className="px-6 py-12 text-center text-sm text-navy-500">
+          <p className="px-6 py-12 text-center text-sm text-ink-faint">
             No learner records yet. Create one to give a family access to the parent portal.
           </p>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line">
             {learners.map((learner) => (
               <div key={learner.id} className="px-6 py-4">
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="min-w-[12rem] flex-1">
-                    <p className="font-medium text-navy-900">{learner.name}</p>
-                    <p className="text-sm text-navy-600/70">
+                    <p className="font-medium text-ink">{learner.name}</p>
+                    <p className="text-sm text-ink-muted/70">
                       {[learner.programme, learner.curriculum, learner.gradeClass].filter(Boolean).join(' · ') || 'No programme set'}
                     </p>
-                    <p className="text-xs text-navy-500">
+                    <p className="text-xs text-ink-faint">
                       Parent: {learner.parent?.name || 'unknown'} ({learner.parent?.email})
                     </p>
                   </div>
@@ -264,7 +264,7 @@ export default function LearnerAdmin() {
                       learner.assignments.map((assignment) => (
                         <span
                           key={assignment.id}
-                          className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-xs text-navy-700"
+                          className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-3 py-1 text-xs text-ink-muted"
                         >
                           {assignment.educator?.name}
                           {assignment.subject ? ` · ${assignment.subject}` : ''}
@@ -278,20 +278,20 @@ export default function LearnerAdmin() {
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-navy-500">No educator assigned</span>
+                      <span className="text-xs text-ink-faint">No educator assigned</span>
                     )}
                   </div>
 
                   <button
                     onClick={() => setExpanded(expanded === learner.id ? null : learner.id)}
-                    className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs text-navy-700 hover:border-gold-500"
+                    className="rounded-lg border border-line px-3 py-1.5 text-xs text-ink-muted hover:border-gold-500"
                   >
                     {expanded === learner.id ? 'Close' : 'Assign & schedule'}
                   </button>
                 </div>
 
                 {expanded === learner.id && (
-                  <div className="mt-4 grid gap-4 rounded-lg bg-gray-50 p-4 md:grid-cols-2">
+                  <div className="mt-4 grid gap-4 rounded-lg bg-surface-sunk p-4 md:grid-cols-2">
                     <AssignPanel educators={educators} onAssign={(id, subject) => assignEducator(learner, id, subject)} />
                     <SchedulePanel
                       educators={(learner.assignments || []).map((a) => a.educator).filter(Boolean) as AssignableUser[]}
@@ -320,14 +320,14 @@ function AssignPanel({
 
   return (
     <div>
-      <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy-500">
+      <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
         <UserPlus className="h-4 w-4" /> Assign an educator
       </h4>
       <div className="space-y-2">
         <select
           value={educatorUserId}
           onChange={(e) => setEducatorUserId(e.target.value)}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gold-500"
+          className="w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-gold-500"
         >
           <option value="">Choose an educator</option>
           {educators.map((educator) => (
@@ -340,7 +340,7 @@ function AssignPanel({
           placeholder="Subject (optional)"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gold-500"
+          className="w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-gold-500"
         />
         <button
           onClick={() => { onAssign(educatorUserId, subject); setEducatorUserId(''); setSubject('') }}
@@ -348,7 +348,7 @@ function AssignPanel({
         >
           Assign
         </button>
-        <p className="text-xs text-navy-500">
+        <p className="text-xs text-ink-faint">
           Assigning gives this educator access to the learner’s record.
         </p>
       </div>
@@ -369,7 +369,7 @@ function SchedulePanel({
 
   return (
     <div>
-      <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy-500">
+      <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
         <CalendarPlus className="h-4 w-4" /> Schedule a session
       </h4>
       <div className="space-y-2">
@@ -377,18 +377,18 @@ function SchedulePanel({
           placeholder="Subject"
           value={subject}
           onChange={(e) => setSubject(e.target.value)}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gold-500"
+          className="w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-gold-500"
         />
         <input
           type="datetime-local"
           value={when}
           onChange={(e) => setWhen(e.target.value)}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gold-500"
+          className="w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-gold-500"
         />
         <select
           value={educatorUserId}
           onChange={(e) => setEducatorUserId(e.target.value)}
-          className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm outline-none focus:border-gold-500"
+          className="w-full rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-gold-500"
         >
           <option value="">No educator yet</option>
           {educators.map((educator) => (
@@ -403,7 +403,7 @@ function SchedulePanel({
         >
           Schedule
         </button>
-        <p className="text-xs text-navy-500">Only assigned educators can be given a session.</p>
+        <p className="text-xs text-ink-faint">Only assigned educators can be given a session.</p>
       </div>
     </div>
   )

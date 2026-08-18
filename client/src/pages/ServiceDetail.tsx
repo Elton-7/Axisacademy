@@ -14,20 +14,20 @@ function SectionBlock({ section }: { section: ServiceSection }) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       viewport={{ once: true, margin: '-80px' }}
-      className="border-t border-gray-100 py-12 first:border-t-0 first:pt-0"
+      className="border-t border-line py-12 first:border-t-0 first:pt-0"
     >
-      <h2 className="text-2xl font-semibold text-navy-900 sm:text-3xl">{section.heading}</h2>
+      <h2 className="text-2xl font-semibold text-ink sm:text-3xl">{section.heading}</h2>
 
       {section.body && (
-        <p className="mt-4 max-w-3xl text-lg leading-relaxed text-navy-600">{section.body}</p>
+        <p className="mt-4 max-w-3xl text-lg leading-relaxed text-ink-muted">{section.body}</p>
       )}
 
       {section.glossary && (
         <dl className="mt-8 grid gap-4 md:grid-cols-2">
           {section.glossary.map((entry) => (
-            <div key={entry.term} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+            <div key={entry.term} className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
               <dt className="text-sm font-semibold uppercase tracking-[0.15em] text-gold-600">{entry.term}</dt>
-              <dd className="mt-3 text-sm leading-relaxed text-navy-600">{entry.definition}</dd>
+              <dd className="mt-3 text-sm leading-relaxed text-ink-muted">{entry.definition}</dd>
             </div>
           ))}
         </dl>
@@ -36,9 +36,9 @@ function SectionBlock({ section }: { section: ServiceSection }) {
       {section.options && (
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           {section.options.map((option) => (
-            <div key={option.title} className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
-              <h3 className="text-base font-semibold text-navy-900">{option.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-navy-600">{option.description}</p>
+            <div key={option.title} className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
+              <h3 className="text-base font-semibold text-ink">{option.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">{option.description}</p>
             </div>
           ))}
         </div>
@@ -47,7 +47,7 @@ function SectionBlock({ section }: { section: ServiceSection }) {
       {section.items && (
         <ul className="mt-8 grid gap-x-8 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
           {section.items.map((item) => (
-            <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-navy-700">
+            <li key={item} className="flex items-start gap-3 text-sm leading-relaxed text-ink-muted">
               <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-gold-500" />
               {item}
             </li>
@@ -57,7 +57,7 @@ function SectionBlock({ section }: { section: ServiceSection }) {
 
       {section.note && (
         <div className="mt-8 rounded-2xl border-l-4 border-gold-500 bg-gold-50 p-6">
-          <p className="text-sm leading-relaxed text-navy-700">{section.note}</p>
+          <p className="text-sm leading-relaxed text-ink-muted">{section.note}</p>
         </div>
       )}
     </motion.section>
@@ -123,7 +123,7 @@ export default function ServiceDetail() {
             transition={{ duration: 0.6 }}
             className="mt-8 max-w-3xl"
           >
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-gold-500/40 bg-white/5">
+            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-gold-500/40 bg-surface/5">
               <Icon className="h-7 w-7 text-gold-500" />
             </div>
             <h1 className="text-4xl font-semibold text-white md:text-5xl">{service.title}</h1>
@@ -135,7 +135,7 @@ export default function ServiceDetail() {
                 <MessageCircle className="h-4 w-4" />
                 Enquire now
               </Link>
-              <Link to="/consultation" className="btn-navy border border-white/20 bg-white/10 hover:bg-white/20">
+              <Link to="/consultation" className="btn-navy border border-white/20 bg-surface/10 hover:bg-surface/20">
                 <Phone className="h-4 w-4" />
                 Book a consultation
               </Link>
@@ -145,7 +145,7 @@ export default function ServiceDetail() {
       </section>
 
       {/* Detail sections */}
-      <section className="bg-white py-16">
+      <section className="bg-surface py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {service.sections.map((section) => (
             <SectionBlock key={section.heading} section={section} />
@@ -162,7 +162,7 @@ export default function ServiceDetail() {
             <Link to={`/enroll?programme=${encodeURIComponent(service.title)}`} className="btn-primary">
               Enquire now
             </Link>
-            <Link to="/contact" className="btn-navy border border-white/20 bg-white/10 hover:bg-white/20">
+            <Link to="/contact" className="btn-navy border border-white/20 bg-surface/10 hover:bg-surface/20">
               Talk to Axis
             </Link>
           </div>
@@ -170,10 +170,10 @@ export default function ServiceDetail() {
       </section>
 
       {/* Other services */}
-      <section className="bg-gray-50 py-20">
+      <section className="bg-surface-sunk py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="section-label mb-3">Explore more</div>
-          <h2 className="mb-10 text-center text-3xl font-semibold text-navy-900">Other Axis services</h2>
+          <h2 className="mb-10 text-center text-3xl font-semibold text-ink">Other Axis services</h2>
           <div className="grid gap-6 md:grid-cols-3">
             {otherServices.map((entry) => {
               const EntryIcon = entry.icon
@@ -181,13 +181,13 @@ export default function ServiceDetail() {
                 <Link
                   key={entry.slug}
                   to={`/services/${entry.slug}`}
-                  className="card-hover group rounded-2xl border border-gray-100 bg-white p-6"
+                  className="card-hover group rounded-2xl border border-line bg-surface p-6"
                 >
                   <div className={`mb-4 flex h-12 w-12 items-center justify-center rounded-xl ${entry.accent}`}>
-                    <EntryIcon className="h-6 w-6 text-navy-900" />
+                    <EntryIcon className="h-6 w-6 text-ink" />
                   </div>
-                  <h3 className="text-lg font-semibold text-navy-900">{entry.shortTitle}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-navy-600">{entry.tagline}</p>
+                  <h3 className="text-lg font-semibold text-ink">{entry.shortTitle}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-ink-muted">{entry.tagline}</p>
                   <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-600">
                     Learn more
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

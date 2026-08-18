@@ -12,7 +12,7 @@ import type { PortalLearnerRecord, PortalSession, SessionStatus } from '../types
  */
 
 const statusTone: Record<SessionStatus, string> = {
-  Scheduled: 'bg-slate-100 text-slate-700',
+  Scheduled: 'bg-surface-muted text-slate-700',
   Attended: 'bg-emerald-50 text-emerald-700',
   Missed: 'bg-rose-50 text-rose-700',
   Cancelled: 'bg-amber-50 text-amber-700',
@@ -31,18 +31,18 @@ function SessionRow({
   onMark: (id: number, status: SessionStatus) => void
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 border-b border-gray-100 py-3 last:border-b-0">
+    <div className="flex flex-wrap items-center gap-3 border-b border-line py-3 last:border-b-0">
       <div className="min-w-[10rem] flex-1">
-        <p className="text-sm font-medium text-navy-900">{session.subject}</p>
-        <p className="text-xs text-navy-600/70">
+        <p className="text-sm font-medium text-ink">{session.subject}</p>
+        <p className="text-xs text-ink-muted/70">
           {formatDateTime(session.scheduledFor)} · {session.durationMinutes} min
           {session.deliveryMode ? ` · ${session.deliveryMode}` : ''}
         </p>
         {session.topicsCovered && (
-          <p className="mt-1 text-xs text-navy-600">Covered: {session.topicsCovered}</p>
+          <p className="mt-1 text-xs text-ink-muted">Covered: {session.topicsCovered}</p>
         )}
         {session.lessonNotes && (
-          <p className="mt-1 text-xs italic text-navy-500">{session.lessonNotes}</p>
+          <p className="mt-1 text-xs italic text-ink-faint">{session.lessonNotes}</p>
         )}
         {session.concernFlagged && (
           <p className="mt-1 flex items-center gap-1 text-xs font-medium text-rose-600">
@@ -59,7 +59,7 @@ function SessionRow({
         <select
           value={session.status}
           onChange={(event) => onMark(session.id, event.target.value as SessionStatus)}
-          className="rounded-lg border border-gray-200 px-2 py-1 text-xs outline-none focus:border-gold-500"
+          className="rounded-lg border border-line px-2 py-1 text-xs outline-none focus:border-gold-500"
           aria-label={`Attendance for ${session.subject} on ${formatDateTime(session.scheduledFor)}`}
         >
           {(['Scheduled', 'Attended', 'Missed', 'Cancelled'] as SessionStatus[]).map((s) => (
@@ -133,9 +133,9 @@ export default function LearnerRecord({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border border-gray-100 bg-white p-6">
-        <h3 className="text-lg font-semibold text-navy-900">{learner.name}</h3>
-        <p className="text-sm text-navy-600/70">
+      <div className="rounded-2xl border border-line bg-surface p-6">
+        <h3 className="text-lg font-semibold text-ink">{learner.name}</h3>
+        <p className="text-sm text-ink-muted/70">
           {[learner.programme, learner.curriculum, learner.gradeClass].filter(Boolean).join(' · ') ||
             'Programme to be confirmed'}
         </p>
@@ -147,33 +147,33 @@ export default function LearnerRecord({
             { label: 'Missed', value: attendance.missed },
             { label: 'Upcoming', value: attendance.scheduled },
           ].map((stat) => (
-            <div key={stat.label} className="rounded-xl bg-gray-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-navy-500">{stat.label}</p>
-              <p className="mt-1 text-2xl font-semibold tabular-nums text-navy-900">{stat.value}</p>
+            <div key={stat.label} className="rounded-xl bg-surface-sunk p-4">
+              <p className="text-xs font-semibold uppercase tracking-wide text-ink-faint">{stat.label}</p>
+              <p className="mt-1 text-2xl font-semibold tabular-nums text-ink">{stat.value}</p>
             </div>
           ))}
         </div>
 
         {attendance.percentage === null && (
-          <p className="mt-3 text-xs text-navy-500">
+          <p className="mt-3 text-xs text-ink-faint">
             No sessions have been marked yet, so there is no attendance figure to show.
           </p>
         )}
 
         {learner.supportNotes && (
           <div className="mt-5 rounded-xl border-l-4 border-gold-500 bg-gold-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-navy-600">Support notes</p>
-            <p className="mt-1 text-sm text-navy-700">{learner.supportNotes}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Support notes</p>
+            <p className="mt-1 text-sm text-ink-muted">{learner.supportNotes}</p>
           </div>
         )}
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white p-6">
-        <h4 className="mb-2 text-sm font-semibold uppercase tracking-wide text-navy-500">
+      <div className="rounded-2xl border border-line bg-surface p-6">
+        <h4 className="mb-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
           Timetable &amp; attendance
         </h4>
         {sessions.length === 0 ? (
-          <p className="py-6 text-sm text-navy-500">No sessions scheduled yet.</p>
+          <p className="py-6 text-sm text-ink-faint">No sessions scheduled yet.</p>
         ) : (
           sessions.map((session) => (
             <SessionRow key={session.id} session={session} canMark={canMark} onMark={markSession} />
@@ -181,18 +181,18 @@ export default function LearnerRecord({
         )}
       </div>
 
-      <div className="rounded-2xl border border-gray-100 bg-white p-6">
-        <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-navy-500">
+      <div className="rounded-2xl border border-line bg-surface p-6">
+        <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
           <ClipboardCheck className="h-4 w-4" /> Academic record
         </h4>
         {assessments.length === 0 ? (
-          <p className="py-6 text-sm text-navy-500">No results recorded yet.</p>
+          <p className="py-6 text-sm text-ink-faint">No results recorded yet.</p>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line">
             {assessments.map((assessment) => (
               <div key={assessment.id} className="flex flex-wrap items-start gap-3 py-3">
                 <div className="min-w-[10rem] flex-1">
-                  <p className="text-sm font-medium text-navy-900">
+                  <p className="text-sm font-medium text-ink">
                     {assessment.title}
                     {!assessment.isReleased && (
                       <span className="ml-2 rounded bg-amber-50 px-2 py-0.5 text-xs font-semibold text-amber-700">
@@ -200,15 +200,15 @@ export default function LearnerRecord({
                       </span>
                     )}
                   </p>
-                  <p className="text-xs text-navy-600/70">
+                  <p className="text-xs text-ink-muted/70">
                     {assessment.subject} · {assessment.type} · {assessment.assessedOn}
                   </p>
                   {assessment.comment && (
-                    <p className="mt-1 text-xs italic text-navy-600">{assessment.comment}</p>
+                    <p className="mt-1 text-xs italic text-ink-muted">{assessment.comment}</p>
                   )}
                 </div>
                 {assessment.score !== null && assessment.score !== undefined && (
-                  <span className="text-sm font-semibold tabular-nums text-navy-900">
+                  <span className="text-sm font-semibold tabular-nums text-ink">
                     {assessment.score}
                     {assessment.maxScore ? ` / ${assessment.maxScore}` : ''}
                   </span>

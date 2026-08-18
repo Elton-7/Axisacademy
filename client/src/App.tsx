@@ -43,7 +43,7 @@ function ProtectedAdminRoute() {
   }, [])
 
   if (isAuthorized === null) {
-    return <div className="flex min-h-screen items-center justify-center bg-gray-50 text-sm text-navy-600">Checking access...</div>
+    return <div className="flex min-h-screen items-center justify-center bg-surface-sunk text-sm text-ink-muted">Checking access...</div>
   }
 
   return isAuthorized ? <AdminDashboard /> : <Navigate to="/admin/login" replace />
@@ -62,7 +62,7 @@ function ProtectedPortalRoute({ role }: { role: 'student' | 'tutor' }) {
       .catch(() => setIsAuthorized(false))
   }, [role])
 
-  if (isAuthorized === null) return <div className="flex min-h-screen items-center justify-center bg-gray-50 text-sm text-navy-600">Checking access...</div>
+  if (isAuthorized === null) return <div className="flex min-h-screen items-center justify-center bg-surface-sunk text-sm text-ink-muted">Checking access...</div>
   return isAuthorized ? <PortalDashboard role={role} /> : <Navigate to={`/portal/${role}`} replace />
 }
 

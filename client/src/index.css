@@ -2,16 +2,50 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Light is the base palette; `.dark` redefines only the tokens. Values are bare
+ * RGB channels so Tailwind's opacity modifiers (text-navy/70, bg-white/10) keep
+ * working in both themes.
+ */
 @layer base {
+  :root {
+    --surface: 255 255 255;
+    --surface-sunk: 246 247 249;
+    --surface-muted: 238 240 244;
+    --line: 228 232 238;
+    --line-strong: 203 210 222;
+    --ink: 10 22 40;
+    --ink-muted: 51 69 106;
+    --ink-faint: 107 126 166;
+    --gold-50: 251 248 239;
+    --gold-600: 171 139 58;
+    --gold-700: 138 110 44;
+  }
+
+  .dark {
+    --surface: 16 26 44;
+    --surface-sunk: 11 19 34;
+    --surface-muted: 22 34 58;
+    --line: 30 43 66;
+    --line-strong: 45 61 89;
+    --ink: 238 241 246;
+    --ink-muted: 169 182 205;
+    --ink-faint: 135 148 171;
+    /* Gold needs lifting on a dark ground to stay legible as a link colour. */
+    --gold-50: 30 26 16;
+    --gold-600: 212 185 106;
+    --gold-700: 224 198 124;
+  }
+
   html {
     scroll-behavior: smooth;
   }
   body {
     font-family: 'Inter', sans-serif;
-    @apply bg-slate-50 text-gray-900 antialiased;
+    @apply bg-surface-sunk text-ink antialiased;
   }
   ::selection {
-    @apply bg-gold text-navy;
+    @apply bg-gold text-navy-surface;
   }
 }
 
@@ -19,22 +53,24 @@
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] transition-all duration-300;
   }
+  /* Gold stays gold in both themes, so its label stays the fixed dark navy
+     rather than the ink token, which would turn white and vanish. */
   .btn-primary {
-    @apply btn bg-gold text-navy shadow-lg shadow-gold/20 hover:-translate-y-0.5 hover:bg-gold-light;
+    @apply btn bg-gold text-navy-surface shadow-lg shadow-gold/20 hover:-translate-y-0.5 hover:bg-gold-light;
   }
   .btn-secondary {
-    @apply btn border border-gold/50 bg-white/90 text-gold hover:border-gold hover:bg-gold-light/20;
+    @apply btn border border-gold/50 bg-surface/90 text-gold-700 hover:border-gold hover:bg-gold-light/20;
   }
   .btn-navy {
     @apply btn bg-navy-dark text-white hover:bg-navy-light;
   }
   .card-hover {
-    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-slate-200;
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-line;
   }
   .section-label {
-    @apply text-gold text-xs font-semibold tracking-[3px] uppercase text-center mb-3;
+    @apply text-gold-700 text-xs font-semibold tracking-[3px] uppercase text-center mb-3;
   }
   .section-title {
-    @apply text-3xl font-semibold text-navy sm:text-4xl;
+    @apply text-3xl font-semibold text-ink sm:text-4xl;
   }
 }

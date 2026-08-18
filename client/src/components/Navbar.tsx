@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone, ChevronDown } from 'lucide-react'
 import { services } from '../content/services'
+import ThemeToggle from './ThemeToggle'
 import { contact, telHref } from '../content/contact'
 
 const navLinks = [
@@ -118,7 +119,7 @@ export default function Navbar() {
                         <Link
                           key={service.slug}
                           to={`/services/${service.slug}`}
-                          className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/5"
+                          className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-surface/5"
                         >
                           <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-gold-500" />
                           <span>
@@ -130,7 +131,7 @@ export default function Navbar() {
                     })}
                     <Link
                       to="/services"
-                      className="mt-1 block rounded-xl border-t border-white/10 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gold-500 hover:bg-white/5"
+                      className="mt-1 block rounded-xl border-t border-white/10 px-3 py-3 text-center text-xs font-semibold uppercase tracking-wide text-gold-500 hover:bg-surface/5"
                     >
                       View all services
                     </Link>
@@ -145,10 +146,11 @@ export default function Navbar() {
           </div>
 
           {/* Phone CTA */}
-          <div className="hidden items-center gap-4 xl:flex">
+          <div className="hidden items-center gap-3 xl:flex">
+            <ThemeToggle />
             <a
               href={telHref}
-              className="flex items-center gap-2 rounded-full border border-gold-500 px-5 py-2.5 text-sm font-medium text-gold-500 transition-all duration-300 hover:bg-gold-500 hover:text-navy-900"
+              className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-gold-500 px-4 py-2.5 text-sm font-medium text-gold-500 transition-all duration-300 hover:bg-gold-500 hover:text-navy-surface"
             >
               <Phone className="h-4 w-4" />
               {contact.phoneDisplay}
@@ -156,6 +158,8 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Toggle */}
+          <div className="flex items-center gap-2 xl:hidden">
+            <ThemeToggle />
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
@@ -164,6 +168,7 @@ export default function Navbar() {
           >
             {isMobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
+          </div>
         </div>
       </div>
 

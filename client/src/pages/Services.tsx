@@ -25,7 +25,7 @@ export default function Services() {
         </div>
       </section>
 
-      <section className="bg-gray-50 py-24">
+      <section className="bg-surface-sunk py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 md:grid-cols-2">
             {services.map((service, i) => {
@@ -37,19 +37,19 @@ export default function Services() {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: (i % 2) * 0.1 }}
                   viewport={{ once: true }}
-                  className="card-hover group overflow-hidden rounded-2xl border border-gray-100 bg-white"
+                  className="card-hover group overflow-hidden rounded-2xl border border-line bg-surface"
                 >
                   <div className={`${service.accent} p-8`}>
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-white shadow-sm">
-                      <Icon className="h-7 w-7 text-navy-900" />
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-surface shadow-sm">
+                      <Icon className="h-7 w-7 text-ink" />
                     </div>
-                    <h2 className="mb-2 text-xl font-semibold text-navy-900">{service.title}</h2>
-                    <p className="text-sm leading-relaxed text-navy-600">{service.summary}</p>
+                    <h2 className="mb-2 text-xl font-semibold text-ink">{service.title}</h2>
+                    <p className="text-sm leading-relaxed text-ink-muted">{service.summary}</p>
                   </div>
                   <div className="p-8">
                     <ul className="mb-6 space-y-3">
                       {service.highlights.map((highlight) => (
-                        <li key={highlight} className="flex items-start gap-3 text-sm text-navy-700">
+                        <li key={highlight} className="flex items-start gap-3 text-sm text-ink-muted">
                           <CheckCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-gold-500" />
                           {highlight}
                         </li>
@@ -65,7 +65,7 @@ export default function Services() {
                       </Link>
                       <Link
                         to={`/enroll?programme=${encodeURIComponent(service.title)}`}
-                        className="text-sm font-semibold uppercase tracking-wide text-navy-600 transition-colors hover:text-navy-900"
+                        className="text-sm font-semibold uppercase tracking-wide text-ink-muted transition-colors hover:text-ink"
                       >
                         Enquire now
                       </Link>
@@ -84,13 +84,13 @@ export default function Services() {
             viewport={{ once: true }}
             className="mt-12 rounded-3xl border border-gold-200 bg-gold-50 p-10 text-center"
           >
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface shadow-sm">
               <Compass className="h-7 w-7 text-gold-600" />
             </div>
-            <h2 className="text-2xl font-semibold text-navy-900 sm:text-3xl">
+            <h2 className="text-2xl font-semibold text-ink sm:text-3xl">
               Not sure which of these your learner needs?
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-navy-600">
+            <p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-ink-muted">
               You do not have to choose from this list. Start with Learner Discovery — we will
               understand the learner, identify the challenge, and recommend the right pathway.
             </p>

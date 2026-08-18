@@ -95,7 +95,7 @@ export default function Programmes() {
         </div>
       </section>
 
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-surface-sunk">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Filter Tabs */}
           <div className="flex flex-wrap justify-center gap-2 mb-12">
@@ -106,7 +106,7 @@ export default function Programmes() {
                 className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   activeCategory === cat
                     ? 'bg-navy-900 text-white shadow-lg'
-                    : 'bg-white text-navy-700 hover:bg-navy-50 border border-gray-200'
+                    : 'bg-surface text-ink-muted hover:bg-navy-50 border border-line'
                 }`}
               >
                 {cat}
@@ -124,7 +124,7 @@ export default function Programmes() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                className="bg-white rounded-2xl overflow-hidden border border-gray-100 card-hover"
+                className="bg-surface rounded-2xl overflow-hidden border border-line card-hover"
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
@@ -133,10 +133,10 @@ export default function Programmes() {
                     </span>
                     <BookOpen className="w-5 h-5 text-navy-300" />
                   </div>
-                  <h3 className="text-lg font-semibold text-navy-900 mb-3">{programme.title}</h3>
-                  <p className="text-navy-600/70 text-sm mb-6 leading-relaxed">{programme.description}</p>
+                  <h3 className="text-lg font-semibold text-ink mb-3">{programme.title}</h3>
+                  <p className="text-ink-muted/70 text-sm mb-6 leading-relaxed">{programme.description}</p>
 
-                  <div className="grid grid-cols-2 gap-3 mb-6 text-xs text-navy-600/60">
+                  <div className="grid grid-cols-2 gap-3 mb-6 text-xs text-ink-muted/60">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-3.5 h-3.5" />
                       {programme.duration}
@@ -153,7 +153,7 @@ export default function Programmes() {
 
                   <ul className="space-y-2 mb-6">
                     {programme.highlights.map((h) => (
-                      <li key={h} className="flex items-center gap-2 text-sm text-navy-700">
+                      <li key={h} className="flex items-center gap-2 text-sm text-ink-muted">
                         <CheckCircle className="w-3.5 h-3.5 text-gold-500" />
                         {h}
                       </li>

@@ -76,8 +76,8 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
   }
 
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6">
-      <h4 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-navy-500">
+    <div className="rounded-2xl border border-line bg-surface p-6">
+      <h4 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
         <MessagesSquare className="h-4 w-4" /> Conversation
       </h4>
 
@@ -91,7 +91,7 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
         <>
           <div className="max-h-96 space-y-3 overflow-y-auto pr-1">
             {messages.length === 0 ? (
-              <p className="py-6 text-center text-sm text-navy-500">
+              <p className="py-6 text-center text-sm text-ink-faint">
                 No messages yet. Anything you write here is seen by Axis and by this learner’s
                 educators.
               </p>
@@ -103,13 +103,13 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
                 >
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                      message.isMine ? 'bg-navy-900 text-white' : 'bg-gray-100 text-navy-900'
+                      message.isMine ? 'bg-navy-900 text-white' : 'bg-surface-muted text-ink'
                     }`}
                   >
                     {!message.isMine && (
-                      <p className="mb-1 text-xs font-semibold text-navy-600">
+                      <p className="mb-1 text-xs font-semibold text-ink-muted">
                         {message.senderName}
-                        <span className="ml-2 font-normal text-navy-500">
+                        <span className="ml-2 font-normal text-ink-faint">
                           {roleLabel[message.senderRole]}
                         </span>
                       </p>
@@ -117,7 +117,7 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
                     <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.body}</p>
                     <p
                       className={`mt-1 text-[0.65rem] ${
-                        message.isMine ? 'text-white/50' : 'text-navy-500'
+                        message.isMine ? 'text-white/50' : 'text-ink-faint'
                       }`}
                     >
                       {formatWhen(message.createdAt)}
@@ -144,7 +144,7 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
               maxLength={4000}
               placeholder="Write a message..."
               aria-label="Write a message"
-              className="flex-1 resize-none rounded-lg border border-gray-200 px-4 py-2.5 text-sm outline-none focus:border-gold-500"
+              className="flex-1 resize-none rounded-lg border border-line px-4 py-2.5 text-sm outline-none focus:border-gold-500"
             />
             <button
               onClick={send}

@@ -54,12 +54,12 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 pt-20">
-      <header className="border-b border-gray-200 bg-white">
+    <div className="min-h-screen bg-surface-muted pt-20">
+      <header className="border-b border-line bg-surface">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-600">Axis Learning</p>
-            <h1 className="mt-1 text-2xl font-semibold text-navy-900">
+            <h1 className="mt-1 text-2xl font-semibold text-ink">
               {isParent ? 'Parent portal' : 'Educator portal'}
             </h1>
           </div>
@@ -88,7 +88,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
         </div>
 
         {loading ? (
-          <div className="rounded-2xl bg-white p-8 text-sm text-navy-600">Loading your workspace...</div>
+          <div className="rounded-2xl bg-surface p-8 text-sm text-ink-muted">Loading your workspace...</div>
         ) : error ? (
           <div role="alert" className="rounded-2xl border border-red-200 bg-red-50 p-8 text-sm text-red-700">
             {error}
@@ -96,8 +96,8 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
         ) : (
           <>
             {/* Learner selector */}
-            <div className="mb-6 rounded-2xl border border-gray-100 bg-white p-6">
-              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-navy-500">
+            <div className="mb-6 rounded-2xl border border-line bg-surface p-6">
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
                 <Users className="h-4 w-4" />
                 {isParent ? 'My learners' : 'Assigned learners'}
               </h3>
@@ -111,11 +111,11 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
                       className={`rounded-xl border px-4 py-3 text-left transition-colors ${
                         selectedLearner === learner.id
                           ? 'border-gold-500 bg-gold-50'
-                          : 'border-gray-200 hover:border-gold-300'
+                          : 'border-line hover:border-gold-300'
                       }`}
                     >
-                      <span className="block text-sm font-medium text-navy-900">{learner.name}</span>
-                      <span className="block text-xs text-navy-600/70">
+                      <span className="block text-sm font-medium text-ink">{learner.name}</span>
+                      <span className="block text-xs text-ink-muted/70">
                         {learner.programme || 'Programme to be confirmed'}
                         {learner.attendance.percentage !== null && ` · ${learner.attendance.percentage}% attendance`}
                       </span>
@@ -123,7 +123,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
                   ))}
                 </div>
               ) : (
-                <p className="mt-3 text-sm text-navy-600/65">
+                <p className="mt-3 text-sm text-ink-muted/65">
                   {isParent
                     ? 'No learner record has been set up yet. Axis will create one once enrolment is complete.'
                     : 'No learners are assigned to you yet.'}
@@ -139,14 +139,14 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
 
             <div className="grid gap-5 md:grid-cols-3">
               {isParent && (
-                <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+                <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
                   <BookOpen className="mb-5 h-7 w-7 text-gold-500" />
-                  <h3 className="text-lg font-semibold text-navy-900">My enquiries</h3>
+                  <h3 className="text-lg font-semibold text-ink">My enquiries</h3>
                   {overview?.programmes.length ? (
                     <ul className="mt-4 space-y-3">
                       {overview.programmes.map((item) => (
                         <li key={item.id} className="flex items-center justify-between text-sm">
-                          <span className="text-navy-700">{item.name}</span>
+                          <span className="text-ink-muted">{item.name}</span>
                           <span className="rounded-full bg-amber-50 px-2 py-1 text-xs capitalize text-amber-700">
                             {item.status}
                           </span>
@@ -154,42 +154,42 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-2 text-sm text-navy-600/65">No enquiries on record.</p>
+                    <p className="mt-2 text-sm text-ink-muted/65">No enquiries on record.</p>
                   )}
                 </div>
               )}
 
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
                 <CalendarDays className="mb-5 h-7 w-7 text-gold-500" />
-                <h3 className="text-lg font-semibold text-navy-900">Upcoming sessions</h3>
+                <h3 className="text-lg font-semibold text-ink">Upcoming sessions</h3>
                 {overview?.upcomingSessions.length ? (
                   <ul className="mt-4 space-y-3">
                     {overview.upcomingSessions.map((item) => (
-                      <li key={item.id} className="text-sm text-navy-700">
+                      <li key={item.id} className="text-sm text-ink-muted">
                         {item.subject}
-                        <span className="block text-xs text-navy-600/60">{formatDateTime(item.scheduledFor)}</span>
+                        <span className="block text-xs text-ink-muted/60">{formatDateTime(item.scheduledFor)}</span>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="mt-2 text-sm text-navy-600/65">No sessions scheduled yet.</p>
+                  <p className="mt-2 text-sm text-ink-muted/65">No sessions scheduled yet.</p>
                 )}
               </div>
 
-              <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
                 <MessageSquare className="mb-5 h-7 w-7 text-gold-500" />
-                <h3 className="text-lg font-semibold text-navy-900">Messages</h3>
+                <h3 className="text-lg font-semibold text-ink">Messages</h3>
                 {overview?.messages.length ? (
                   <ul className="mt-4 space-y-3">
                     {overview.messages.map((item) => (
-                      <li key={item.id} className="text-sm text-navy-700">
+                      <li key={item.id} className="text-sm text-ink-muted">
                         <p className="font-medium">{item.subject}</p>
-                        <p className="text-xs text-navy-600/60">{item.preview}</p>
+                        <p className="text-xs text-ink-muted/60">{item.preview}</p>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="mt-2 text-sm text-navy-600/65">You have no new messages.</p>
+                  <p className="mt-2 text-sm text-ink-muted/65">You have no new messages.</p>
                 )}
               </div>
             </div>
@@ -199,8 +199,8 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-gold-200 bg-gold-50/60 p-5">
           <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-gold-600" />
           <div>
-            <h3 className="text-sm font-semibold text-navy-900">Need help?</h3>
-            <p className="mt-1 text-sm text-navy-600/70">
+            <h3 className="text-sm font-semibold text-ink">Need help?</h3>
+            <p className="mt-1 text-sm text-ink-muted/70">
               Contact the Axis team if you need help accessing your account or learning workspace.
             </p>
             <Link to="/contact" className="mt-3 inline-block text-sm font-semibold text-gold-700 hover:underline">
@@ -209,7 +209,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
           </div>
         </div>
 
-        <Link to="/" className="mt-8 inline-block text-sm text-navy-600/60 hover:text-gold-600">
+        <Link to="/" className="mt-8 inline-block text-sm text-ink-muted/60 hover:text-gold-600">
           Return to main website
         </Link>
       </main>

@@ -84,13 +84,13 @@ export default function Contact() {
         </div>
       </section>
 
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-surface-sunk">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-3 gap-12">
             {/* Contact Info */}
             <div className="lg:col-span-1 space-y-8">
               <div>
-                <h3 className="text-xl font-semibold text-navy-900 mb-6">Contact Information</h3>
+                <h3 className="text-xl font-semibold text-ink mb-6">Contact Information</h3>
                 <div className="space-y-5">
                   {/*
                     Consultations are booked by phone, WhatsApp or email rather
@@ -102,8 +102,8 @@ export default function Contact() {
                       <Phone className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-navy-900">Phone</p>
-                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">{contact.phoneDisplay}</p>
+                      <p className="text-sm font-medium text-ink">Phone</p>
+                      <p className="text-ink-muted/70 text-sm group-hover:text-gold-700">{contact.phoneDisplay}</p>
                     </div>
                   </a>
                   <a
@@ -117,8 +117,8 @@ export default function Contact() {
                       <MessageCircle className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-navy-900">WhatsApp</p>
-                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">
+                      <p className="text-sm font-medium text-ink">WhatsApp</p>
+                      <p className="text-ink-muted/70 text-sm group-hover:text-gold-700">
                         Message us to book a consultation
                       </p>
                     </div>
@@ -128,8 +128,8 @@ export default function Contact() {
                       <Mail className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-navy-900">Email</p>
-                      <p className="text-navy-600/70 text-sm group-hover:text-gold-700">{contact.email}</p>
+                      <p className="text-sm font-medium text-ink">Email</p>
+                      <p className="text-ink-muted/70 text-sm group-hover:text-gold-700">{contact.email}</p>
                     </div>
                   </a>
                   <div className="flex items-start gap-4">
@@ -137,8 +137,8 @@ export default function Contact() {
                       <MapPin className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-navy-900">Location</p>
-                      <p className="text-navy-600/70 text-sm">Nairobi, Kenya</p>
+                      <p className="text-sm font-medium text-ink">Location</p>
+                      <p className="text-ink-muted/70 text-sm">Nairobi, Kenya</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -146,8 +146,8 @@ export default function Contact() {
                       <Clock className="w-5 h-5 text-gold-500" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-navy-900">Hours</p>
-                      <p className="text-navy-600/70 text-sm">Mon - Sat: 8:00 AM - 6:00 PM</p>
+                      <p className="text-sm font-medium text-ink">Hours</p>
+                      <p className="text-ink-muted/70 text-sm">Mon - Sat: 8:00 AM - 6:00 PM</p>
                     </div>
                   </div>
                 </div>
@@ -172,7 +172,7 @@ export default function Contact() {
 
             {/* Contact Form */}
             <div className="lg:col-span-2">
-              <div className="bg-white rounded-2xl p-8 md:p-10 border border-gray-100 shadow-sm">
+              <div className="bg-surface rounded-2xl p-8 md:p-10 border border-line shadow-sm">
                 {isSuccess ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -180,8 +180,8 @@ export default function Contact() {
                     className="text-center py-12"
                   >
                     <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                    <h3 className="text-2xl font-semibold text-navy-900 mb-2">Message Sent!</h3>
-                    <p className="text-navy-600/70">We'll get back to you within 24 hours.</p>
+                    <h3 className="text-2xl font-semibold text-ink mb-2">Message Sent!</h3>
+                    <p className="text-ink-muted/70">We'll get back to you within 24 hours.</p>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -193,19 +193,19 @@ export default function Contact() {
                     )}
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-navy-900 mb-2">First Name *</label>
+                        <label className="block text-sm font-medium text-ink mb-2">First Name *</label>
                         <input
                           {...register('firstName', { required: 'First name is required', validate: value => value.trim().length > 0 || 'First name is required', maxLength: { value: 50, message: 'First name must be 50 characters or fewer' } })}
-                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
+                          className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="John"
                         />
                         {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-navy-900 mb-2">Last Name *</label>
+                        <label className="block text-sm font-medium text-ink mb-2">Last Name *</label>
                         <input
                           {...register('lastName', { required: 'Last name is required', validate: value => value.trim().length > 0 || 'Last name is required', maxLength: { value: 50, message: 'Last name must be 50 characters or fewer' } })}
-                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
+                          className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="Doe"
                         />
                         {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName.message}</p>}
@@ -214,7 +214,7 @@ export default function Contact() {
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-navy-900 mb-2">Email *</label>
+                        <label className="block text-sm font-medium text-ink mb-2">Email *</label>
                         <input
                           type="email"
                           {...register('email', { 
@@ -222,26 +222,26 @@ export default function Contact() {
                             pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
                             maxLength: { value: 100, message: 'Email must be 100 characters or fewer' }
                           })}
-                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
+                          className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="john@example.com"
                         />
                         {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-navy-900 mb-2">Phone</label>
+                        <label className="block text-sm font-medium text-ink mb-2">Phone</label>
                         <input
                           {...register('phone', { pattern: { value: /^[0-9+()\s-]{6,20}$/, message: 'Enter a valid phone number' }, maxLength: { value: 20, message: 'Phone must be 20 characters or fewer' } })}
-                          className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
+                          className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="{contact.phoneDisplay}"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-navy-900 mb-2">Interested Programme</label>
+                      <label className="block text-sm font-medium text-ink mb-2">Interested Programme</label>
                       <select
                         {...register('programme')}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all bg-white"
+                        className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all bg-surface"
                       >
                         <option value="">Select a programme...</option>
                         <option value="homeschooling">Homeschooling</option>
@@ -254,23 +254,23 @@ export default function Contact() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-navy-900 mb-2">Subject *</label>
+                      <label className="block text-sm font-medium text-ink mb-2">Subject *</label>
                       <input
                         {...register('subject', { required: 'Subject is required', validate: value => value.trim().length > 0 || 'Subject is required', maxLength: { value: 100, message: 'Subject must be 100 characters or fewer' } })}
                         maxLength={100}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
+                        className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                         placeholder="How can we help?"
                       />
                       {errors.subject && <p className="text-red-500 text-xs mt-1">{errors.subject.message}</p>}
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-navy-900 mb-2">Message *</label>
+                      <label className="block text-sm font-medium text-ink mb-2">Message *</label>
                       <textarea
                         {...register('message', { required: 'Message is required', validate: value => value.trim().length > 0 || 'Message is required', maxLength: { value: 2000, message: 'Message must be 2,000 characters or fewer' } })}
                         maxLength={2000}
                         rows={5}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all resize-none"
+                        className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all resize-none"
                         placeholder="Tell us about your learning goals..."
                       />
                       {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>}

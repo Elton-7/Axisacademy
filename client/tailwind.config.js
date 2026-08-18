@@ -1,5 +1,21 @@
 /** @type {import('tailwindcss').Config} */
+
+/**
+ * Two kinds of colour, kept deliberately apart.
+ *
+ * Brand colours (navy, gold) are fixed. They are the identity, they read on
+ * both grounds, and the deep navy sections — hero, footer, call-to-action
+ * bands — are meant to stay dark whatever the theme.
+ *
+ * Theme tokens (surface, ink, line) resolve through CSS variables and flip
+ * under `.dark`. Anything that is "the page" rather than "the brand" uses
+ * these, so light and dark are a property of the palette instead of something
+ * every component has to remember with a `dark:` variant.
+ */
+const themed = (variable) => `rgb(var(${variable}) / <alpha-value>)`
+
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,9 +23,15 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Anchors: navy-900 is the deep brand navy, gold-500 the brand accent.
-        // The mid navy shades (500-700) carry body copy, so they are tuned for
-        // contrast on white rather than being simple tints of the anchor.
+        surface: themed('--surface'),
+        'surface-sunk': themed('--surface-sunk'),
+        'surface-muted': themed('--surface-muted'),
+        line: themed('--line'),
+        'line-strong': themed('--line-strong'),
+        ink: themed('--ink'),
+        'ink-muted': themed('--ink-muted'),
+        'ink-faint': themed('--ink-faint'),
+
         navy: {
           50: '#f4f6fa',
           100: '#e5e9f2',
@@ -22,18 +44,20 @@ export default {
           800: '#16223a',
           900: '#0a1628',
           DEFAULT: '#0a1628',
+          /** The dark brand surface, fixed in both themes. */
+          surface: '#0a1628',
           light: '#111d32',
           dark: '#070e1a',
         },
         gold: {
-          50: '#fbf8ef',
+          50: themed('--gold-50'),
           100: '#f6efd8',
           200: '#ecdcaa',
           300: '#e0c67c',
           400: '#d5b563',
           500: '#c9a84c',
-          600: '#ab8b3a',
-          700: '#8a6e2c',
+          600: themed('--gold-600'),
+          700: themed('--gold-700'),
           800: '#6b5422',
           900: '#4d3c19',
           DEFAULT: '#c9a84c',

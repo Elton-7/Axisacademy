@@ -41,7 +41,7 @@ export default function WhyTestimonials() {
   }, [])
 
   return (
-    <section ref={ref} className="bg-white py-24">
+    <section ref={ref} className="bg-surface py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-16 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
@@ -53,12 +53,12 @@ export default function WhyTestimonials() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={isVisible ? { opacity: 1, scale: 1 } : {}}
                   transition={{ duration: 0.4, delay: i * 0.05 }}
-                  className="group rounded-[1.25rem] border border-slate-200 bg-slate-50 p-4 text-center shadow-sm"
+                  className="group rounded-[1.25rem] border border-line bg-surface-sunk p-4 text-center shadow-sm"
                 >
-                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-gold/30 bg-white transition-all duration-300 group-hover:bg-gold group-hover:border-gold">
-                    <reason.icon className="h-5 w-5 text-gold transition-colors group-hover:text-navy" />
+                  <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-gold/30 bg-surface transition-all duration-300 group-hover:bg-gold group-hover:border-gold">
+                    <reason.icon className="h-5 w-5 text-gold transition-colors group-hover:text-ink" />
                   </div>
-                  <h3 className="text-xs font-semibold leading-tight text-navy">
+                  <h3 className="text-xs font-semibold leading-tight text-ink">
                     {reason.label}
                   </h3>
                 </motion.div>
@@ -67,12 +67,12 @@ export default function WhyTestimonials() {
           </div>
 
           <div>
-            <h2 className="mb-8 text-2xl font-semibold text-navy">
+            <h2 className="mb-8 text-2xl font-semibold text-ink">
               What parents and learners say
             </h2>
             {testimonials.length === 0 ? (
-              <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-8">
-                <p className="text-sm leading-relaxed text-navy/70">
+              <div className="rounded-[1.5rem] border border-line bg-surface-sunk p-8">
+                <p className="text-sm leading-relaxed text-ink-muted/70">
                   We would rather publish nothing here than invent it. Axis is collecting
                   testimonials from families and learners, and they will appear here once they
                   have been given with permission.
@@ -92,11 +92,11 @@ export default function WhyTestimonials() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.5, delay: 0.25 + i * 0.15 }}
-                    className="relative rounded-[1.5rem] border border-slate-200 bg-slate-50 p-6 shadow-sm"
+                    className="relative rounded-[1.5rem] border border-line bg-surface-sunk p-6 shadow-sm"
                   >
                     <span className="absolute left-4 top-4 font-serif text-6xl leading-none text-gold/30">"</span>
-                    <p className="pl-6 text-sm leading-relaxed italic text-navy/70">{t.text}</p>
-                    <p className="mt-4 text-right text-sm font-semibold text-navy">
+                    <p className="pl-6 text-sm leading-relaxed italic text-ink-muted/70">{t.text}</p>
+                    <p className="mt-4 text-right text-sm font-semibold text-ink">
                       — {t.author}
                       {t.role ? `, ${t.role}` : ''}
                     </p>

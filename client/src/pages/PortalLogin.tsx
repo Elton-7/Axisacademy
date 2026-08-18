@@ -62,8 +62,8 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
   const switchRole = role === 'student' ? 'tutor' : 'student'
 
   return (
-    <div className="min-h-screen bg-slate-100 px-4 py-28 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
+    <div className="min-h-screen bg-surface-muted px-4 py-28 sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-5xl overflow-hidden rounded-3xl bg-surface shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
         <div className={`relative hidden overflow-hidden bg-gradient-to-br ${config.accent} p-10 lg:flex lg:flex-col lg:justify-between`}>
           <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full border border-white/20" />
           <Link to="/" className="relative flex items-center gap-3 text-white">
@@ -79,23 +79,23 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
         </div>
 
         <div className="p-7 sm:p-10 lg:p-14">
-          <Link to="/" className="mb-10 inline-flex items-center gap-2 text-sm text-navy-600/60 hover:text-gold-600"><ArrowLeft className="h-4 w-4" /> Back to website</Link>
+          <Link to="/" className="mb-10 inline-flex items-center gap-2 text-sm text-ink-muted/60 hover:text-gold-600"><ArrowLeft className="h-4 w-4" /> Back to website</Link>
           <div className="mb-8">
             <div className={`mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br ${config.accent} text-white`}><Icon className="h-6 w-6" /></div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold-600">{config.eyebrow}</p>
-            <h1 className="text-3xl font-semibold text-navy-900">Sign in to your {role} account</h1>
-            <p className="mt-2 text-sm text-navy-600/70">{config.description}</p>
+            <h1 className="text-3xl font-semibold text-ink">Sign in to your {role} account</h1>
+            <p className="mt-2 text-sm text-ink-muted/70">{config.description}</p>
           </div>
 
           {error && <div role="alert" className="mb-5 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /><span>{error}</span></div>}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div><label htmlFor={`${role}-email`} className="mb-2 block text-sm font-medium text-navy-900">Email address</label><input id={`${role}-email`} type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-gray-200 px-4 py-3.5 outline-none transition-all placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>
-            <div><div className="mb-2 flex items-center justify-between"><label htmlFor={`${role}-password`} className="block text-sm font-medium text-navy-900">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-navy-600/60 hover:text-gold-600">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div><input id={`${role}-password`} type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" className="w-full rounded-xl border border-gray-200 px-4 py-3.5 outline-none transition-all placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>
+            <div><label htmlFor={`${role}-email`} className="mb-2 block text-sm font-medium text-ink">Email address</label><input id={`${role}-email`} type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-faint focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>
+            <div><div className="mb-2 flex items-center justify-between"><label htmlFor={`${role}-password`} className="block text-sm font-medium text-ink">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-ink-muted/60 hover:text-gold-600">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div><input id={`${role}-password`} type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-faint focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>
             <button type="submit" disabled={loading} className="btn-primary flex w-full items-center justify-center gap-2 rounded-xl py-3.5 disabled:cursor-not-allowed disabled:opacity-50">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}{loading ? 'Signing in...' : `Sign in to ${role} portal`}</button>
           </form>
 
-          <div className="mt-8 border-t border-gray-100 pt-6 text-center"><p className="text-sm text-navy-600/60">Need the {switchRole} portal?</p><Link to={`/portal/${switchRole}`} state={{ from: location.pathname }} className="mt-1 inline-block text-sm font-semibold text-gold-600 hover:text-gold-700">Go to {switchRole} sign in</Link></div>
+          <div className="mt-8 border-t border-line pt-6 text-center"><p className="text-sm text-ink-muted/60">Need the {switchRole} portal?</p><Link to={`/portal/${switchRole}`} state={{ from: location.pathname }} className="mt-1 inline-block text-sm font-semibold text-gold-600 hover:text-gold-700">Go to {switchRole} sign in</Link></div>
         </div>
       </div>
     </div>

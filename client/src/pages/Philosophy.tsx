@@ -76,7 +76,7 @@ export default function Philosophy() {
       </section>
 
       {/* The reframing at the heart of the brief */}
-      <section className="bg-white py-20">
+      <section className="bg-surface py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-stretch gap-6 md:grid-cols-2">
             <motion.div
@@ -84,15 +84,15 @@ export default function Philosophy() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
-              className="rounded-3xl border border-gray-200 bg-gray-50 p-10"
+              className="rounded-3xl border border-line bg-surface-sunk p-10"
             >
-              <p className="font-mono text-xs uppercase tracking-[0.15em] text-navy-500">
+              <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-faint">
                 Education usually asks
               </p>
-              <p className="mt-4 font-serif text-3xl italic leading-snug text-navy-500">
+              <p className="mt-4 font-serif text-3xl italic leading-snug text-ink-faint">
                 “Which class is the learner in?”
               </p>
-              <p className="mt-6 text-sm leading-relaxed text-navy-600">
+              <p className="mt-6 text-sm leading-relaxed text-ink-muted">
                 A reasonable administrative question. It tells you where to put a learner — and
                 almost nothing about how to teach them.
               </p>
@@ -121,11 +121,11 @@ export default function Philosophy() {
       </section>
 
       {/* The seven questions */}
-      <section className="bg-gray-50 py-20">
+      <section className="bg-surface-sunk py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <h2 className="text-3xl font-semibold text-navy-900">What we seek to understand</h2>
-            <p className="mt-4 text-lg leading-relaxed text-navy-600">
+            <h2 className="text-3xl font-semibold text-ink">What we seek to understand</h2>
+            <p className="mt-4 text-lg leading-relaxed text-ink-muted">
               Before recommending a curriculum, a programme or an educator, we work to understand
               seven things about the learner in front of us.
             </p>
@@ -139,12 +139,12 @@ export default function Philosophy() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: (index % 3) * 0.08 }}
                 viewport={{ once: true }}
-                className="flex items-start gap-4 rounded-2xl border border-gray-100 bg-white p-6"
+                className="flex items-start gap-4 rounded-2xl border border-line bg-surface p-6"
               >
                 <span className="font-mono text-sm font-semibold text-gold-600">
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <span className="text-base font-medium leading-snug text-navy-900">{question}</span>
+                <span className="text-base font-medium leading-snug text-ink">{question}</span>
               </motion.li>
             ))}
           </ol>
@@ -152,11 +152,11 @@ export default function Philosophy() {
       </section>
 
       {/* What follows from it */}
-      <section className="bg-white py-20">
+      <section className="bg-surface py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <h2 className="text-3xl font-semibold text-navy-900">What this means in practice</h2>
-            <p className="mt-4 text-lg leading-relaxed text-navy-600">
+            <h2 className="text-3xl font-semibold text-ink">What this means in practice</h2>
+            <p className="mt-4 text-lg leading-relaxed text-ink-muted">
               A philosophy is only worth stating if it changes what an organisation actually does.
               Here is what follows from ours.
             </p>
@@ -170,10 +170,10 @@ export default function Philosophy() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.45, delay: (index % 2) * 0.1 }}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-gray-100 bg-gray-50 p-8"
+                className="rounded-2xl border border-line bg-surface-sunk p-8"
               >
-                <h3 className="text-lg font-semibold text-navy-900">{item.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-navy-600">{item.body}</p>
+                <h3 className="text-lg font-semibold text-ink">{item.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-ink-muted">{item.body}</p>
               </motion.div>
             ))}
           </div>
@@ -194,7 +194,7 @@ export default function Philosophy() {
               Start with Learner Discovery
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link to="/consultation" className="btn-navy border border-white/20 bg-white/10 hover:bg-white/20">
+            <Link to="/consultation" className="btn-navy border border-white/20 bg-surface/10 hover:bg-surface/20">
               Book a consultation
             </Link>
           </div>

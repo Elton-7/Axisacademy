@@ -13,11 +13,11 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="group overflow-hidden rounded-2xl bg-white shadow-sm hover:shadow-lg transition-shadow duration-300 border border-slate-200"
+      className="group overflow-hidden rounded-2xl bg-surface shadow-sm hover:shadow-lg transition-shadow duration-300 border border-line"
     >
       {/* Photo */}
       {educator.photo && (
-        <div className="h-64 overflow-hidden bg-slate-100">
+        <div className="h-64 overflow-hidden bg-surface-muted">
           <img
             src={educator.photo}
             alt={educator.name}
@@ -29,12 +29,12 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
       {/* Content */}
       <div className="p-6">
         {/* Name and Position */}
-        <h3 className="text-lg font-semibold text-navy mb-1">{educator.name}</h3>
+        <h3 className="text-lg font-semibold text-ink mb-1">{educator.name}</h3>
         <p className="text-sm text-gold font-medium mb-3">{educator.position}</p>
 
         {/* Category */}
         <div className="inline-block mb-4">
-          <span className="text-xs font-semibold bg-navy/10 text-navy px-3 py-1 rounded-full">
+          <span className="text-xs font-semibold bg-navy/10 text-ink px-3 py-1 rounded-full">
             {educator.category}
           </span>
         </div>
@@ -42,16 +42,16 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
         {/* Qualifications */}
         {educator.qualifications && (
           <div className="mb-4">
-            <p className="text-xs font-semibold text-navy/70 mb-1">QUALIFICATIONS</p>
-            <p className="text-sm text-navy/60 line-clamp-2">{educator.qualifications}</p>
+            <p className="text-xs font-semibold text-ink-muted/70 mb-1">QUALIFICATIONS</p>
+            <p className="text-sm text-ink-muted/60 line-clamp-2">{educator.qualifications}</p>
           </div>
         )}
 
         {/* Expertise */}
         {educator.expertise && (
           <div className="mb-4">
-            <p className="text-xs font-semibold text-navy/70 mb-1">EXPERTISE</p>
-            <p className="text-sm text-navy/60 line-clamp-2">{educator.expertise}</p>
+            <p className="text-xs font-semibold text-ink-muted/70 mb-1">EXPERTISE</p>
+            <p className="text-sm text-ink-muted/60 line-clamp-2">{educator.expertise}</p>
           </div>
         )}
 
@@ -60,7 +60,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <BookOpen className="h-4 w-4 text-gold" />
-              <span className="text-xs font-semibold text-navy/70">SUBJECTS</span>
+              <span className="text-xs font-semibold text-ink-muted/70">SUBJECTS</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {educator.subjects.slice(0, 3).map((subject) => (
@@ -69,7 +69,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
                 </span>
               ))}
               {educator.subjects.length > 3 && (
-                <span className="text-xs text-navy/60 px-2 py-1">+{educator.subjects.length - 3} more</span>
+                <span className="text-xs text-ink-muted/60 px-2 py-1">+{educator.subjects.length - 3} more</span>
               )}
             </div>
           </div>
@@ -80,7 +80,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Languages className="h-4 w-4 text-gold" />
-              <span className="text-xs font-semibold text-navy/70">LANGUAGES</span>
+              <span className="text-xs font-semibold text-ink-muted/70">LANGUAGES</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {educator.languages.slice(0, 3).map((lang) => (
@@ -89,18 +89,18 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
                 </span>
               ))}
               {educator.languages.length > 3 && (
-                <span className="text-xs text-navy/60 px-2 py-1">+{educator.languages.length - 3} more</span>
+                <span className="text-xs text-ink-muted/60 px-2 py-1">+{educator.languages.length - 3} more</span>
               )}
             </div>
           </div>
         )}
 
         {/* Contact */}
-        <div className="pt-4 border-t border-slate-200 space-y-2">
+        <div className="pt-4 border-t border-line space-y-2">
           {educator.email && (
             <a
               href={`mailto:${educator.email}`}
-              className="flex items-center gap-2 text-sm text-navy/70 hover:text-gold transition-colors"
+              className="flex items-center gap-2 text-sm text-ink-muted/70 hover:text-gold transition-colors"
             >
               <Mail className="h-4 w-4" />
               <span className="truncate">{educator.email}</span>
@@ -109,7 +109,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
           {educator.phone && (
             <a
               href={`tel:${educator.phone}`}
-              className="flex items-center gap-2 text-sm text-navy/70 hover:text-gold transition-colors"
+              className="flex items-center gap-2 text-sm text-ink-muted/70 hover:text-gold transition-colors"
             >
               <Phone className="h-4 w-4" />
               {educator.phone}

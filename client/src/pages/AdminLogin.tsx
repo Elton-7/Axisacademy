@@ -32,8 +32,8 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 px-4 py-28 sm:px-6 lg:px-8">
-      <div className="mx-auto grid max-w-5xl overflow-hidden rounded-3xl bg-white shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
+    <div className="min-h-screen bg-surface-muted px-4 py-28 sm:px-6 lg:px-8">
+      <div className="mx-auto grid max-w-5xl overflow-hidden rounded-3xl bg-surface shadow-2xl lg:grid-cols-[0.9fr_1.1fr]">
         <div className="relative hidden overflow-hidden bg-navy-900 p-10 lg:flex lg:flex-col lg:justify-between">
           <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full border border-gold-500/20" />
           <div className="absolute -bottom-32 -left-24 h-80 w-80 rounded-full border border-gold-500/10" />
@@ -53,12 +53,12 @@ export default function AdminLogin() {
         </div>
 
         <div className="p-7 sm:p-10 lg:p-14">
-          <Link to="/" className="mb-10 inline-flex items-center gap-2 text-sm text-navy-600/60 transition-colors hover:text-gold-600 lg:hidden"><ArrowLeft className="h-4 w-4" /> Back to website</Link>
+          <Link to="/" className="mb-10 inline-flex items-center gap-2 text-sm text-ink-muted/60 transition-colors hover:text-gold-600 lg:hidden"><ArrowLeft className="h-4 w-4" /> Back to website</Link>
           <div className="mb-8">
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold-50 text-gold-600"><LockKeyhole className="h-6 w-6" /></div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold-600">Welcome back</p>
-            <h1 className="text-3xl font-semibold text-navy-900">Sign in to your account</h1>
-            <p className="mt-2 text-sm text-navy-600/70">Use your staff credentials to continue to the dashboard.</p>
+            <h1 className="text-3xl font-semibold text-ink">Sign in to your account</h1>
+            <p className="mt-2 text-sm text-ink-muted/70">Use your staff credentials to continue to the dashboard.</p>
           </div>
 
         {error && (
@@ -70,21 +70,21 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label htmlFor="admin-email" className="mb-2 block text-sm font-medium text-navy-900">Work email</label>
-            <input id="admin-email" type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@axislearning.co.ke" className="w-full rounded-xl border border-gray-200 px-4 py-3.5 outline-none transition-all placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
+            <label htmlFor="admin-email" className="mb-2 block text-sm font-medium text-ink">Work email</label>
+            <input id="admin-email" type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@axislearning.co.ke" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-faint focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
           </div>
           <div>
-            <div className="mb-2 flex items-center justify-between"><label htmlFor="admin-password" className="block text-sm font-medium text-navy-900">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-navy-600/60 hover:text-gold-600">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div>
-            <input id="admin-password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" className="w-full rounded-xl border border-gray-200 px-4 py-3.5 outline-none transition-all placeholder:text-gray-400 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
+            <div className="mb-2 flex items-center justify-between"><label htmlFor="admin-password" className="block text-sm font-medium text-ink">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-ink-muted/60 hover:text-gold-600">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div>
+            <input id="admin-password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-faint focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
           </div>
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-navy-600/70"><input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} className="h-4 w-4 rounded border-gray-300 text-gold-500 focus:ring-gold-500" /> Keep me signed in</label>
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-ink-muted/70"><input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} className="h-4 w-4 rounded border-line-strong text-gold-500 focus:ring-gold-500" /> Keep me signed in</label>
           <button type="submit" disabled={loading} className="btn-primary flex w-full items-center justify-center gap-2 rounded-xl py-3.5 disabled:cursor-not-allowed disabled:opacity-50">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
-        <p className="mt-8 text-center text-xs leading-relaxed text-navy-600/50">Authorized personnel only. Your activity may be monitored for security.</p>
-        <Link to="/" className="mt-5 block text-center text-sm text-navy-600/70 hover:text-gold-600">Return to website</Link>
+        <p className="mt-8 text-center text-xs leading-relaxed text-ink-muted/50">Authorized personnel only. Your activity may be monitored for security.</p>
+        <Link to="/" className="mt-5 block text-center text-sm text-ink-muted/70 hover:text-gold-600">Return to website</Link>
         </div>
       </div>
     </div>

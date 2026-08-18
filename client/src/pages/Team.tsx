@@ -92,27 +92,27 @@ export default function Team() {
         </div>
       </section>
 
-      <section className="bg-white py-10">
+      <section className="bg-surface py-10">
         <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 md:grid-cols-3 lg:px-8">
-          <div className="rounded-2xl bg-slate-50 p-6"><Network className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-navy">A growing network</h2><p className="mt-2 text-sm leading-relaxed text-navy/70">Axis brings together teachers, tutors, specialists, coaches, artists, and other learning professionals.</p></div>
-          <div className="rounded-2xl bg-slate-50 p-6"><SlidersHorizontal className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-navy">Matched to the learner</h2><p className="mt-2 text-sm leading-relaxed text-navy/70">We begin by understanding the learner, then identify the expertise and support that can help them thrive.</p></div>
-          <div className="rounded-2xl bg-slate-50 p-6"><MapPin className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-navy">Beyond one location</h2><p className="mt-2 text-sm leading-relaxed text-navy/70">The network helps Axis support families through online, home-based, centre-based, and blended learning.</p></div>
+          <div className="rounded-2xl bg-surface-sunk p-6"><Network className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">A growing network</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted/70">Axis brings together teachers, tutors, specialists, coaches, artists, and other learning professionals.</p></div>
+          <div className="rounded-2xl bg-surface-sunk p-6"><SlidersHorizontal className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">Matched to the learner</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted/70">We begin by understanding the learner, then identify the expertise and support that can help them thrive.</p></div>
+          <div className="rounded-2xl bg-surface-sunk p-6"><MapPin className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">Beyond one location</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted/70">The network helps Axis support families through online, home-based, centre-based, and blended learning.</p></div>
         </div>
       </section>
 
       {/* Filters Section */}
-      <section className="bg-white border-b border-slate-200 py-8 sticky top-0 z-40">
+      <section className="bg-surface border-b border-line py-8 sticky top-0 z-40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
               <input
                 type="text"
                 placeholder="Search by name, expertise, subjects, or languages..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+                className="w-full pl-12 pr-4 py-2 border border-line-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
               />
             </div>
 
@@ -123,7 +123,7 @@ export default function Team() {
                 className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
                   selectedCategory === 'all'
                     ? 'bg-navy text-white'
-                    : 'bg-slate-100 text-navy hover:bg-slate-200'
+                    : 'bg-surface-muted text-ink hover:bg-line'
                 }`}
               >
                 <Filter className="inline-block h-4 w-4 mr-2" />
@@ -136,7 +136,7 @@ export default function Team() {
                   className={`px-4 py-2 rounded-full font-medium text-sm transition-colors whitespace-nowrap ${
                     selectedCategory === category
                       ? 'bg-navy text-white'
-                      : 'bg-slate-100 text-navy hover:bg-slate-200'
+                      : 'bg-surface-muted text-ink hover:bg-line'
                   }`}
                 >
                   {category}
@@ -145,7 +145,7 @@ export default function Team() {
             </div>
 
             {/* Results count */}
-            <p className="text-sm text-navy/60">
+            <p className="text-sm text-ink-muted/60">
               Showing {filteredEducators.length} of {educators.length} educators
             </p>
           </div>
@@ -153,7 +153,7 @@ export default function Team() {
       </section>
 
       {/* Educators Grid */}
-      <section className="py-16 bg-slate-50 min-h-[60vh]">
+      <section className="py-16 bg-surface-sunk min-h-[60vh]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center items-center py-20">
@@ -167,8 +167,8 @@ export default function Team() {
             <div className="py-12 text-center">
               {educators.length === 0 ? (
                 <>
-                  <p className="text-lg font-semibold text-navy">Our educator profiles are being prepared.</p>
-                  <p className="mx-auto mt-2 max-w-lg text-navy/60">
+                  <p className="text-lg font-semibold text-ink">Our educator profiles are being prepared.</p>
+                  <p className="mx-auto mt-2 max-w-lg text-ink-muted/60">
                     Axis works through a growing national network of teachers, tutors, language
                     educators, coaches and specialists. Individual profiles will appear here as each
                     educator's details and photograph are confirmed.
@@ -178,7 +178,7 @@ export default function Team() {
                   </Link>
                 </>
               ) : (
-                <p className="text-lg text-navy/60">
+                <p className="text-lg text-ink-muted/60">
                   {searchQuery ? 'No educators match your search. Try a different query.' : 'No educators in this category.'}
                 </p>
               )}
@@ -203,13 +203,13 @@ export default function Team() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/enroll?programme=Learner%20Discovery%20%26%20Consultancy"
-              className="px-8 py-3 bg-gold text-navy font-semibold rounded-lg hover:bg-gold/90 transition-colors"
+              className="px-8 py-3 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
             >
               Find the right educator
             </Link>
             <Link
               to="/enroll"
-              className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy transition-colors"
+              className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-surface hover:text-ink transition-colors"
             >
               Make an Enquiry
             </Link>

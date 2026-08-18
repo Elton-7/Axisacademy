@@ -104,32 +104,32 @@ export default function Events() {
       </section>
 
       {/* Filters Section */}
-      <section className="bg-white border-b border-slate-200 py-8 sticky top-0 z-40">
+      <section className="bg-surface border-b border-line py-8 sticky top-0 z-40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
               <input
                 type="text"
                 placeholder="Search events by title, description, programme, or location..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
+                className="w-full pl-12 pr-4 py-2 border border-line-strong rounded-lg focus:outline-none focus:ring-2 focus:ring-gold focus:border-transparent"
               />
             </div>
 
             {/* Status and Category Filters */}
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <label className="text-xs font-semibold text-navy/70 mb-2 block">Status</label>
+                <label className="text-xs font-semibold text-ink-muted/70 mb-2 block">Status</label>
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setSelectedStatus('all')}
                     className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
                       selectedStatus === 'all'
                         ? 'bg-navy text-white'
-                        : 'bg-slate-100 text-navy hover:bg-slate-200'
+                        : 'bg-surface-muted text-ink hover:bg-line'
                     }`}
                   >
                     All Events
@@ -141,7 +141,7 @@ export default function Events() {
                       className={`px-4 py-2 rounded-full font-medium text-sm transition-colors whitespace-nowrap ${
                         selectedStatus === status
                           ? 'bg-navy text-white'
-                          : 'bg-slate-100 text-navy hover:bg-slate-200'
+                          : 'bg-surface-muted text-ink hover:bg-line'
                       }`}
                     >
                       {status}
@@ -153,14 +153,14 @@ export default function Events() {
 
             {/* Category Filters */}
             <div>
-              <label className="text-xs font-semibold text-navy/70 mb-2 block">Category</label>
+              <label className="text-xs font-semibold text-ink-muted/70 mb-2 block">Category</label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSelectedCategory('all')}
                   className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
                     selectedCategory === 'all'
-                      ? 'bg-gold text-navy'
-                      : 'bg-slate-100 text-navy hover:bg-slate-200'
+                      ? 'bg-gold text-navy-surface'
+                      : 'bg-surface-muted text-ink hover:bg-line'
                   }`}
                 >
                   <Filter className="inline-block h-4 w-4 mr-2" />
@@ -172,8 +172,8 @@ export default function Events() {
                     onClick={() => setSelectedCategory(category)}
                     className={`px-4 py-2 rounded-full font-medium text-sm transition-colors whitespace-nowrap ${
                       selectedCategory === category
-                        ? 'bg-gold text-navy'
-                        : 'bg-slate-100 text-navy hover:bg-slate-200'
+                        ? 'bg-gold text-navy-surface'
+                        : 'bg-surface-muted text-ink hover:bg-line'
                     }`}
                   >
                     {category}
@@ -183,7 +183,7 @@ export default function Events() {
             </div>
 
             {/* Results count */}
-            <p className="text-sm text-navy/60">
+            <p className="text-sm text-ink-muted/60">
               Showing {filteredEvents.length} of {events.length} events
             </p>
           </div>
@@ -191,7 +191,7 @@ export default function Events() {
       </section>
 
       {/* Events Grid */}
-      <section className="py-16 bg-slate-50 min-h-[60vh]">
+      <section className="py-16 bg-surface-sunk min-h-[60vh]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center items-center py-20">
@@ -203,8 +203,8 @@ export default function Events() {
             </div>
           ) : filteredEvents.length === 0 ? (
             <div className="text-center py-12">
-              <Calendar className="h-12 w-12 text-navy/30 mx-auto mb-4" />
-              <p className="text-lg text-navy/60">
+              <Calendar className="h-12 w-12 text-ink-muted/30 mx-auto mb-4" />
+              <p className="text-lg text-ink-muted/60">
                 {searchQuery ? 'No events match your search. Try a different query.' : 'No events found.'}
               </p>
             </div>
@@ -228,13 +228,13 @@ export default function Events() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/contact"
-              className="px-8 py-3 bg-gold text-navy font-semibold rounded-lg hover:bg-gold/90 transition-colors"
+              className="px-8 py-3 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
             >
               Contact Us
             </Link>
             <Link
               to="/enroll"
-              className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-navy transition-colors"
+              className="px-8 py-3 border-2 border-white text-white font-semibold rounded-lg hover:bg-surface hover:text-ink transition-colors"
             >
               Make an Enquiry
             </Link>

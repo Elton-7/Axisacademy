@@ -52,7 +52,7 @@ export default function About() {
       {/* Tagline pillars */}
       <section className="bg-gold-500 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="mb-10 text-center font-mono text-xs uppercase tracking-[0.3em] text-navy-900/70">
+          <p className="mb-10 text-center font-mono text-xs uppercase tracking-[0.3em] text-ink/70">
             Learn • Think • Create • Explore • Thrive
           </p>
           <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
@@ -65,9 +65,9 @@ export default function About() {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <pillar.icon className="mx-auto mb-3 h-8 w-8 text-navy-900" />
-                <div className="mb-1 text-xl font-bold text-navy-900">{pillar.title}</div>
-                <div className="text-sm leading-snug text-navy-900/75">{pillar.desc}</div>
+                <pillar.icon className="mx-auto mb-3 h-8 w-8 text-ink" />
+                <div className="mb-1 text-xl font-bold text-ink">{pillar.title}</div>
+                <div className="text-sm leading-snug text-ink/75">{pillar.desc}</div>
               </motion.div>
             ))}
           </div>
@@ -75,18 +75,18 @@ export default function About() {
       </section>
 
       {/* Mission & Vision */}
-      <section ref={ref} className="py-24 bg-white">
+      <section ref={ref} className="py-24 bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12">
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={isVisible ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6 }}
-              className="bg-gray-50 rounded-2xl p-10"
+              className="bg-surface-sunk rounded-2xl p-10"
             >
               <Target className="w-12 h-12 text-gold-500 mb-6" />
-              <h2 className="text-2xl font-semibold text-navy-900 mb-4">Our Mission</h2>
-              <p className="text-navy-600/80 leading-relaxed">
+              <h2 className="text-2xl font-semibold text-ink mb-4">Our Mission</h2>
+              <p className="text-ink-muted/80 leading-relaxed">
                 To develop learners whom the world needs more than they need the world. We achieve this 
                 by providing personalized, high-quality education that nurtures critical thinking, creativity, 
                 and character development.
@@ -96,11 +96,11 @@ export default function About() {
               initial={{ opacity: 0, x: 30 }}
               animate={isVisible ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-gray-50 rounded-2xl p-10"
+              className="bg-surface-sunk rounded-2xl p-10"
             >
               <Eye className="w-12 h-12 text-gold-500 mb-6" />
-              <h2 className="text-2xl font-semibold text-navy-900 mb-4">Our Vision</h2>
-              <p className="text-navy-600/80 leading-relaxed">
+              <h2 className="text-2xl font-semibold text-ink mb-4">Our Vision</h2>
+              <p className="text-ink-muted/80 leading-relaxed">
                 To build a world where learners are creators of opportunity, not merely seekers of it. 
                 We envision an educational ecosystem that empowers every individual to discover their 
                 unique potential and contribute meaningfully to society.
@@ -111,10 +111,10 @@ export default function About() {
       </section>
 
       {/* Core Values */}
-      <section className="py-24 bg-gray-50">
+      <section className="py-24 bg-surface-sunk">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="section-label mb-4">Our Values</div>
-          <h2 className="text-3xl font-semibold text-navy-900 text-center mb-16">
+          <h2 className="text-3xl font-semibold text-ink text-center mb-16">
             What Drives Us
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -125,19 +125,19 @@ export default function About() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-white rounded-2xl p-8 border border-gray-100 card-hover"
+                className="bg-surface rounded-2xl p-8 border border-line card-hover"
               >
-                <h3 className="text-lg font-semibold text-navy-900 mb-3">{value.title}</h3>
-                <p className="text-navy-600/70 text-sm leading-relaxed">{value.desc}</p>
+                <h3 className="text-lg font-semibold text-ink mb-3">{value.title}</h3>
+                <p className="text-ink-muted/70 text-sm leading-relaxed">{value.desc}</p>
               </motion.div>
             ))}
           </div>
 
-          <div className="mt-16 rounded-3xl border border-gray-200 bg-white p-10 text-center">
-            <h3 className="font-serif text-2xl italic text-navy-900 sm:text-3xl">
+          <div className="mt-16 rounded-3xl border border-line bg-surface p-10 text-center">
+            <h3 className="font-serif text-2xl italic text-ink sm:text-3xl">
               “Every learner is different, and education should be designed around the learner.”
             </h3>
-            <p className="mx-auto mt-4 max-w-2xl text-navy-600">
+            <p className="mx-auto mt-4 max-w-2xl text-ink-muted">
               That belief shapes every pathway we build. It is worth reading in full before you
               decide whether Axis is right for your learner.
             </p>

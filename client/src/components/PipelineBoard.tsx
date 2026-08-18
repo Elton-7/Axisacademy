@@ -124,30 +124,30 @@ export default function PipelineBoard() {
       {/* Headline numbers */}
       {summary && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-gray-100 bg-white p-5">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy-500">
+          <div className="rounded-xl border border-line bg-surface p-5">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
               <Users className="h-4 w-4" /> In the pipeline
             </div>
-            <p className="mt-2 text-3xl font-semibold tabular-nums text-navy-900">{summary.totals.active}</p>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-ink">{summary.totals.active}</p>
           </div>
-          <div className="rounded-xl border border-gray-100 bg-white p-5">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy-500">
+          <div className="rounded-xl border border-line bg-surface p-5">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
               <TrendingUp className="h-4 w-4" /> Enrolled
             </div>
             <p className="mt-2 text-3xl font-semibold tabular-nums text-emerald-700">{summary.totals.enrolled}</p>
           </div>
-          <div className="rounded-xl border border-gray-100 bg-white p-5">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-navy-500">
+          <div className="rounded-xl border border-line bg-surface p-5">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
               <TrendingDown className="h-4 w-4" /> Lost
             </div>
             <p className="mt-2 text-3xl font-semibold tabular-nums text-rose-700">{summary.totals.lost}</p>
           </div>
-          <div className="rounded-xl border border-gray-100 bg-white p-5">
-            <div className="text-xs font-semibold uppercase tracking-wide text-navy-500">Conversion</div>
-            <p className="mt-2 text-3xl font-semibold tabular-nums text-navy-900">
+          <div className="rounded-xl border border-line bg-surface p-5">
+            <div className="text-xs font-semibold uppercase tracking-wide text-ink-faint">Conversion</div>
+            <p className="mt-2 text-3xl font-semibold tabular-nums text-ink">
               {summary.totals.conversionRate === null ? '—' : `${summary.totals.conversionRate}%`}
             </p>
-            <p className="mt-1 text-xs text-navy-500">
+            <p className="mt-1 text-xs text-ink-faint">
               {summary.totals.conversionRate === null
                 ? 'No enquiry has reached an outcome yet'
                 : 'Of enquiries that reached an outcome'}
@@ -158,8 +158,8 @@ export default function PipelineBoard() {
 
       {/* Stage distribution */}
       {summary && (
-        <div className="rounded-xl border border-gray-100 bg-white p-6">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-navy-500">
+        <div className="rounded-xl border border-line bg-surface p-6">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-faint">
             Where enquiries are sitting
           </h3>
           <div className="mt-4 space-y-2">
@@ -167,14 +167,14 @@ export default function PipelineBoard() {
               const max = Math.max(...summary.stages.map((entry) => entry.count), 1)
               return (
                 <div key={stage} className="flex items-center gap-3">
-                  <span className="w-48 flex-shrink-0 text-sm text-navy-700">{stage}</span>
-                  <div className="h-6 flex-1 overflow-hidden rounded bg-gray-100">
+                  <span className="w-48 flex-shrink-0 text-sm text-ink-muted">{stage}</span>
+                  <div className="h-6 flex-1 overflow-hidden rounded bg-surface-muted">
                     <div
                       className={`h-full ${stage === 'Lost' ? 'bg-rose-400' : 'bg-gold-500'}`}
                       style={{ width: `${(count / max) * 100}%` }}
                     />
                   </div>
-                  <span className="w-10 text-right text-sm font-semibold tabular-nums text-navy-900">
+                  <span className="w-10 text-right text-sm font-semibold tabular-nums text-ink">
                     {count}
                   </span>
                 </div>
@@ -185,24 +185,24 @@ export default function PipelineBoard() {
       )}
 
       {/* The enquiries themselves */}
-      <div className="overflow-hidden rounded-xl border border-gray-100 bg-white">
-        <div className="border-b border-gray-100 px-6 py-4">
-          <h3 className="text-lg font-semibold text-navy-900">Enquiries</h3>
-          <p className="text-sm text-navy-600/60">
+      <div className="overflow-hidden rounded-xl border border-line bg-surface">
+        <div className="border-b border-line px-6 py-4">
+          <h3 className="text-lg font-semibold text-ink">Enquiries</h3>
+          <p className="text-sm text-ink-muted/60">
             Move an enquiry as the family progresses. Marking one lost asks why.
           </p>
         </div>
 
         {enrollments.length === 0 ? (
-          <p className="px-6 py-12 text-center text-sm text-navy-500">No enquiries yet.</p>
+          <p className="px-6 py-12 text-center text-sm text-ink-faint">No enquiries yet.</p>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line">
             {enrollments.map((enrollment) => {
               const stalled = daysSince(enrollment.stageChangedAt || enrollment.createdAt)
               return (
                 <div key={enrollment.id} className="flex flex-wrap items-center gap-4 px-6 py-4">
                   <div className="min-w-[12rem] flex-1">
-                    <p className="flex items-center gap-2 font-medium text-navy-900">
+                    <p className="flex items-center gap-2 font-medium text-ink">
                       {/* A consultation request may not name the learner yet. */}
                       {enrollment.studentName || enrollment.parentName || 'Unnamed enquiry'}
                       {enrollment.requestType === 'consultation' && (
@@ -211,13 +211,13 @@ export default function PipelineBoard() {
                         </span>
                       )}
                     </p>
-                    <p className="text-sm text-navy-600/70">
+                    <p className="text-sm text-ink-muted/70">
                       {enrollment.programme || 'No programme named'}
                       {enrollment.parentName && enrollment.studentName ? ` · ${enrollment.parentName}` : ''}
                       {enrollment.preferredChannel ? ` · prefers ${enrollment.preferredChannel}` : ''}
                     </p>
                     {enrollment.stageNote && (
-                      <p className="mt-1 text-xs italic text-navy-500">{enrollment.stageNote}</p>
+                      <p className="mt-1 text-xs italic text-ink-faint">{enrollment.stageNote}</p>
                     )}
                   </div>
 
@@ -226,7 +226,7 @@ export default function PipelineBoard() {
                       className={`text-xs tabular-nums ${
                         stalled >= 14 && enrollment.pipelineStage !== 'Active Learner' && enrollment.pipelineStage !== 'Lost'
                           ? 'font-semibold text-rose-600'
-                          : 'text-navy-500'
+                          : 'text-ink-faint'
                       }`}
                     >
                       {stalled}d in stage
@@ -243,7 +243,7 @@ export default function PipelineBoard() {
                     value={enrollment.pipelineStage}
                     disabled={saving === enrollment.id}
                     onChange={(event) => moveStage(enrollment, event.target.value as PipelineStage)}
-                    className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm outline-none focus:border-gold-500 disabled:opacity-50"
+                    className="rounded-lg border border-line px-3 py-1.5 text-sm outline-none focus:border-gold-500 disabled:opacity-50"
                     aria-label={`Pipeline stage for ${enrollment.studentName || enrollment.parentName || `enquiry ${enrollment.id}`}`}
                   >
                     {ACTIVE_STAGES.map((stage) => (

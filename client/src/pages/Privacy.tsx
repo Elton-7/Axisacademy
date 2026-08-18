@@ -34,17 +34,17 @@ export default function Privacy() {
         </div>
       </section>
 
-      <section className="bg-slate-50 py-16">
+      <section className="bg-surface-sunk py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 rounded-2xl border border-gold/30 bg-gold/10 p-6 text-sm leading-relaxed text-navy/80">
+          <div className="mb-10 rounded-2xl border border-gold/30 bg-gold/10 p-6 text-sm leading-relaxed text-ink-muted/80">
             This page explains the website’s current privacy approach. Before launch, Axis should have its final privacy policy, consent procedures, retention periods, and contact details reviewed and approved by its authorised leadership and legal advisers.
           </div>
           <div className="grid gap-5 md:grid-cols-2">
             {sections.map(({ icon: Icon, title, text }) => (
-              <article key={title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <article key={title} className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
                 <Icon className="mb-4 h-6 w-6 text-gold" />
-                <h2 className="text-lg font-semibold text-navy">{title}</h2>
-                <p className="mt-3 text-sm leading-relaxed text-navy/70">{text}</p>
+                <h2 className="text-lg font-semibold text-ink">{title}</h2>
+                <p className="mt-3 text-sm leading-relaxed text-ink-muted/70">{text}</p>
               </article>
             ))}
           </div>

@@ -715,17 +715,17 @@ export default function AdminDashboard() {
   ]
 
   return (
-    <div className="pt-20 min-h-screen bg-gray-50">
+    <div className="pt-20 min-h-screen bg-surface-sunk">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-navy-900">Admin Dashboard</h1>
-            <p className="text-navy-600/60 text-sm">Manage content and track engagement</p>
+            <h1 className="text-2xl font-bold text-ink">Admin Dashboard</h1>
+            <p className="text-ink-muted/60 text-sm">Manage content and track engagement</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {activeTab === 'dashboard' && (
               <>
-                <button onClick={refreshDashboard} disabled={loading} className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm text-navy-700 transition-colors hover:bg-gray-50 disabled:opacity-50">
+                <button onClick={refreshDashboard} disabled={loading} className="inline-flex items-center gap-2 rounded-lg border border-line bg-surface px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-surface-sunk disabled:opacity-50">
                   <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
                   Refresh
                 </button>
@@ -743,8 +743,8 @@ export default function AdminDashboard() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-white rounded-xl border border-gray-100 mb-6 overflow-hidden">
-          <div className="flex border-b border-gray-100 overflow-x-auto">
+        <div className="bg-surface rounded-xl border border-line mb-6 overflow-hidden">
+          <div className="flex border-b border-line overflow-x-auto">
             {(['dashboard', 'pipeline', 'learners', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations'] as const).map((tab) => (
               <button
                 key={tab}
@@ -752,7 +752,7 @@ export default function AdminDashboard() {
                 className={`flex-shrink-0 px-6 py-4 text-sm font-medium transition-colors whitespace-nowrap ${
                   activeTab === tab
                     ? 'bg-navy-900 text-white'
-                    : 'bg-white text-navy-700 hover:bg-gray-50'
+                    : 'bg-surface text-ink-muted hover:bg-surface-sunk'
                 }`}
               >
                 {tab === 'faqs' ? 'FAQs' : tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -771,30 +771,30 @@ export default function AdminDashboard() {
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-xl p-6 border border-gray-100"
+                  className="bg-surface rounded-xl p-6 border border-line"
                 >
                   <div className={`w-10 h-10 rounded-lg ${stat.color} flex items-center justify-center mb-3`}>
                     <stat.icon className="w-5 h-5" />
                   </div>
-                  <p className="text-2xl font-bold text-navy-900">{stat.value}</p>
-                  <p className="text-navy-600/60 text-sm">{stat.label}</p>
+                  <p className="text-2xl font-bold text-ink">{stat.value}</p>
+                  <p className="text-ink-muted/60 text-sm">{stat.label}</p>
                 </motion.div>
               ))}
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 mb-6 overflow-hidden">
-          <div className="border-b border-gray-100 px-6 py-4">
+            <div className="bg-surface rounded-xl border border-line mb-6 overflow-hidden">
+          <div className="border-b border-line px-6 py-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-semibold text-navy-900">Recent Activity</h2>
-                <p className="text-sm text-navy-600/60">Latest protected administrative actions</p>
+                <h2 className="text-lg font-semibold text-ink">Recent Activity</h2>
+                <p className="text-sm text-ink-muted/60">Latest protected administrative actions</p>
               </div>
               <div className="flex gap-2">
-                <select value={auditAction} onChange={(event) => setAuditAction(event.target.value)} className="rounded-lg border border-gray-200 px-2 py-1.5 text-xs text-navy-700">
+                <select value={auditAction} onChange={(event) => setAuditAction(event.target.value)} className="rounded-lg border border-line px-2 py-1.5 text-xs text-ink-muted">
                   <option value="">All actions</option>
                   <option value="status_updated">Status updated</option>
                 </select>
-                <select value={auditEntity} onChange={(event) => setAuditEntity(event.target.value)} className="rounded-lg border border-gray-200 px-2 py-1.5 text-xs text-navy-700">
+                <select value={auditEntity} onChange={(event) => setAuditEntity(event.target.value)} className="rounded-lg border border-line px-2 py-1.5 text-xs text-ink-muted">
                   <option value="">All records</option>
                   <option value="contact">Contacts</option>
                   <option value="enrollment">Enrollments</option>
@@ -805,16 +805,16 @@ export default function AdminDashboard() {
           {auditError ? (
             <p className="px-6 py-5 text-sm text-red-600">{auditError}</p>
           ) : auditLogs.length === 0 ? (
-            <p className="px-6 py-5 text-sm text-navy-500">No administrative activity recorded yet.</p>
+            <p className="px-6 py-5 text-sm text-ink-faint">No administrative activity recorded yet.</p>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-line">
               {auditLogs.map((log) => (
                 <div key={log.id} className="flex flex-wrap items-center justify-between gap-2 px-6 py-3">
                   <div>
-                    <p className="text-sm text-navy-900"><span className="font-medium capitalize">{log.action.replaceAll('_', ' ')}</span> {log.entity} #{log.entityId ?? '—'}</p>
-                    <p className="text-xs text-navy-500">{log.user ? `${log.user.name} (${log.user.email})` : 'System'}{log.metadata?.status ? ` · Status: ${String(log.metadata.status)}` : ''}</p>
+                    <p className="text-sm text-ink"><span className="font-medium capitalize">{log.action.replaceAll('_', ' ')}</span> {log.entity} #{log.entityId ?? '—'}</p>
+                    <p className="text-xs text-ink-faint">{log.user ? `${log.user.name} (${log.user.email})` : 'System'}{log.metadata?.status ? ` · Status: ${String(log.metadata.status)}` : ''}</p>
                   </div>
-                  <time className="text-xs text-navy-500" dateTime={log.createdAt}>{new Date(log.createdAt).toLocaleString()}</time>
+                  <time className="text-xs text-ink-faint" dateTime={log.createdAt}>{new Date(log.createdAt).toLocaleString()}</time>
                 </div>
               ))}
             </div>
@@ -844,71 +844,71 @@ export default function AdminDashboard() {
             </button>
 
             {editingGallery !== undefined && (
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingGallery ? 'Edit' : 'Add'} Gallery Item</h3>
+              <div className="bg-surface rounded-xl border border-line p-6">
+                <h3 className="text-lg font-semibold text-ink mb-4">{editingGallery ? 'Edit' : 'Add'} Gallery Item</h3>
                 <div className="space-y-4">
-                  <input type="text" placeholder="Title" value={galleryForm.title} onChange={(e) => setGalleryForm({...galleryForm, title: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <select value={galleryForm.type} onChange={(e) => setGalleryForm({...galleryForm, type: e.target.value as GalleryType})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <input type="text" placeholder="Title" value={galleryForm.title} onChange={(e) => setGalleryForm({...galleryForm, title: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <select value={galleryForm.type} onChange={(e) => setGalleryForm({...galleryForm, type: e.target.value as GalleryType})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="Photo">Photo</option>
                     <option value="Video">Video</option>
                   </select>
-                  <select value={galleryForm.category} onChange={(e) => setGalleryForm({...galleryForm, category: e.target.value as GalleryCategory})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <select value={galleryForm.category} onChange={(e) => setGalleryForm({...galleryForm, category: e.target.value as GalleryCategory})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="General">General</option>
                     <option value="Event">Event</option>
                     <option value="Programme">Programme</option>
                     <option value="Activity">Activity</option>
                   </select>
-                  <textarea placeholder="Description" value={galleryForm.description} onChange={(e) => setGalleryForm({...galleryForm, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" rows={3} />
-                  <input type="url" placeholder="Image/Video URL" value={galleryForm.url} onChange={(e) => setGalleryForm({...galleryForm, url: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="url" placeholder="Thumbnail URL (optional)" value={galleryForm.thumbnail} onChange={(e) => setGalleryForm({...galleryForm, thumbnail: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Tags (comma-separated)" value={galleryForm.tags} onChange={(e) => setGalleryForm({...galleryForm, tags: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
+                  <textarea placeholder="Description" value={galleryForm.description} onChange={(e) => setGalleryForm({...galleryForm, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={3} />
+                  <input type="url" placeholder="Image/Video URL" value={galleryForm.url} onChange={(e) => setGalleryForm({...galleryForm, url: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="url" placeholder="Thumbnail URL (optional)" value={galleryForm.thumbnail} onChange={(e) => setGalleryForm({...galleryForm, thumbnail: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Tags (comma-separated)" value={galleryForm.tags} onChange={(e) => setGalleryForm({...galleryForm, tags: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <div className="space-y-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
-                    <label className="flex items-start gap-3 text-sm text-navy-700">
-                      <input type="checkbox" checked={galleryForm.consentConfirmed} onChange={(e) => setGalleryForm({...galleryForm, consentConfirmed: e.target.checked})} className="mt-0.5 h-4 w-4 rounded border-gray-300 text-gold-600 focus:ring-gold-500" />
+                    <label className="flex items-start gap-3 text-sm text-ink-muted">
+                      <input type="checkbox" checked={galleryForm.consentConfirmed} onChange={(e) => setGalleryForm({...galleryForm, consentConfirmed: e.target.checked})} className="mt-0.5 h-4 w-4 rounded border-line-strong text-gold-600 focus:ring-gold-500" />
                       <span>I confirm that the appropriate consent has been verified for public publication of this photo or video.</span>
                     </label>
-                    <input type="text" placeholder="Signed media release reference (e.g. MR-2026-014)" value={galleryForm.consentReference} onChange={(e) => setGalleryForm({...galleryForm, consentReference: e.target.value})} className="w-full rounded-lg border border-amber-300 bg-white px-4 py-2 text-sm outline-none focus:border-gold-500" />
-                    <p className="text-xs text-navy-600/70">Recorded with your name and the date, so consent can be evidenced or withdrawn later.</p>
+                    <input type="text" placeholder="Signed media release reference (e.g. MR-2026-014)" value={galleryForm.consentReference} onChange={(e) => setGalleryForm({...galleryForm, consentReference: e.target.value})} className="w-full rounded-lg border border-amber-300 bg-surface px-4 py-2 text-sm outline-none focus:border-gold-500" />
+                    <p className="text-xs text-ink-muted/70">Recorded with your name and the date, so consent can be evidenced or withdrawn later.</p>
                   </div>
                   <div className="flex gap-2">
                     <button onClick={saveGalleryItem} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
-                    <button onClick={() => {setEditingGallery(undefined); setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false, consentReference: '' })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
+                    <button onClick={() => {setEditingGallery(undefined); setGalleryForm({ title: '', type: 'Photo', category: 'General', description: '', url: '', thumbnail: '', tags: '', consentConfirmed: false, consentReference: '' })}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-surface-sunk border-b border-line">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Title</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Type</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Category</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Actions</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Title</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Type</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Category</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-line">
                     {galleryItems.map((item) => (
-                      <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={item.id} className="hover:bg-surface-sunk/50 transition-colors">
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <ImageIcon className="w-4 h-4 text-gray-400" />
-                            <span className="text-sm font-medium text-navy-900">{item.title}</span>
+                            <ImageIcon className="w-4 h-4 text-ink-faint" />
+                            <span className="text-sm font-medium text-ink">{item.title}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{item.type}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{item.category}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{item.type}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{item.category}</td>
                         <td className="px-6 py-4">
-                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${item.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${item.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>
                             {item.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2">
-                            <button onClick={() => {setEditingGallery(item); setGalleryForm({title: item.title, type: item.type, category: item.category, description: item.description || '', url: item.url, thumbnail: item.thumbnail || '', tags: item.tags?.join(', ') || '', consentConfirmed: item.consentConfirmed, consentReference: item.consentReference || ''})}} className="text-navy-600 hover:text-navy-900">
+                            <button onClick={() => {setEditingGallery(item); setGalleryForm({title: item.title, type: item.type, category: item.category, description: item.description || '', url: item.url, thumbnail: item.thumbnail || '', tags: item.tags?.join(', ') || '', consentConfirmed: item.consentConfirmed, consentReference: item.consentReference || ''})}} className="text-ink-muted hover:text-ink">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => deleteGalleryItem(item.id)} className="text-red-600 hover:text-red-900">
@@ -922,7 +922,7 @@ export default function AdminDashboard() {
                 </table>
               </div>
               {galleryItems.length === 0 && (
-                <div className="text-center py-12 text-navy-500 text-sm">
+                <div className="text-center py-12 text-ink-faint text-sm">
                   No gallery items yet.
                 </div>
               )}
@@ -945,13 +945,13 @@ export default function AdminDashboard() {
             </button>
 
             {editingResource !== undefined && (
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingResource ? 'Edit' : 'Add'} Resource</h3>
+              <div className="bg-surface rounded-xl border border-line p-6">
+                <h3 className="text-lg font-semibold text-ink mb-4">{editingResource ? 'Edit' : 'Add'} Resource</h3>
                 <div className="space-y-4">
-                  <input type="text" placeholder="Title" value={resourceForm.title} onChange={(e) => setResourceForm({...resourceForm, title: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Slug" value={resourceForm.slug} onChange={(e) => setResourceForm({...resourceForm, slug: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Excerpt" value={resourceForm.excerpt} onChange={(e) => setResourceForm({...resourceForm, excerpt: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <select value={resourceForm.category} onChange={(e) => setResourceForm({...resourceForm, category: e.target.value as ResourceCategory})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <input type="text" placeholder="Title" value={resourceForm.title} onChange={(e) => setResourceForm({...resourceForm, title: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Slug" value={resourceForm.slug} onChange={(e) => setResourceForm({...resourceForm, slug: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Excerpt" value={resourceForm.excerpt} onChange={(e) => setResourceForm({...resourceForm, excerpt: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <select value={resourceForm.category} onChange={(e) => setResourceForm({...resourceForm, category: e.target.value as ResourceCategory})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="General">General</option>
                     <option value="Learning Tips">Learning Tips</option>
                     <option value="Parent Guide">Parent Guide</option>
@@ -959,45 +959,45 @@ export default function AdminDashboard() {
                     <option value="Assessment">Assessment</option>
                     <option value="Academic Support">Academic Support</option>
                   </select>
-                  <textarea placeholder="Content" value={resourceForm.content} onChange={(e) => setResourceForm({...resourceForm, content: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" rows={5} />
-                  <input type="text" placeholder="Author" value={resourceForm.author} onChange={(e) => setResourceForm({...resourceForm, author: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="url" placeholder="Cover Image URL" value={resourceForm.coverImage} onChange={(e) => setResourceForm({...resourceForm, coverImage: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Read Time (e.g., '5 min')" value={resourceForm.readTime} onChange={(e) => setResourceForm({...resourceForm, readTime: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Tags (comma-separated)" value={resourceForm.tags} onChange={(e) => setResourceForm({...resourceForm, tags: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
+                  <textarea placeholder="Content" value={resourceForm.content} onChange={(e) => setResourceForm({...resourceForm, content: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={5} />
+                  <input type="text" placeholder="Author" value={resourceForm.author} onChange={(e) => setResourceForm({...resourceForm, author: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="url" placeholder="Cover Image URL" value={resourceForm.coverImage} onChange={(e) => setResourceForm({...resourceForm, coverImage: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Read Time (e.g., '5 min')" value={resourceForm.readTime} onChange={(e) => setResourceForm({...resourceForm, readTime: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Tags (comma-separated)" value={resourceForm.tags} onChange={(e) => setResourceForm({...resourceForm, tags: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <div className="flex gap-2">
                     <button onClick={saveResource} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
-                    <button onClick={() => {setEditingResource(undefined); setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
+                    <button onClick={() => {setEditingResource(undefined); setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-surface-sunk border-b border-line">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Title</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Category</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Author</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Actions</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Title</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Category</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Author</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-line">
                     {resources.map((resource) => (
-                      <tr key={resource.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-navy-900">{resource.title}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{resource.category}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{resource.author || '—'}</td>
+                      <tr key={resource.id} className="hover:bg-surface-sunk/50 transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-ink">{resource.title}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{resource.category}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{resource.author || '—'}</td>
                         <td className="px-6 py-4">
-                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${resource.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${resource.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>
                             {resource.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2">
-                            <button onClick={() => {setEditingResource(resource); setResourceForm({title: resource.title, slug: resource.slug, excerpt: resource.excerpt || '', content: resource.content, category: resource.category, author: resource.author, coverImage: resource.coverImage || '', readTime: resource.readTime || '', tags: resource.tags?.join(', ') || ''})}} className="text-navy-600 hover:text-navy-900">
+                            <button onClick={() => {setEditingResource(resource); setResourceForm({title: resource.title, slug: resource.slug, excerpt: resource.excerpt || '', content: resource.content, category: resource.category, author: resource.author, coverImage: resource.coverImage || '', readTime: resource.readTime || '', tags: resource.tags?.join(', ') || ''})}} className="text-ink-muted hover:text-ink">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => deleteResource(resource.id)} className="text-red-600 hover:text-red-900">
@@ -1011,7 +1011,7 @@ export default function AdminDashboard() {
                 </table>
               </div>
               {resources.length === 0 && (
-                <div className="text-center py-12 text-navy-500 text-sm">
+                <div className="text-center py-12 text-ink-faint text-sm">
                   No resources yet.
                 </div>
               )}
@@ -1034,61 +1034,61 @@ export default function AdminDashboard() {
             </button>
 
             {editingPartner !== undefined && (
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingPartner ? 'Edit' : 'Add'} Partner</h3>
+              <div className="bg-surface rounded-xl border border-line p-6">
+                <h3 className="text-lg font-semibold text-ink mb-4">{editingPartner ? 'Edit' : 'Add'} Partner</h3>
                 <div className="space-y-4">
-                  <input type="text" placeholder="Partner Name" value={partnerForm.name} onChange={(e) => setPartnerForm({...partnerForm, name: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="url" placeholder="Logo URL" value={partnerForm.logo} onChange={(e) => setPartnerForm({...partnerForm, logo: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <select value={partnerForm.category} onChange={(e) => setPartnerForm({...partnerForm, category: e.target.value as PartnerCategory})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <input type="text" placeholder="Partner Name" value={partnerForm.name} onChange={(e) => setPartnerForm({...partnerForm, name: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="url" placeholder="Logo URL" value={partnerForm.logo} onChange={(e) => setPartnerForm({...partnerForm, logo: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <select value={partnerForm.category} onChange={(e) => setPartnerForm({...partnerForm, category: e.target.value as PartnerCategory})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="Corporate">Corporate</option>
                     <option value="Educational Institution">Educational Institution</option>
                     <option value="Tech Partner">Tech Partner</option>
                     <option value="Content Provider">Content Provider</option>
                     <option value="Community Partner">Community Partner</option>
                   </select>
-                  <textarea placeholder="Description" value={partnerForm.description} onChange={(e) => setPartnerForm({...partnerForm, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" rows={3} />
-                  <input type="url" placeholder="Website URL" value={partnerForm.website} onChange={(e) => setPartnerForm({...partnerForm, website: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Contact Person" value={partnerForm.contact} onChange={(e) => setPartnerForm({...partnerForm, contact: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="email" placeholder="Email" value={partnerForm.email} onChange={(e) => setPartnerForm({...partnerForm, email: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="tel" placeholder="Phone" value={partnerForm.phone} onChange={(e) => setPartnerForm({...partnerForm, phone: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Focus Areas (comma-separated)" value={partnerForm.focusAreas} onChange={(e) => setPartnerForm({...partnerForm, focusAreas: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
+                  <textarea placeholder="Description" value={partnerForm.description} onChange={(e) => setPartnerForm({...partnerForm, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={3} />
+                  <input type="url" placeholder="Website URL" value={partnerForm.website} onChange={(e) => setPartnerForm({...partnerForm, website: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Contact Person" value={partnerForm.contact} onChange={(e) => setPartnerForm({...partnerForm, contact: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="email" placeholder="Email" value={partnerForm.email} onChange={(e) => setPartnerForm({...partnerForm, email: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="tel" placeholder="Phone" value={partnerForm.phone} onChange={(e) => setPartnerForm({...partnerForm, phone: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Focus Areas (comma-separated)" value={partnerForm.focusAreas} onChange={(e) => setPartnerForm({...partnerForm, focusAreas: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <div className="flex gap-2">
                     <button onClick={savePartner} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
-                    <button onClick={() => {setEditingPartner(undefined); setPartnerForm({ name: '', logo: '', category: 'Corporate', description: '', website: '', contact: '', email: '', phone: '', focusAreas: '' })}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button>
+                    <button onClick={() => {setEditingPartner(undefined); setPartnerForm({ name: '', logo: '', category: 'Corporate', description: '', website: '', contact: '', email: '', phone: '', focusAreas: '' })}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
             )}
 
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-surface-sunk border-b border-line">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Name</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Category</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Contact</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Actions</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Name</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Category</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Contact</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-line">
                     {partners.map((partner) => (
-                      <tr key={partner.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-navy-900">{partner.name}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{partner.category}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">
+                      <tr key={partner.id} className="hover:bg-surface-sunk/50 transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-ink">{partner.name}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{partner.category}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">
                           {partner.email && <p>{partner.email}</p>}
-                          {partner.phone && <p className="text-xs text-navy-500">{partner.phone}</p>}
+                          {partner.phone && <p className="text-xs text-ink-faint">{partner.phone}</p>}
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${partner.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${partner.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>
                             {partner.isActive ? 'Active' : 'Inactive'}
                           </span>
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2">
-                            <button onClick={() => {setEditingPartner(partner); setPartnerForm({name: partner.name, logo: partner.logo || '', category: partner.category, description: partner.description || '', website: partner.website || '', contact: partner.contact || '', email: partner.email || '', phone: partner.phone || '', focusAreas: partner.focusAreas?.join(', ') || ''})}} className="text-navy-600 hover:text-navy-900">
+                            <button onClick={() => {setEditingPartner(partner); setPartnerForm({name: partner.name, logo: partner.logo || '', category: partner.category, description: partner.description || '', website: partner.website || '', contact: partner.contact || '', email: partner.email || '', phone: partner.phone || '', focusAreas: partner.focusAreas?.join(', ') || ''})}} className="text-ink-muted hover:text-ink">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => deletePartner(partner.id)} className="text-red-600 hover:text-red-900">
@@ -1102,7 +1102,7 @@ export default function AdminDashboard() {
                 </table>
               </div>
               {partners.length === 0 && (
-                <div className="text-center py-12 text-navy-500 text-sm">
+                <div className="text-center py-12 text-ink-faint text-sm">
                   No partners yet.
                 </div>
               )}
@@ -1115,12 +1115,12 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <button onClick={() => {setEditingEducator(null); setEducatorForm({name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: ''})}} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"><Plus className="h-4 w-4" />Add Educator</button>
             {editingEducator !== undefined && (
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingEducator ? 'Edit' : 'Add'} Educator</h3>
+              <div className="bg-surface rounded-xl border border-line p-6">
+                <h3 className="text-lg font-semibold text-ink mb-4">{editingEducator ? 'Edit' : 'Add'} Educator</h3>
                 <div className="space-y-4">
-                  <input type="text" placeholder="Name" value={educatorForm.name} onChange={(e) => setEducatorForm({...educatorForm, name: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Position" value={educatorForm.position} onChange={(e) => setEducatorForm({...educatorForm, position: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <select value={educatorForm.category} onChange={(e) => setEducatorForm({...educatorForm, category: e.target.value as EducatorCategory})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <input type="text" placeholder="Name" value={educatorForm.name} onChange={(e) => setEducatorForm({...educatorForm, name: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Position" value={educatorForm.position} onChange={(e) => setEducatorForm({...educatorForm, position: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <select value={educatorForm.category} onChange={(e) => setEducatorForm({...educatorForm, category: e.target.value as EducatorCategory})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="Teacher">Teacher</option>
                     <option value="Tutor">Tutor</option>
                     <option value="Leadership">Leadership</option>
@@ -1131,45 +1131,45 @@ export default function AdminDashboard() {
                     <option value="Artist">Artist</option>
                     <option value="Administrator">Administrator</option>
                   </select>
-                  <input type="text" placeholder="Qualifications" value={educatorForm.qualifications} onChange={(e) => setEducatorForm({...educatorForm, qualifications: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Experience" value={educatorForm.experience} onChange={(e) => setEducatorForm({...educatorForm, experience: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Subjects (comma-separated)" value={educatorForm.subjects} onChange={(e) => setEducatorForm({...educatorForm, subjects: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Languages (comma-separated)" value={educatorForm.languages} onChange={(e) => setEducatorForm({...educatorForm, languages: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Expertise" value={educatorForm.expertise} onChange={(e) => setEducatorForm({...educatorForm, expertise: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <textarea placeholder="Biography" value={educatorForm.biography} onChange={(e) => setEducatorForm({...educatorForm, biography: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" rows={3} />
-                  <input type="url" placeholder="Photo URL" value={educatorForm.photo} onChange={(e) => setEducatorForm({...educatorForm, photo: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="email" placeholder="Email" value={educatorForm.email} onChange={(e) => setEducatorForm({...educatorForm, email: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="tel" placeholder="Phone" value={educatorForm.phone} onChange={(e) => setEducatorForm({...educatorForm, phone: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <div className="flex gap-2"><button onClick={saveEducator} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingEducator(undefined); setEducatorForm({name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
+                  <input type="text" placeholder="Qualifications" value={educatorForm.qualifications} onChange={(e) => setEducatorForm({...educatorForm, qualifications: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Experience" value={educatorForm.experience} onChange={(e) => setEducatorForm({...educatorForm, experience: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Subjects (comma-separated)" value={educatorForm.subjects} onChange={(e) => setEducatorForm({...educatorForm, subjects: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Languages (comma-separated)" value={educatorForm.languages} onChange={(e) => setEducatorForm({...educatorForm, languages: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Expertise" value={educatorForm.expertise} onChange={(e) => setEducatorForm({...educatorForm, expertise: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <textarea placeholder="Biography" value={educatorForm.biography} onChange={(e) => setEducatorForm({...educatorForm, biography: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={3} />
+                  <input type="url" placeholder="Photo URL" value={educatorForm.photo} onChange={(e) => setEducatorForm({...educatorForm, photo: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="email" placeholder="Email" value={educatorForm.email} onChange={(e) => setEducatorForm({...educatorForm, email: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="tel" placeholder="Phone" value={educatorForm.phone} onChange={(e) => setEducatorForm({...educatorForm, phone: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <div className="flex gap-2"><button onClick={saveEducator} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingEducator(undefined); setEducatorForm({name: '', position: '', category: 'Teacher', qualifications: '', experience: '', subjects: '', languages: '', expertise: '', biography: '', photo: '', email: '', phone: ''})}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button></div>
                 </div>
               </div>
             )}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-surface-sunk border-b border-line">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Name</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Position</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Category</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Actions</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Name</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Position</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Category</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-line">
                     {educators.map((educator) => (
-                      <tr key={educator.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-navy-900">{educator.name}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{educator.position}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{educator.category}</td>
-                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${educator.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{educator.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingEducator(educator); setEducatorForm({name: educator.name, position: educator.position, category: educator.category, qualifications: educator.qualifications || '', experience: educator.experience || '', subjects: educator.subjects?.join(', ') || '', languages: educator.languages?.join(', ') || '', expertise: educator.expertise || '', biography: educator.biography || '', photo: educator.photo || '', email: educator.email || '', phone: educator.phone || ''})}} className="text-navy-600 hover:text-navy-900"><Edit className="w-4 h-4" /></button><button onClick={() => deleteEducator(educator.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
+                      <tr key={educator.id} className="hover:bg-surface-sunk/50 transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-ink">{educator.name}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{educator.position}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{educator.category}</td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${educator.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>{educator.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingEducator(educator); setEducatorForm({name: educator.name, position: educator.position, category: educator.category, qualifications: educator.qualifications || '', experience: educator.experience || '', subjects: educator.subjects?.join(', ') || '', languages: educator.languages?.join(', ') || '', expertise: educator.expertise || '', biography: educator.biography || '', photo: educator.photo || '', email: educator.email || '', phone: educator.phone || ''})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteEducator(educator.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              {educators.length === 0 && (<div className="text-center py-12 text-navy-500 text-sm">No educators yet.</div>)}
+              {educators.length === 0 && (<div className="text-center py-12 text-ink-faint text-sm">No educators yet.</div>)}
             </div>
           </div>
         )}
@@ -1179,12 +1179,12 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <button onClick={() => {setEditingEvent(null); setEventForm({title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming'})}} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"><Plus className="h-4 w-4" />Add Event</button>
             {editingEvent !== undefined && (
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingEvent ? 'Edit' : 'Add'} Event</h3>
+              <div className="bg-surface rounded-xl border border-line p-6">
+                <h3 className="text-lg font-semibold text-ink mb-4">{editingEvent ? 'Edit' : 'Add'} Event</h3>
                 <div className="space-y-4">
-                  <input type="text" placeholder="Title" value={eventForm.title} onChange={(e) => setEventForm({...eventForm, title: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <textarea placeholder="Description" value={eventForm.description} onChange={(e) => setEventForm({...eventForm, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" rows={3} />
-                  <select value={eventForm.category} onChange={(e) => setEventForm({...eventForm, category: e.target.value as EventCategory})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <input type="text" placeholder="Title" value={eventForm.title} onChange={(e) => setEventForm({...eventForm, title: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <textarea placeholder="Description" value={eventForm.description} onChange={(e) => setEventForm({...eventForm, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={3} />
+                  <select value={eventForm.category} onChange={(e) => setEventForm({...eventForm, category: e.target.value as EventCategory})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="Workshop">Workshop</option>
                     <option value="Holiday Tuition">Holiday Tuition</option>
                     <option value="Exam Preparation">Exam Preparation</option>
@@ -1195,54 +1195,54 @@ export default function AdminDashboard() {
                     <option value="Other">Other</option>
                   </select>
                   <div className="grid grid-cols-2 gap-4">
-                    <input type="date" placeholder="Start Date" value={eventForm.startDate} onChange={(e) => setEventForm({...eventForm, startDate: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                    <input type="date" placeholder="End Date" value={eventForm.endDate} onChange={(e) => setEventForm({...eventForm, endDate: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
+                    <input type="date" placeholder="Start Date" value={eventForm.startDate} onChange={(e) => setEventForm({...eventForm, startDate: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                    <input type="date" placeholder="End Date" value={eventForm.endDate} onChange={(e) => setEventForm({...eventForm, endDate: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   </div>
-                  <input type="text" placeholder="Venue" value={eventForm.venue} onChange={(e) => setEventForm({...eventForm, venue: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Location" value={eventForm.location} onChange={(e) => setEventForm({...eventForm, location: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="number" placeholder="Capacity" value={eventForm.capacity} onChange={(e) => setEventForm({...eventForm, capacity: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Age Group" value={eventForm.ageGroup} onChange={(e) => setEventForm({...eventForm, ageGroup: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="text" placeholder="Programme" value={eventForm.programme} onChange={(e) => setEventForm({...eventForm, programme: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="number" placeholder="Price (KES)" value={eventForm.priceKES} onChange={(e) => setEventForm({...eventForm, priceKES: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="date" placeholder="Registration Deadline" value={eventForm.registrationDeadline} onChange={(e) => setEventForm({...eventForm, registrationDeadline: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="url" placeholder="Registration Link" value={eventForm.registrationLink} onChange={(e) => setEventForm({...eventForm, registrationLink: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="url" placeholder="Poster URL" value={eventForm.poster} onChange={(e) => setEventForm({...eventForm, poster: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <select value={eventForm.status} onChange={(e) => setEventForm({...eventForm, status: e.target.value as EventStatus})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <input type="text" placeholder="Venue" value={eventForm.venue} onChange={(e) => setEventForm({...eventForm, venue: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Location" value={eventForm.location} onChange={(e) => setEventForm({...eventForm, location: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="number" placeholder="Capacity" value={eventForm.capacity} onChange={(e) => setEventForm({...eventForm, capacity: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Age Group" value={eventForm.ageGroup} onChange={(e) => setEventForm({...eventForm, ageGroup: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Programme" value={eventForm.programme} onChange={(e) => setEventForm({...eventForm, programme: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="number" placeholder="Price (KES)" value={eventForm.priceKES} onChange={(e) => setEventForm({...eventForm, priceKES: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="date" placeholder="Registration Deadline" value={eventForm.registrationDeadline} onChange={(e) => setEventForm({...eventForm, registrationDeadline: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="url" placeholder="Registration Link" value={eventForm.registrationLink} onChange={(e) => setEventForm({...eventForm, registrationLink: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="url" placeholder="Poster URL" value={eventForm.poster} onChange={(e) => setEventForm({...eventForm, poster: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <select value={eventForm.status} onChange={(e) => setEventForm({...eventForm, status: e.target.value as EventStatus})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="Upcoming">Upcoming</option>
                     <option value="Ongoing">Ongoing</option>
                     <option value="Completed">Completed</option>
                     <option value="Cancelled">Cancelled</option>
                   </select>
-                  <div className="flex gap-2"><button onClick={saveEvent} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingEvent(undefined); setEventForm({title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming'})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
+                  <div className="flex gap-2"><button onClick={saveEvent} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingEvent(undefined); setEventForm({title: '', description: '', category: 'Workshop', startDate: '', endDate: '', venue: '', location: '', capacity: '', ageGroup: '', programme: '', priceKES: '', registrationDeadline: '', registrationLink: '', poster: '', status: 'Upcoming'})}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button></div>
                 </div>
               </div>
             )}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-surface-sunk border-b border-line">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Title</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Category</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Start Date</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Actions</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Title</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Category</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Start Date</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-line">
                     {events.map((event) => (
-                      <tr key={event.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-navy-900">{event.title}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{event.category}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{new Date(event.startDate).toLocaleDateString()}</td>
-                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${event.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{event.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingEvent(event); setEventForm({title: event.title, description: event.description, category: event.category, startDate: event.startDate, endDate: event.endDate || '', venue: event.venue || '', location: event.location || '', capacity: event.capacity?.toString() || '', ageGroup: event.ageGroup || '', programme: event.programme || '', priceKES: event.priceKES?.toString() || '', registrationDeadline: event.registrationDeadline || '', registrationLink: event.registrationLink || '', poster: event.poster || '', status: event.status})}} className="text-navy-600 hover:text-navy-900"><Edit className="w-4 h-4" /></button><button onClick={() => deleteEvent(event.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
+                      <tr key={event.id} className="hover:bg-surface-sunk/50 transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-ink">{event.title}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{event.category}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{new Date(event.startDate).toLocaleDateString()}</td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${event.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>{event.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingEvent(event); setEventForm({title: event.title, description: event.description, category: event.category, startDate: event.startDate, endDate: event.endDate || '', venue: event.venue || '', location: event.location || '', capacity: event.capacity?.toString() || '', ageGroup: event.ageGroup || '', programme: event.programme || '', priceKES: event.priceKES?.toString() || '', registrationDeadline: event.registrationDeadline || '', registrationLink: event.registrationLink || '', poster: event.poster || '', status: event.status})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteEvent(event.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              {events.length === 0 && (<div className="text-center py-12 text-navy-500 text-sm">No events yet.</div>)}
+              {events.length === 0 && (<div className="text-center py-12 text-ink-faint text-sm">No events yet.</div>)}
             </div>
           </div>
         )}
@@ -1252,12 +1252,12 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <button onClick={() => {setEditingFAQ(null); setFaqForm({question: '', answer: '', category: 'General', order: ''})}} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"><Plus className="h-4 w-4" />Add FAQ</button>
             {editingFAQ !== undefined && (
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingFAQ ? 'Edit' : 'Add'} FAQ</h3>
+              <div className="bg-surface rounded-xl border border-line p-6">
+                <h3 className="text-lg font-semibold text-ink mb-4">{editingFAQ ? 'Edit' : 'Add'} FAQ</h3>
                 <div className="space-y-4">
-                  <textarea placeholder="Question" value={faqForm.question} onChange={(e) => setFaqForm({...faqForm, question: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" rows={2} />
-                  <textarea placeholder="Answer" value={faqForm.answer} onChange={(e) => setFaqForm({...faqForm, answer: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" rows={4} />
-                  <select value={faqForm.category} onChange={(e) => setFaqForm({...faqForm, category: e.target.value as FAQCategory})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <textarea placeholder="Question" value={faqForm.question} onChange={(e) => setFaqForm({...faqForm, question: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={2} />
+                  <textarea placeholder="Answer" value={faqForm.answer} onChange={(e) => setFaqForm({...faqForm, answer: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={4} />
+                  <select value={faqForm.category} onChange={(e) => setFaqForm({...faqForm, category: e.target.value as FAQCategory})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="General">General</option>
                     <option value="Programmes & Curricula">Programmes & Curricula</option>
                     <option value="Enrollment">Enrollment</option>
@@ -1269,37 +1269,37 @@ export default function AdminDashboard() {
                     <option value="Portals & Learning">Portals & Learning</option>
                     <option value="Technical">Technical</option>
                   </select>
-                  <input type="number" placeholder="Order" value={faqForm.order} onChange={(e) => setFaqForm({...faqForm, order: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <div className="flex gap-2"><button onClick={saveFAQ} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingFAQ(undefined); setFaqForm({question: '', answer: '', category: 'General', order: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
+                  <input type="number" placeholder="Order" value={faqForm.order} onChange={(e) => setFaqForm({...faqForm, order: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <div className="flex gap-2"><button onClick={saveFAQ} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingFAQ(undefined); setFaqForm({question: '', answer: '', category: 'General', order: ''})}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button></div>
                 </div>
               </div>
             )}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-surface-sunk border-b border-line">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Question</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Category</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Views</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Actions</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Question</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Category</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Views</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-line">
                     {faqs.map((faq) => (
-                      <tr key={faq.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-navy-900 max-w-xs line-clamp-2">{faq.question}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{faq.category}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{faq.viewCount}</td>
-                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${faq.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{faq.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingFAQ(faq); setFaqForm({question: faq.question, answer: faq.answer, category: faq.category, order: faq.order.toString()})}} className="text-navy-600 hover:text-navy-900"><Edit className="w-4 h-4" /></button><button onClick={() => deleteFAQ(faq.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
+                      <tr key={faq.id} className="hover:bg-surface-sunk/50 transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-ink max-w-xs line-clamp-2">{faq.question}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{faq.category}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{faq.viewCount}</td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${faq.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>{faq.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingFAQ(faq); setFaqForm({question: faq.question, answer: faq.answer, category: faq.category, order: faq.order.toString()})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteFAQ(faq.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              {faqs.length === 0 && (<div className="text-center py-12 text-navy-500 text-sm">No FAQs yet.</div>)}
+              {faqs.length === 0 && (<div className="text-center py-12 text-ink-faint text-sm">No FAQs yet.</div>)}
             </div>
           </div>
         )}
@@ -1309,61 +1309,61 @@ export default function AdminDashboard() {
           <div className="space-y-6">
             <button onClick={() => {setEditingLocation(null); setLocationForm({name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: ''})}} className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"><Plus className="h-4 w-4" />Add Location</button>
             {editingLocation !== undefined && (
-              <div className="bg-white rounded-xl border border-gray-100 p-6">
-                <h3 className="text-lg font-semibold text-navy-900 mb-4">{editingLocation ? 'Edit' : 'Add'} Location</h3>
+              <div className="bg-surface rounded-xl border border-line p-6">
+                <h3 className="text-lg font-semibold text-ink mb-4">{editingLocation ? 'Edit' : 'Add'} Location</h3>
                 <div className="space-y-4">
-                  <input type="text" placeholder="Location Name" value={locationForm.name} onChange={(e) => setLocationForm({...locationForm, name: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <select value={locationForm.type} onChange={(e) => setLocationForm({...locationForm, type: e.target.value as LocationType})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500">
+                  <input type="text" placeholder="Location Name" value={locationForm.name} onChange={(e) => setLocationForm({...locationForm, name: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <select value={locationForm.type} onChange={(e) => setLocationForm({...locationForm, type: e.target.value as LocationType})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
                     <option value="Head Office">Head Office</option>
                     <option value="Learning Centre">Learning Centre</option>
                     <option value="Partner Facility">Partner Facility</option>
                     <option value="Educator Hub">Educator Hub</option>
                     <option value="Home-Based Service">Home-Based Service</option>
                   </select>
-                  <input type="text" placeholder="Address" value={locationForm.address} onChange={(e) => setLocationForm({...locationForm, address: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
+                  <input type="text" placeholder="Address" value={locationForm.address} onChange={(e) => setLocationForm({...locationForm, address: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <div className="grid grid-cols-2 gap-4">
-                    <input type="text" placeholder="City" value={locationForm.city} onChange={(e) => setLocationForm({...locationForm, city: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                    <input type="text" placeholder="County" value={locationForm.county} onChange={(e) => setLocationForm({...locationForm, county: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
+                    <input type="text" placeholder="City" value={locationForm.city} onChange={(e) => setLocationForm({...locationForm, city: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                    <input type="text" placeholder="County" value={locationForm.county} onChange={(e) => setLocationForm({...locationForm, county: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   </div>
-                  <input type="email" placeholder="Email" value={locationForm.email} onChange={(e) => setLocationForm({...locationForm, email: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="tel" placeholder="Phone" value={locationForm.phone} onChange={(e) => setLocationForm({...locationForm, phone: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <textarea placeholder="Description" value={locationForm.description} onChange={(e) => setLocationForm({...locationForm, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" rows={3} />
-                  <input type="text" placeholder="Programmes (comma-separated)" value={locationForm.programmes} onChange={(e) => setLocationForm({...locationForm, programmes: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                  <input type="url" placeholder="Photo URL" value={locationForm.photo} onChange={(e) => setLocationForm({...locationForm, photo: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
+                  <input type="email" placeholder="Email" value={locationForm.email} onChange={(e) => setLocationForm({...locationForm, email: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="tel" placeholder="Phone" value={locationForm.phone} onChange={(e) => setLocationForm({...locationForm, phone: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <textarea placeholder="Description" value={locationForm.description} onChange={(e) => setLocationForm({...locationForm, description: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={3} />
+                  <input type="text" placeholder="Programmes (comma-separated)" value={locationForm.programmes} onChange={(e) => setLocationForm({...locationForm, programmes: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <input type="url" placeholder="Photo URL" value={locationForm.photo} onChange={(e) => setLocationForm({...locationForm, photo: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <div className="grid grid-cols-2 gap-4">
-                    <input type="number" placeholder="Latitude" step="0.0001" value={locationForm.latitude} onChange={(e) => setLocationForm({...locationForm, latitude: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
-                    <input type="number" placeholder="Longitude" step="0.0001" value={locationForm.longitude} onChange={(e) => setLocationForm({...locationForm, longitude: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-gray-200 outline-none focus:border-gold-500" />
+                    <input type="number" placeholder="Latitude" step="0.0001" value={locationForm.latitude} onChange={(e) => setLocationForm({...locationForm, latitude: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                    <input type="number" placeholder="Longitude" step="0.0001" value={locationForm.longitude} onChange={(e) => setLocationForm({...locationForm, longitude: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   </div>
-                  <div className="flex gap-2"><button onClick={saveLocation} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingLocation(undefined); setLocationForm({name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: ''})}} className="flex-1 rounded-lg bg-gray-200 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-300">Cancel</button></div>
+                  <div className="flex gap-2"><button onClick={saveLocation} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button><button onClick={() => {setEditingLocation(undefined); setLocationForm({name: '', type: 'Head Office', address: '', city: '', county: '', phone: '', email: '', description: '', programmes: '', photo: '', latitude: '', longitude: ''})}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button></div>
                 </div>
               </div>
             )}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-surface-sunk border-b border-line">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Name</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Type</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">City</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Actions</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Name</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Type</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">City</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-line">
                     {locations.map((location) => (
-                      <tr key={location.id} className="hover:bg-gray-50/50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-navy-900">{location.name}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{location.type}</td>
-                        <td className="px-6 py-4 text-sm text-navy-700">{location.city || '—'}</td>
-                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${location.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>{location.isActive ? 'Active' : 'Inactive'}</span></td>
-                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingLocation(location); setLocationForm({name: location.name, type: location.type, address: location.address || '', city: location.city || '', county: location.county || '', phone: location.phone || '', email: location.email || '', description: location.description || '', programmes: location.programmes?.join(', ') || '', photo: location.photo || '', latitude: location.latitude?.toString() || '', longitude: location.longitude?.toString() || ''})}} className="text-navy-600 hover:text-navy-900"><Edit className="w-4 h-4" /></button><button onClick={() => deleteLocation(location.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
+                      <tr key={location.id} className="hover:bg-surface-sunk/50 transition-colors">
+                        <td className="px-6 py-4 text-sm font-medium text-ink">{location.name}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{location.type}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted">{location.city || '—'}</td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${location.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>{location.isActive ? 'Active' : 'Inactive'}</span></td>
+                        <td className="px-6 py-4"><div className="flex gap-2"><button onClick={() => {setEditingLocation(location); setLocationForm({name: location.name, type: location.type, address: location.address || '', city: location.city || '', county: location.county || '', phone: location.phone || '', email: location.email || '', description: location.description || '', programmes: location.programmes?.join(', ') || '', photo: location.photo || '', latitude: location.latitude?.toString() || '', longitude: location.longitude?.toString() || ''})}} className="text-ink-muted hover:text-ink"><Edit className="w-4 h-4" /></button><button onClick={() => deleteLocation(location.id)} className="text-red-600 hover:text-red-900"><Trash2 className="w-4 h-4" /></button></div></td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              {locations.length === 0 && (<div className="text-center py-12 text-navy-500 text-sm">No locations yet.</div>)}
+              {locations.length === 0 && (<div className="text-center py-12 text-ink-faint text-sm">No locations yet.</div>)}
             </div>
           </div>
         )}
@@ -1371,34 +1371,34 @@ export default function AdminDashboard() {
         {/* Dashboard Tab, continued — subscribers, contacts and enrolments */}
         {activeTab === 'dashboard' && (
           <>
-            <div className="bg-white rounded-xl border border-gray-100 mb-6 overflow-hidden">
-              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+            <div className="bg-surface rounded-xl border border-line mb-6 overflow-hidden">
+              <div className="flex items-center justify-between border-b border-line px-6 py-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-navy-900">Newsletter Subscribers</h2>
-                  <p className="text-sm text-navy-600/60">{subscribers.length} total subscribers</p>
+                  <h2 className="text-lg font-semibold text-ink">Newsletter Subscribers</h2>
+                  <p className="text-sm text-ink-muted/60">{subscribers.length} total subscribers</p>
                 </div>
               </div>
               {subscriberError ? (
                 <p className="px-6 py-5 text-sm text-red-600">{subscriberError}</p>
               ) : subscribers.length === 0 ? (
-                <p className="px-6 py-5 text-sm text-navy-500">No newsletter subscribers yet.</p>
+                <p className="px-6 py-5 text-sm text-ink-faint">No newsletter subscribers yet.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-100">
+                    <thead className="bg-surface-sunk border-b border-line">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-navy-600">Email</th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-navy-600">Subscribed</th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-navy-600">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">Email</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">Subscribed</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-line">
                       {subscribers.map((subscriber) => (
                         <tr key={subscriber.id}>
-                          <td className="px-6 py-3 text-sm text-navy-900">{subscriber.email}</td>
-                          <td className="px-6 py-3 text-sm text-navy-600">{new Date(subscriber.subscribedAt).toLocaleDateString()}</td>
+                          <td className="px-6 py-3 text-sm text-ink">{subscriber.email}</td>
+                          <td className="px-6 py-3 text-sm text-ink-muted">{new Date(subscriber.subscribedAt).toLocaleDateString()}</td>
                           <td className="px-6 py-3">
-                            <span className={`rounded-full px-2 py-1 text-xs font-medium ${subscriber.isActive ? 'bg-green-50 text-green-700' : 'bg-gray-100 text-gray-600'}`}>
+                            <span className={`rounded-full px-2 py-1 text-xs font-medium ${subscriber.isActive ? 'bg-green-50 text-green-700' : 'bg-surface-muted text-ink-muted'}`}>
                               {subscriber.isActive ? 'Active' : 'Inactive'}
                             </span>
                           </td>
@@ -1410,47 +1410,47 @@ export default function AdminDashboard() {
               )}
             </div>
 
-            <div className="bg-white rounded-xl border border-gray-100 mb-6 overflow-hidden">
-              <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
+            <div className="bg-surface rounded-xl border border-line mb-6 overflow-hidden">
+              <div className="flex items-center justify-between border-b border-line px-6 py-4">
                 <div>
-                  <h2 className="text-lg font-semibold text-navy-900">Enrollment Applications</h2>
-                  <p className="text-sm text-navy-600/60">{enrollmentTotal} total applications</p>
+                  <h2 className="text-lg font-semibold text-ink">Enrollment Applications</h2>
+                  <p className="text-sm text-ink-muted/60">{enrollmentTotal} total applications</p>
                 </div>
               </div>
               {enrollmentError ? (
                 <p className="px-6 py-5 text-sm text-red-600">{enrollmentError}</p>
               ) : enrollments.length === 0 ? (
-                <p className="px-6 py-5 text-sm text-navy-500">No enrollment applications yet.</p>
+                <p className="px-6 py-5 text-sm text-ink-faint">No enrollment applications yet.</p>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-50 border-b border-gray-100">
+                    <thead className="bg-surface-sunk border-b border-line">
                       <tr>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-navy-600">Student</th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-navy-600">Contact</th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-navy-600">Programme</th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-navy-600">Applied</th>
-                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-navy-600">Status</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">Student</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">Contact</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">Programme</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">Applied</th>
+                        <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-muted">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-line">
                       {enrollments.map((enrollment) => (
-                        <tr key={enrollment.id} className="hover:bg-gray-50/50 transition-colors">
+                        <tr key={enrollment.id} className="hover:bg-surface-sunk/50 transition-colors">
                           <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedEnrollment(enrollment)}>
-                            <p className="text-sm font-medium text-navy-900">{enrollment.studentName}</p>
-                            {enrollment.parentName && <p className="text-xs text-navy-500">Parent: {enrollment.parentName}</p>}
+                            <p className="text-sm font-medium text-ink">{enrollment.studentName}</p>
+                            {enrollment.parentName && <p className="text-xs text-ink-faint">Parent: {enrollment.parentName}</p>}
                           </td>
                           <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedEnrollment(enrollment)}>
-                            <p className="text-xs text-navy-600">{enrollment.email}</p>
-                            {enrollment.phone && <p className="mt-1 text-xs text-navy-500">{enrollment.phone}</p>}
+                            <p className="text-xs text-ink-muted">{enrollment.email}</p>
+                            {enrollment.phone && <p className="mt-1 text-xs text-ink-faint">{enrollment.phone}</p>}
                           </td>
-                          <td className="px-6 py-4 text-sm text-navy-700 cursor-pointer" onClick={() => setSelectedEnrollment(enrollment)}>{enrollment.programme}</td>
-                          <td className="px-6 py-4 text-xs text-navy-500 cursor-pointer" onClick={() => setSelectedEnrollment(enrollment)}>{new Date(enrollment.createdAt).toLocaleDateString()}</td>
+                          <td className="px-6 py-4 text-sm text-ink-muted cursor-pointer" onClick={() => setSelectedEnrollment(enrollment)}>{enrollment.programme}</td>
+                          <td className="px-6 py-4 text-xs text-ink-faint cursor-pointer" onClick={() => setSelectedEnrollment(enrollment)}>{new Date(enrollment.createdAt).toLocaleDateString()}</td>
                           <td className="px-6 py-4">
                             <select
                               value={enrollment.status}
                               onChange={(event) => updateEnrollmentStatus(enrollment.id, event.target.value as Enrollment['status'])}
-                              className="text-xs border border-gray-200 rounded-lg px-2 py-1 focus:border-gold-500 outline-none"
+                              className="text-xs border border-line rounded-lg px-2 py-1 focus:border-gold-500 outline-none"
                             >
                               <option value="pending">Pending</option>
                               <option value="approved">Approved</option>
@@ -1467,20 +1467,20 @@ export default function AdminDashboard() {
             </div>
 
             {/* Filters */}
-            <div className="bg-white rounded-xl border border-gray-100 mb-6">
+            <div className="bg-surface rounded-xl border border-line mb-6">
               <div className="p-4 flex flex-wrap items-center gap-4">
                 <div className="relative flex-1 min-w-[200px]">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
                   <input
                     type="text"
                     placeholder="Search inquiries..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none text-sm"
+                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none text-sm"
                   />
                 </div>
                 <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-gray-400" />
+                  <Filter className="w-4 h-4 text-ink-faint" />
                   {['all', 'new', 'read', 'replied', 'closed'].map((f) => (
                     <button
                       key={f}
@@ -1488,7 +1488,7 @@ export default function AdminDashboard() {
                       className={`px-3 py-1.5 rounded-full text-xs font-medium capitalize transition-colors ${
                         filter === f 
                           ? 'bg-navy-900 text-white' 
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          : 'bg-surface-muted text-ink-muted hover:bg-line'
                       }`}
                     >
                       {f}
@@ -1499,42 +1499,42 @@ export default function AdminDashboard() {
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-100">
+                  <thead className="bg-surface-sunk border-b border-line">
                     <tr>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Name</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Contact</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Subject</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Programme</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Status</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Date</th>
-                      <th className="text-left px-6 py-3 text-xs font-semibold text-navy-600 uppercase tracking-wide">Actions</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Name</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Contact</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Subject</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Programme</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Status</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Date</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-100">
+                  <tbody className="divide-y divide-line">
                     {paginatedContacts.map((contact) => (
-                      <tr key={contact.id} className="hover:bg-gray-50/50 transition-colors">
+                      <tr key={contact.id} className="hover:bg-surface-sunk/50 transition-colors">
                         <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedContact(contact)}>
-                          <p className="text-sm font-medium text-navy-900">{contact.name}</p>
+                          <p className="text-sm font-medium text-ink">{contact.name}</p>
                         </td>
                         <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedContact(contact)}>
                           <div className="space-y-1">
-                            <p className="text-xs text-navy-600 flex items-center gap-1">
+                            <p className="text-xs text-ink-muted flex items-center gap-1">
                               <Mail className="w-3 h-3" /> {contact.email}
                             </p>
-                            <p className="text-xs text-navy-600 flex items-center gap-1">
+                            <p className="text-xs text-ink-muted flex items-center gap-1">
                               <Phone className="w-3 h-3" /> {contact.phone || 'N/A'}
                             </p>
                           </div>
                         </td>
                         <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedContact(contact)}>
-                          <p className="text-sm text-navy-700">{contact.subject}</p>
-                          <p className="text-xs text-navy-500 mt-1 line-clamp-1">{contact.message}</p>
+                          <p className="text-sm text-ink-muted">{contact.subject}</p>
+                          <p className="text-xs text-ink-faint mt-1 line-clamp-1">{contact.message}</p>
                         </td>
                         <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedContact(contact)}>
-                          <span className="text-xs bg-gray-100 text-navy-700 px-2 py-1 rounded-full capitalize">
+                          <span className="text-xs bg-surface-muted text-ink-muted px-2 py-1 rounded-full capitalize">
                             General
                           </span>
                         </td>
@@ -1543,13 +1543,13 @@ export default function AdminDashboard() {
                             contact.status === 'new' ? 'bg-amber-50 text-amber-700' :
                             contact.status === 'read' ? 'bg-blue-50 text-blue-700' :
                             contact.status === 'replied' ? 'bg-green-50 text-green-700' :
-                            'bg-gray-50 text-gray-700'
+                            'bg-surface-sunk text-ink-muted'
                           }`}>
                             {contact.status}
                           </span>
                         </td>
                         <td className="px-6 py-4 cursor-pointer" onClick={() => setSelectedContact(contact)}>
-                          <p className="text-xs text-navy-500 flex items-center gap-1">
+                          <p className="text-xs text-ink-faint flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
                             {new Date(contact.createdAt).toLocaleDateString()}
                           </p>
@@ -1558,7 +1558,7 @@ export default function AdminDashboard() {
                           <select
                             value={contact.status}
                             onChange={(e) => updateStatus(contact.id, e.target.value as Contact['status'])}
-                            className="text-xs border border-gray-200 rounded-lg px-2 py-1 focus:border-gold-500 outline-none"
+                            className="text-xs border border-line rounded-lg px-2 py-1 focus:border-gold-500 outline-none"
                           >
                             <option value="new">New</option>
                             <option value="read">Read</option>
@@ -1572,17 +1572,17 @@ export default function AdminDashboard() {
                 </table>
               </div>
               {filteredContacts.length === 0 && (
-                <div className="text-center py-12 text-navy-500 text-sm">
+                <div className="text-center py-12 text-ink-faint text-sm">
                   No inquiries found matching your criteria.
                 </div>
               )}
               {filteredContacts.length > 0 && (
-                <div className="flex items-center justify-between border-t border-gray-100 px-6 py-3 text-sm text-navy-600">
+                <div className="flex items-center justify-between border-t border-line px-6 py-3 text-sm text-ink-muted">
                   <span>Showing {(contactPage - 1) * pageSize + 1}-{Math.min(contactPage * pageSize, contactTotal)} of {contactTotal}</span>
                   <div className="flex items-center gap-2">
-                    <button type="button" disabled={contactPage === 1} onClick={() => setContactPage((page) => Math.max(1, page - 1))} className="rounded-lg border border-gray-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
+                    <button type="button" disabled={contactPage === 1} onClick={() => setContactPage((page) => Math.max(1, page - 1))} className="rounded-lg border border-line px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-40">Previous</button>
                     <span>Page {contactPage} of {contactPageCount}</span>
-                    <button type="button" disabled={contactPage === contactPageCount} onClick={() => setContactPage((page) => Math.min(contactPageCount, page + 1))} className="rounded-lg border border-gray-200 px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-40">Next</button>
+                    <button type="button" disabled={contactPage === contactPageCount} onClick={() => setContactPage((page) => Math.min(contactPageCount, page + 1))} className="rounded-lg border border-line px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-40">Next</button>
                   </div>
                 </div>
               )}
@@ -1592,25 +1592,25 @@ export default function AdminDashboard() {
       </div>
       {(selectedContact || selectedEnrollment) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-900/50 px-4" onClick={() => { setSelectedContact(null); setSelectedEnrollment(null) }}>
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
+          <div className="w-full max-w-lg rounded-2xl bg-surface p-6 shadow-2xl" onClick={(event) => event.stopPropagation()}>
             <div className="mb-5 flex items-start justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gold-600">Record details</p>
-                <h2 className="mt-1 text-xl font-semibold text-navy-900">{selectedContact ? selectedContact.name : selectedEnrollment?.studentName}</h2>
+                <h2 className="mt-1 text-xl font-semibold text-ink">{selectedContact ? selectedContact.name : selectedEnrollment?.studentName}</h2>
               </div>
-              <button type="button" aria-label="Close details" onClick={() => { setSelectedContact(null); setSelectedEnrollment(null) }} className="rounded-lg p-2 text-navy-600 hover:bg-gray-100"><X className="h-5 w-5" /></button>
+              <button type="button" aria-label="Close details" onClick={() => { setSelectedContact(null); setSelectedEnrollment(null) }} className="rounded-lg p-2 text-ink-muted hover:bg-surface-muted"><X className="h-5 w-5" /></button>
             </div>
             {selectedContact ? (
-              <div className="space-y-3 text-sm text-navy-700">
+              <div className="space-y-3 text-sm text-ink-muted">
                 <p><strong>Email:</strong> {selectedContact.email}</p>
                 <p><strong>Phone:</strong> {selectedContact.phone || 'Not provided'}</p>
                 <p><strong>Subject:</strong> {selectedContact.subject}</p>
                 <p><strong>Status:</strong> {selectedContact.status}</p>
                 <p><strong>Received:</strong> {new Date(selectedContact.createdAt).toLocaleString()}</p>
-                <div><strong>Message:</strong><p className="mt-1 rounded-lg bg-gray-50 p-3 leading-relaxed">{selectedContact.message}</p></div>
+                <div><strong>Message:</strong><p className="mt-1 rounded-lg bg-surface-sunk p-3 leading-relaxed">{selectedContact.message}</p></div>
               </div>
             ) : selectedEnrollment && (
-              <div className="space-y-3 text-sm text-navy-700">
+              <div className="space-y-3 text-sm text-ink-muted">
                 <p><strong>Parent:</strong> {selectedEnrollment.parentName || 'Not provided'}</p>
                 <p><strong>Email:</strong> {selectedEnrollment.email}</p>
                 <p><strong>Phone:</strong> {selectedEnrollment.phone || 'Not provided'}</p>
@@ -1628,8 +1628,8 @@ export default function AdminDashboard() {
                 <p><strong>Status:</strong> {selectedEnrollment.status}</p>
                 <p><strong>Contact consent:</strong> {selectedEnrollment.contactConsent ? 'Confirmed' : 'Not recorded'}</p>
                 <p><strong>Applied:</strong> {new Date(selectedEnrollment.createdAt).toLocaleString()}</p>
-                {selectedEnrollment.learningNeeds && <div><strong>Learning context:</strong><p className="mt-1 rounded-lg bg-gray-50 p-3 leading-relaxed">{selectedEnrollment.learningNeeds}</p></div>}
-                <div><strong>Notes:</strong><p className="mt-1 rounded-lg bg-gray-50 p-3 leading-relaxed">{selectedEnrollment.notes || 'No notes provided.'}</p></div>
+                {selectedEnrollment.learningNeeds && <div><strong>Learning context:</strong><p className="mt-1 rounded-lg bg-surface-sunk p-3 leading-relaxed">{selectedEnrollment.learningNeeds}</p></div>}
+                <div><strong>Notes:</strong><p className="mt-1 rounded-lg bg-surface-sunk p-3 leading-relaxed">{selectedEnrollment.notes || 'No notes provided.'}</p></div>
               </div>
             )}
           </div>

@@ -75,47 +75,47 @@ export default function Resources() {
         </div>
       </section>
 
-      <section className="bg-white py-8">
+      <section className="bg-surface py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm md:grid-cols-3">
-            <div className="rounded-xl bg-white p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Resources</p>
-              <p className="mt-3 text-3xl font-bold text-navy">{stats.total}</p>
+          <div className="grid gap-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm md:grid-cols-3">
+            <div className="rounded-xl bg-surface p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Resources</p>
+              <p className="mt-3 text-3xl font-bold text-ink">{stats.total}</p>
             </div>
-            <div className="rounded-xl bg-white p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Topics</p>
-              <p className="mt-3 text-3xl font-bold text-navy">{stats.categories}</p>
+            <div className="rounded-xl bg-surface p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Topics</p>
+              <p className="mt-3 text-3xl font-bold text-ink">{stats.categories}</p>
             </div>
-            <div className="rounded-xl bg-white p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-slate-500">Focus</p>
-              <p className="mt-3 text-lg font-semibold text-navy">Guided Growth</p>
+            <div className="rounded-xl bg-surface p-4">
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Focus</p>
+              <p className="mt-3 text-lg font-semibold text-ink">Guided Growth</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="bg-white pb-8">
+      <section className="bg-surface pb-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="space-y-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+          <div className="space-y-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm">
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-slate-400" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search resources by title, topic, or keyword..."
-                className="w-full rounded-lg border border-slate-300 bg-white pl-12 pr-4 py-2.5 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
+                className="w-full rounded-lg border border-line-strong bg-surface pl-12 pr-4 py-2.5 focus:border-gold focus:outline-none focus:ring-2 focus:ring-gold/20"
               />
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-navy/70">Category</label>
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/70">Category</label>
               <div className="flex flex-wrap gap-2">
                 {CATEGORIES.map((category) => (
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${selectedCategory === category ? 'bg-navy text-white' : 'bg-white text-navy hover:bg-slate-200'}`}
+                    className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${selectedCategory === category ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-line'}`}
                   >
                     {category === 'all' ? 'All' : category}
                   </button>
@@ -126,21 +126,21 @@ export default function Resources() {
         </div>
       </section>
 
-      <section className="bg-slate-50 py-16">
+      <section className="bg-surface-sunk py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center py-20"><Loader className="h-8 w-8 animate-spin text-gold" /></div>
           ) : error ? (
             <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center text-red-700">{error}</div>
           ) : filteredResources.length === 0 ? (
-            <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center text-navy/70">
-              <Sparkles className="mx-auto mb-4 h-12 w-12 text-navy/30" />
+            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted/70">
+              <Sparkles className="mx-auto mb-4 h-12 w-12 text-ink-muted/30" />
               No resources match your current filters.
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {filteredResources.map((resource, index) => (
-                <motion.article key={resource.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: index * 0.04 }} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                <motion.article key={resource.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: index * 0.04 }} className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
                   {/* Brief §19 rules out a stock-photo site, so an article
                       without its own cover gets a branded panel rather than a
                       generic photograph standing in for one. */}
@@ -155,29 +155,29 @@ export default function Resources() {
                       </div>
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent" />
-                    <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-navy">{resource.category}</div>
+                    <div className="absolute left-4 top-4 rounded-full bg-surface/90 px-3 py-1 text-xs font-medium text-ink">{resource.category}</div>
                   </div>
 
                   <div className="space-y-4 p-5">
-                    <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+                    <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-[0.2em] text-ink-faint">
                       <span>{resource.author}</span>
                       <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" /> {resource.readTime || '4 min read'}</span>
                     </div>
 
                     <div>
-                      <h3 className="text-xl font-semibold text-navy">{resource.title}</h3>
-                      {resource.excerpt && <p className="mt-2 text-sm leading-relaxed text-navy/70">{resource.excerpt}</p>}
+                      <h3 className="text-xl font-semibold text-ink">{resource.title}</h3>
+                      {resource.excerpt && <p className="mt-2 text-sm leading-relaxed text-ink-muted/70">{resource.excerpt}</p>}
                     </div>
 
                     {resource.tags && resource.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {resource.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="rounded-full bg-slate-100 px-2.5 py-1 text-xs text-navy/70">{tag}</span>
+                          <span key={tag} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted/70">{tag}</span>
                         ))}
                       </div>
                     )}
 
-                    <button className="inline-flex items-center rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-navy transition-colors hover:bg-gold/90">
+                    <button className="inline-flex items-center rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-gold/90">
                       Read article
                     </button>
                   </div>

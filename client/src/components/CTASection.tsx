@@ -22,13 +22,13 @@ export default function CTASection() {
                 <GraduationCap className="h-8 w-8" />
               </div>
               <div>
-                <h2 className="mb-2 text-2xl font-semibold text-navy">
+                <h2 className="mb-2 text-2xl font-semibold text-ink">
                   Begin your learning journey today
                 </h2>
-                <p className="max-w-xl text-sm leading-relaxed text-navy/80">
+                <p className="max-w-xl text-sm leading-relaxed text-ink-muted/80">
                   Whether you are seeking homeschooling support, academic tutoring, language learning, enrichment programmes, or personalized educational guidance, Axis is ready to help.
                 </p>
-                <a href={telHref} className="mt-3 inline-flex items-center gap-2 font-semibold text-navy hover:underline">
+                <a href={telHref} className="mt-3 inline-flex items-center gap-2 font-semibold text-ink hover:underline">
                   <Phone className="h-4 w-4" />
                   {`Call ${contact.phoneDisplay}`}
                 </a>
@@ -39,7 +39,7 @@ export default function CTASection() {
               <Link to="/enroll" className="btn-navy">Make an Enquiry</Link>
               <Link
                 to="/consultation"
-                className="btn-secondary border-navy text-navy hover:bg-navy hover:text-white"
+                className="btn-secondary border-navy text-ink hover:bg-navy hover:text-white"
               >
                 Book a Consultation
               </Link>
@@ -47,7 +47,7 @@ export default function CTASection() {
                 href={whatsappHref()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold uppercase tracking-wide text-navy transition-colors hover:bg-slate-100"
+                className="inline-flex items-center gap-2 rounded-full bg-surface px-6 py-3 text-sm font-semibold uppercase tracking-wide text-ink transition-colors hover:bg-surface-muted"
               >
                 <MessageCircle className="h-4 w-4" />
                 WhatsApp Us

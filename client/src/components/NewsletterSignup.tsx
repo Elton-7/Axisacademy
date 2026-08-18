@@ -48,7 +48,7 @@ export default function NewsletterSignup() {
               pattern: { value: /^\S+@\S+$/i, message: 'Enter a valid email address' },
               maxLength: { value: 255, message: 'Email is too long' },
             })}
-            className="w-full rounded-lg border border-white/10 bg-white/5 py-2.5 pl-10 pr-3 text-sm text-white outline-none placeholder:text-white/40 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20"
+            className="w-full rounded-lg border border-white/10 bg-surface/5 py-2.5 pl-10 pr-3 text-sm text-white outline-none placeholder:text-white/40 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20"
           />
         </div>
         {errors.email && <p className="text-xs text-red-300">{errors.email.message}</p>}

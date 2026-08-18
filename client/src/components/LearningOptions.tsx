@@ -53,7 +53,7 @@ export default function LearningOptions() {
               initial={{ opacity: 0, y: 20 }}
               animate={isVisible ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="relative rounded-[1.75rem] border border-white/10 bg-white/10 p-8 text-center shadow-lg shadow-navy/20 backdrop-blur-sm"
+              className="relative rounded-[1.75rem] border border-white/10 bg-surface/10 p-8 text-center shadow-lg shadow-navy/20 backdrop-blur-sm"
             >
               <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-gold/20 bg-gold/10">
                 <option.icon className="h-7 w-7 text-gold" />
