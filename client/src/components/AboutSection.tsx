@@ -19,7 +19,10 @@ export default function AboutSection() {
           </p>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr_0.8fr] lg:items-stretch">
+        {/* Mission and Vision are a sentence each. As two full-height columns
+            beside a much longer card they were mostly empty space, so they now
+            share one column as compact rows. */}
+        <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:items-stretch">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
@@ -42,35 +45,38 @@ export default function AboutSection() {
             </a>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-sm card-hover"
-          >
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10">
-              <Target className="h-8 w-8 text-gold" />
-            </div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.15em] text-navy">Mission</h3>
-            <p className="leading-relaxed text-navy/70">
-              To develop learners whom the world needs more than they need the world.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isVisible ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="rounded-[2rem] border border-slate-200 bg-white p-8 text-center shadow-sm card-hover"
-          >
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold/10">
-              <Eye className="h-8 w-8 text-gold" />
-            </div>
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.15em] text-navy">Vision</h3>
-            <p className="leading-relaxed text-navy/70">
-              To build a world where learners are creators of opportunity, not merely seekers of it.
-            </p>
-          </motion.div>
+          <div className="flex flex-col gap-6">
+            {[
+              {
+                icon: Target,
+                title: 'Mission',
+                body: 'To develop learners whom the world needs more than they need the world.',
+              },
+              {
+                icon: Eye,
+                title: 'Vision',
+                body: 'To build a world where learners are creators of opportunity, not merely seekers of it.',
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 30 }}
+                animate={isVisible ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: 0.2 + i * 0.15 }}
+                className="card-hover flex flex-1 items-start gap-5 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm"
+              >
+                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-full bg-gold/10">
+                  <item.icon className="h-7 w-7 text-gold" />
+                </div>
+                <div>
+                  <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.15em] text-navy">
+                    {item.title}
+                  </h3>
+                  <p className="leading-relaxed text-navy/70">{item.body}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </div>
     </section>

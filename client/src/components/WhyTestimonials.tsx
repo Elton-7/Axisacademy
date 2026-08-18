@@ -44,7 +44,7 @@ export default function WhyTestimonials() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-16 lg:grid-cols-[1.2fr_0.8fr]">
           <div>
-            <div className="section-label mb-8 text-left">Why Choose Axis</div>
+            <h2 className="section-label mb-8 text-left">Why Choose Axis</h2>
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {reasons.map((reason, i) => (
                 <motion.div
@@ -57,18 +57,18 @@ export default function WhyTestimonials() {
                   <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full border border-gold/30 bg-white transition-all duration-300 group-hover:bg-gold group-hover:border-gold">
                     <reason.icon className="h-5 w-5 text-gold transition-colors group-hover:text-navy" />
                   </div>
-                  <h4 className="text-xs font-semibold leading-tight text-navy">
+                  <h3 className="text-xs font-semibold leading-tight text-navy">
                     {reason.label}
-                  </h4>
+                  </h3>
                 </motion.div>
               ))}
             </div>
           </div>
 
           <div>
-            <h3 className="mb-8 text-2xl font-semibold text-navy">
+            <h2 className="mb-8 text-2xl font-semibold text-navy">
               What parents and learners say
-            </h3>
+            </h2>
             {testimonials.length === 0 ? (
               <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-8">
                 <p className="text-sm leading-relaxed text-navy/70">

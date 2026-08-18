@@ -68,7 +68,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wide text-white">Quick Links</h4>
+            <h2 className="mb-6 text-sm font-semibold uppercase tracking-wide text-white">Quick Links</h2>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.href}>
@@ -81,7 +81,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="mb-6 text-sm font-semibold uppercase tracking-wide text-white">Contact Info</h4>
+            <h2 className="mb-6 text-sm font-semibold uppercase tracking-wide text-white">Contact Info</h2>
             <ul className="space-y-3">
               <li className="flex items-center gap-3 text-sm text-white/50">
                 <Phone className="h-4 w-4 text-gold-500" />
@@ -97,7 +97,7 @@ export default function Footer() {
               </li>
             </ul>
             <div className="mt-7">
-              <h5 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gold-500">Portal Access</h5>
+              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gold-500">Portal Access</h3>
               <ul className="space-y-2">
                 {portalLinks.map((link) => (
                   <li key={link.href}>

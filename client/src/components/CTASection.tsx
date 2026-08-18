@@ -21,9 +21,9 @@ export default function CTASection() {
                 <GraduationCap className="h-8 w-8" />
               </div>
               <div>
-                <h3 className="mb-2 text-2xl font-semibold text-navy">
+                <h2 className="mb-2 text-2xl font-semibold text-navy">
                   Begin your learning journey today
-                </h3>
+                </h2>
                 <p className="max-w-xl text-sm leading-relaxed text-navy/80">
                   Whether you are seeking homeschooling support, academic tutoring, language learning, enrichment programmes, or personalized educational guidance, Axis is ready to help.
                 </p>
