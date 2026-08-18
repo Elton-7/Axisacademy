@@ -28,7 +28,10 @@ services:
         value: production
 
       # Creates missing tables but never alters existing ones. `alter` on a
-      # live database can rewrite columns holding learner records.
+      # live database can rewrite columns holding learner records. Changes to
+      # existing tables come from server/migrations/ instead, which run at
+      # startup — see docs/DEPLOYMENT.md. Set SKIP_MIGRATIONS=true here if this
+      # service is ever scaled beyond one instance.
       - key: DB_SYNC
         value: safe
 

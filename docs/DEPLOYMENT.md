@@ -66,14 +66,46 @@ Then submit a real enquiry and confirm it appears in the admin pipeline.
 
 ## Things that behave differently in production
 
-**Schema changes.** `DB_SYNC` defaults to `safe` in production: missing tables
-are created, existing ones are never altered. `alter` inspects the live schema
-and rewrites it to match the models, which on a database holding learner
-records can change column types or drop columns a model no longer mentions.
-Set `DB_SYNC=alter` deliberately and briefly, or `none` if migrations are
-managed elsewhere. A sync failure stops the server rather than being logged and
-ignored — serving requests against a half-built schema produces confusing
-errors much later.
+**Schema changes** are handled by two mechanisms that do different jobs.
+
+`DB_SYNC` defaults to `safe` in production: missing tables are created,
+existing ones are never altered. `alter` inspects the live schema and rewrites
+it to match the models, which on a database holding learner records can change
+column types or drop columns a model no longer mentions. Set `DB_SYNC=alter`
+deliberately and briefly, or `none` to disable it entirely. A sync failure
+stops the server rather than being logged and ignored — serving requests
+against a half-built schema produces confusing errors much later.
+
+Because `safe` never touches an existing table, it cannot add a column to one.
+Everything sync will not do — new columns, changed types, indexes, backfills —
+goes in `server/migrations/`, runs in filename order, once each, and is
+recorded in `SequelizeMeta`.
+
+```
+npm run migrate          apply everything pending
+npm run migrate:status   what has run and what has not
+npm run migrate:undo     revert the most recent one
+```
+
+Migrations also run automatically at startup, after sync and before seeding, so
+a deploy applies its own schema changes. That is safe for one instance, which
+is what `render.yaml` provisions. **If the API is ever scaled past one
+instance, set `SKIP_MIGRATIONS=true` and run `npm run migrate` as a release
+step instead** — otherwise two instances start together and race.
+
+Write one as a file named `YYYYMMDDHHMMSS-what-it-does.js` exporting `up` and
+`down`, both taking Sequelize's query interface:
+
+```js
+module.exports = {
+  async up(queryInterface) { /* addColumn, addIndex, changeColumn, bulk update */ },
+  async down(queryInterface) { /* the reverse */ },
+}
+```
+
+A migration that has run on production is history — never edit it. Correct it
+with a new one. Write `down` even if you expect never to use it: it is what
+makes a bad deploy recoverable, and it is only cheap to write at the time.
 
 **Seeding** runs on every start but only fills empty tables. Set
 `SKIP_SEED=true` for a database managed entirely by hand.
@@ -89,5 +121,5 @@ load balancer. Trusting every hop would let a client forge the header.
   a restore has never been rehearsed.
 - **Error monitoring.** Nothing reports a production failure. If the API starts
   returning 500s, the first report will come from a parent.
-- **Test coverage.** The behaviour of vetting, portal scoping and the
-  safeguarding rules was verified by hand and is not protected by tests.
+- **Test coverage.** Vetting, portal scoping and the safeguarding rules are
+  covered by `npm test`. The admin CMS routes are not.

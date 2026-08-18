@@ -6,6 +6,7 @@ require('dotenv').config()
 
 const { contactLimiter, generalApiLimiter } = require('./middleware/rateLimiter')
 const { syncDatabase } = require('./models')
+const { runMigrations } = require('./lib/migrator')
 const sequelize = require('./config/database')
 const seedData = require('./seeders/seed')
 
@@ -87,7 +88,13 @@ app.use((err, req, res, next) => {
 // Start server
 const startServer = async () => {
   try {
+    // Order matters. sync creates tables that do not exist; migrations then
+    // apply the changes it cannot make to tables that already do.
     await syncDatabase()
+
+    if (process.env.SKIP_MIGRATIONS !== 'true') {
+      await runMigrations()
+    }
 
     // Seeding is idempotent — it only fills empty tables — but it can be turned
     // off for a production database that is managed by hand.

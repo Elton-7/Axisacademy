@@ -8,7 +8,10 @@
     "dev": "nodemon server.js",
     "seed": "node seeders/seed.js",
     "test": "node --test --test-concurrency=1 test/integration.test.js test/safeguarding.test.js",
-    "test:safeguarding": "node --test test/safeguarding.test.js"
+    "test:safeguarding": "node --test test/safeguarding.test.js",
+    "migrate": "node -e \"require('dotenv').config();require('./lib/migrator').runMigrations().then(()=>process.exit(0)).catch(e=>{console.error(e);process.exit(1)})\"",
+    "migrate:status": "node -e \"require('dotenv').config();const{migrator}=require('./lib/migrator');migrator.executed().then(e=>migrator.pending().then(p=>{console.log('applied:',e.map(m=>m.name).join(', ')||'none');console.log('pending:',p.map(m=>m.name).join(', ')||'none');process.exit(0)})).catch(e=>{console.error(e.message);process.exit(1)})\"",
+    "migrate:undo": "node -e \"require('dotenv').config();require('./lib/migrator').migrator.down().then(r=>{console.log('reverted:',r.map(m=>m.name).join(', ')||'none');process.exit(0)}).catch(e=>{console.error(e);process.exit(1)})\""
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -23,7 +26,8 @@
     "nodemailer": "^9.0.5",
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
-    "sequelize": "^6.37.3"
+    "sequelize": "^6.37.3",
+    "umzug": "^3.8.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"
