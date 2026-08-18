@@ -141,8 +141,19 @@ export default function Resources() {
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {filteredResources.map((resource, index) => (
                 <motion.article key={resource.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: index * 0.04 }} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                  <div className="relative aspect-[16/9] overflow-hidden bg-slate-200">
-                    <img src={resource.coverImage || 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=900&q=80'} alt={resource.title} className="h-full w-full object-cover" />
+                  {/* Brief §19 rules out a stock-photo site, so an article
+                      without its own cover gets a branded panel rather than a
+                      generic photograph standing in for one. */}
+                  <div className="relative aspect-[16/9] overflow-hidden bg-navy-900">
+                    {resource.coverImage ? (
+                      <img src={resource.coverImage} alt={resource.title} className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,#0a1628_0%,#24334f_100%)] px-6 text-center">
+                        <span className="font-mono text-xs uppercase tracking-[0.2em] text-gold-500">
+                          {resource.category}
+                        </span>
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent" />
                     <div className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-navy">{resource.category}</div>
                   </div>
