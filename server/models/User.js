@@ -30,6 +30,30 @@ const User = sequelize.define('User', {
     allowNull: false,
     defaultValue: 'staff',
   },
+  /**
+   * Accounts are disabled rather than deleted. An educator who leaves still
+   * appears on the sessions they taught and the messages they wrote, so
+   * removing the row would tear holes in a learner's history — and that history
+   * is exactly what safeguarding depends on.
+   */
+  isActive: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
+    field: 'is_active',
+  },
+  /** Set when an administrator issues a temporary password. */
+  mustChangePassword: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'must_change_password',
+  },
+  lastLoginAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'last_login_at',
+  },
 }, {
   tableName: 'users',
   timestamps: true,

@@ -261,6 +261,20 @@ export interface SafeguardingConcern {
   raisedBy?: { id: number; name: string; role: string } | null
 }
 
+/** Account administration (brief §28-§30). */
+export type AccountRole = 'admin' | 'staff' | 'tutor' | 'student'
+
+export interface Account {
+  id: number
+  name: string
+  email: string
+  role: AccountRole
+  isActive: boolean
+  mustChangePassword: boolean
+  lastLoginAt: string | null
+  createdAt: string
+}
+
 export interface PortalLearnerRecord {
   learner: Omit<PortalLearner, 'attendance'>
   attendance: AttendanceSummary

@@ -46,6 +46,8 @@ import {
   PortalMessageItem,
   PortalSession,
   AdminLearner,
+  Account,
+  AccountRole,
   VettingRow,
   VettingStatus,
   SafeguardingConcern,
@@ -572,6 +574,30 @@ export const safeguardingApi = {
 
   async eraseLearner(learnerId: number, confirmName: string) {
     await api.delete(`/data-protection/learners/${learnerId}`, { data: { confirmName } })
+  },
+}
+
+/** Account administration. Reading is staff; changing is admin only. */
+export const accountsApi = {
+  async getAll() {
+    const { data } = await api.get<ApiResponse<Account[]>>('/users')
+    return unwrap(data)
+  },
+
+  /** The temporary password comes back once and is never retrievable again. */
+  async create(payload: { name: string; email: string; role: AccountRole }) {
+    const { data } = await api.post<ApiResponse<Account & { temporaryPassword: string }>>('/users', payload)
+    return unwrap(data)
+  },
+
+  async update(id: number, payload: { name?: string; role?: AccountRole; isActive?: boolean }) {
+    const { data } = await api.patch<ApiResponse<{ assignmentsEnded: number }>>(`/users/${id}`, payload)
+    return unwrap(data)
+  },
+
+  async resetPassword(id: number) {
+    const { data } = await api.post<ApiResponse<{ temporaryPassword: string }>>(`/users/${id}/reset-password`, {})
+    return unwrap(data)
   },
 }
 

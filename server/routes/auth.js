@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { authLimiter } = require('../middleware/rateLimiter')
 const User = require('../models/User')
+const { requireAuth } = require('../middleware/requireAuth')
+const { recordAudit } = require('../middleware/audit')
 
 const MAX_EMAIL_ATTEMPTS = 5
 const EMAIL_TRACK_WINDOW_MS = 30 * 60 * 1000 // 30 minutes
@@ -125,6 +127,19 @@ router.post(
       return res.status(401).json({ success: false, error: 'Invalid credentials' })
     }
 
+    /**
+     * A disabled account must not be able to sign in. Checked after the
+     * password comparison so the response cannot be used to work out which
+     * addresses have accounts.
+     */
+    if (!user.isActive) {
+      recordFailedLogin(email, ip)
+      return res.status(403).json({
+        success: false,
+        error: 'This account has been disabled. Contact Axis if you think that is a mistake.',
+      })
+    }
+
     clearLoginAttempts(email, ip)
 
     if (!process.env.JWT_SECRET) {
@@ -137,6 +152,8 @@ router.post(
       { expiresIn: '8h' }
     )
 
+    await user.update({ lastLoginAt: new Date() })
+
     res.json({
       success: true,
       token,
@@ -145,11 +162,49 @@ router.post(
         email: user.email,
         name: user.name,
         role: user.role,
+        // Signals that this is a temporary password issued by an administrator.
+        mustChangePassword: user.mustChangePassword,
         createdAt: user.createdAt,
       },
     })
   }
 )
+
+/**
+ * Changing your own password. Anyone signed in may do this, and it is how a
+ * temporary password issued by an administrator gets replaced.
+ */
+router.post('/change-password', requireAuth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body
+
+    if (String(newPassword || '').length < 10) {
+      return res.status(400).json({ success: false, error: 'Choose a password of at least 10 characters' })
+    }
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ success: false, error: 'The new password must be different' })
+    }
+
+    const user = await User.findByPk(req.user.userId)
+    if (!user) return res.status(404).json({ success: false, error: 'Account not found' })
+
+    const matches = await bcrypt.compare(String(currentPassword || ''), user.passwordHash)
+    if (!matches) {
+      return res.status(401).json({ success: false, error: 'Your current password is not correct' })
+    }
+
+    await user.update({
+      passwordHash: await bcrypt.hash(newPassword, 10),
+      mustChangePassword: false,
+    })
+    await recordAudit(req, 'password_changed', 'user', user.id, {})
+
+    res.json({ success: true, message: 'Your password has been changed.' })
+  } catch (error) {
+    console.error('Failed to change password:', error)
+    res.status(500).json({ success: false, error: 'Failed to change password' })
+  }
+})
 
 // Get current user (verify token)
 router.get('/me', async (req, res) => {
