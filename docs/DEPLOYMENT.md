@@ -9,6 +9,11 @@ the API or the database.
 | Express API + PostgreSQL | Render (or any Docker host) | `render.yaml`, `server/Dockerfile` |
 | Domain, DNS and mailboxes | Truehost | registrar control panel |
 
+`docker-compose.yml` at the repository root is **not** part of this. It runs the
+whole stack on one machine for local work — localhost origins, the database
+port published to the host, the server's source mounted over the image — and
+its `.env.example` covers only that.
+
 ## Order
 
 Deploy the API first. The site is built with the API address compiled into it,

@@ -1,3 +1,12 @@
+# A local stack: Postgres, the API and the built site on one machine.
+#
+# This is not the deployment path — that is Netlify plus a Docker host, and it
+# is described in docs/DEPLOYMENT.md. Everything here points at localhost, the
+# database port is published to the host, and the server's source is mounted
+# over the image, none of which belong in a deployment.
+#
+# Needs DB_PASSWORD and JWT_SECRET in a .env beside this file. See .env.example.
+
 services:
   postgres:
     image: postgres:15-alpine
@@ -28,9 +37,17 @@ services:
       DB_USER: postgres
       DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set}
       PORT: 5000
-      NODE_ENV: production
+      # Development, deliberately. CORS points at localhost and the source is
+      # mounted from the host, so calling this production was a contradiction —
+      # and the production preflight refuses to start against a localhost
+      # origin, which meant `docker compose up` could not boot the API at all.
+      NODE_ENV: development
       CORS_ORIGIN: http://localhost:5173
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
+      # Optional. Without them the seeder creates admin@axis.com on first run.
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
+      ADMIN_NAME: ${ADMIN_NAME:-}
     ports:
       - "5000:5000"
     depends_on:
