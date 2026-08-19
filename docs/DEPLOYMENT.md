@@ -7,6 +7,7 @@ the API or the database.
 | --- | --- | --- |
 | React site | Netlify | `netlify.toml` |
 | Express API + PostgreSQL | Render (or any Docker host) | `render.yaml`, `server/Dockerfile` |
+| Domain, DNS and mailboxes | Truehost | registrar control panel |
 
 ## Order
 
@@ -46,15 +47,70 @@ In Netlify, set the build environment:
 the bundle, so changing one in the dashboard does nothing until the site is
 rebuilt.
 
-### 3. DNS
+### 3. Domain, DNS and email
 
-- `www.axislearning.co.ke` → Netlify
-- `api.axislearning.co.ke` → the API host
-- Keep the `MX` records pointing at whoever hosts email. Repointing the whole
-  domain at Netlify and dropping them is the usual way `info@` stops working.
+The domain is registered with Truehost, a KeNIC registrar. Nothing in the
+project depends on that — any registrar works, provided you can edit records.
+What follows is written for Truehost's DNS manager because that is where the
+domain is.
 
-Certificates are issued automatically once DNS resolves, which can take from
-minutes to a couple of hours. The site will look broken until it completes.
+**Keep DNS at Truehost. Do not delegate the nameservers to Netlify.** Netlify
+DNS is otherwise a reasonable choice, but the mailboxes are Truehost's, and
+moving the zone without recreating the `MX` records is the usual way `info@`
+stops receiving mail — quietly, and usually noticed when a parent says nobody
+replied.
+
+| Type | Name | Value | Purpose |
+| --- | --- | --- | --- |
+| CNAME | `www` | `<site>.netlify.app` | the website |
+| A | `@` | Netlify's load balancer IP | apex → website |
+| CNAME | `api` | `<service>.onrender.com` | the API |
+| MX | `@` | Truehost's mail servers | email — leave as issued |
+
+Take the exact values from the dashboards rather than from this table: Netlify
+shows both the `.netlify.app` hostname and the apex IP under Domain
+management, and Render shows the service hostname under Settings. The apex IP
+in particular is Netlify's to change, and a copied-out number goes stale
+silently.
+
+The apex needs an `A` record rather than a `CNAME` because DNS does not allow a
+CNAME at a zone apex. `www` is the canonical host — `VITE_SITE_URL` and
+`CORS_ORIGIN` both name it — so the apex only has to reach Netlify and be
+redirected there. Truehost's panel also offers a URL redirect, which is
+equivalent for this purpose.
+
+Certificates are issued automatically by Netlify and Render once the records
+resolve, which can take from minutes to a couple of hours. The site will look
+broken until it completes. You do not need to buy an SSL certificate from the
+registrar, whatever the upsell at checkout suggests.
+
+#### Email
+
+Three addresses are referenced by the application and must exist before
+enquiries reach anyone:
+
+- `info@axislearning.co.ke` — published on the site
+- `enquiries@axislearning.co.ke` — `NOTIFICATION_TO`
+- `no-reply@axislearning.co.ke` — `NOTIFICATION_FROM`
+
+Truehost supplies SMTP credentials with the mailboxes; they go into `SMTP_HOST`,
+`SMTP_USER` and `SMTP_PASSWORD` on the API. Until all of them are set, enquiry
+notifications are written to the log instead of being sent, so a missing
+credential never silently loses an enquiry — but nobody is told about it either.
+
+#### What not to buy from the registrar
+
+Truehost sells cPanel shared hosting alongside domains. It does not fit this
+application and is not needed:
+
+- The site is a static build; Netlify builds it from the repository on every
+  push, which shared hosting would not do.
+- The API is Express with **PostgreSQL**. Shared cPanel plans offer MySQL, and
+  running a persistent Node process there means giving up the health checks,
+  automatic TLS and restart behaviour that `render.yaml` already provides.
+
+Domain and mailboxes from Truehost, application on Netlify and Render, is the
+combination this repository is configured for.
 
 ### 4. Close the loop
 
@@ -170,5 +226,8 @@ pointing it at these logs, or one call inside `lib/reportError.js`.
 
 ## Still outstanding
 
+- **The mailboxes do not exist yet.** Until `info@`, `enquiries@` and
+  `no-reply@axislearning.co.ke` are created and their SMTP details set, every
+  enquiry notification is written to the log and nobody is emailed.
 - **Test coverage.** Vetting, portal scoping and the safeguarding rules are
   covered by `npm test`. The admin CMS routes are not.
