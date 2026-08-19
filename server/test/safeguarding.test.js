@@ -70,7 +70,7 @@ const clearanceFor = (offsetDays = 300) =>
 before(async () => {
   serverProcess = spawn(process.execPath, ['server.js'], {
     cwd: `${__dirname}/..`,
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: 'test' },
+    env: { ...process.env, PORT: String(PORT), NODE_ENV: 'test', AUTH_RATE_LIMIT_MAX: '100' },
     stdio: 'ignore',
   })
   await waitForHealth()
@@ -80,6 +80,7 @@ before(async () => {
   await makeUser('parentB', 'student', 'Suite Parent B')
   await makeUser('tutor1', 'tutor', 'Suite Tutor One')
   await makeUser('tutor2', 'tutor', 'Suite Tutor Two')
+  await makeUser('staff', 'staff', 'Suite Staff')
 
   const learnerA = await Learner.create({ name: 'Suite Learner A', parentUserId: ids.parentA, programme: 'Tuition' })
   const learnerB = await Learner.create({ name: 'Suite Learner B', parentUserId: ids.parentB, programme: 'Tuition' })
@@ -353,5 +354,42 @@ describe('account access', () => {
       method: 'PATCH', token: tokens.admin, body: { isActive: false },
     })
     assert.equal(result.status, 400)
+  })
+})
+
+describe('erasing a learner is reserved to administrators', () => {
+  test('staff can read a learner record', async () => {
+    const result = await api(`/data-protection/learners/${ids.learnerA}/export`, {
+      token: tokens.staff,
+    })
+    assert.equal(result.status, 200)
+  })
+
+  test('staff cannot erase one, and are told why', async () => {
+    // The destructive action takes the stronger gate: applying the retention
+    // schedule is admin-only, so deleting one family's entire history cannot
+    // sit behind a weaker check than reading it.
+    const result = await api(`/data-protection/learners/${ids.learnerA}`, {
+      method: 'DELETE',
+      token: tokens.staff,
+      body: { confirmName: 'Suite Learner A' },
+    })
+    assert.equal(result.status, 403)
+    assert.match(result.body.error, /administrator/i)
+  })
+
+  test('the learner is still there', async () => {
+    const learner = await Learner.findByPk(ids.learnerA)
+    assert.ok(learner, 'the refused erasure removed the learner anyway')
+  })
+
+  test('an administrator is still refused without the exact name', async () => {
+    const result = await api(`/data-protection/learners/${ids.learnerA}`, {
+      method: 'DELETE',
+      token: tokens.admin,
+      body: { confirmName: 'wrong name' },
+    })
+    assert.equal(result.status, 400)
+    assert.ok(await Learner.findByPk(ids.learnerA))
   })
 })

@@ -86,7 +86,7 @@ const RESOURCES = Object.keys(validPayload)
 before(async () => {
   serverProcess = spawn(process.execPath, ['server.js'], {
     cwd: `${__dirname}/..`,
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: 'test' },
+    env: { ...process.env, PORT: String(PORT), NODE_ENV: 'test', AUTH_RATE_LIMIT_MAX: '100' },
     stdio: 'ignore',
   })
   await waitForHealth()

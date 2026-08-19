@@ -24,7 +24,11 @@ const newsletterLimiter = rateLimit({
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 6, // limit each IP to 6 auth attempts per window
+  // Six is the production figure. It is configurable only so the test suite,
+  // which signs in a fixture account per role from a single address, is not
+  // throttled — raising it in production would weaken the protection that
+  // makes a password worth having.
+  max: Number(process.env.AUTH_RATE_LIMIT_MAX) || 6,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

@@ -29,6 +29,30 @@ const { recordAudit } = require('../middleware/audit')
 const staffOnly = [requireAuth, requireRole('admin', 'staff')]
 
 /**
+ * Erasure is administrator-only, and says so plainly.
+ *
+ * It used to sit behind the same gate as reading a record, which put the most
+ * destructive action in the file behind a weaker check than applying the
+ * retention schedule — where nothing individual is even chosen. Deleting one
+ * family's entire history has no undo, so it takes the stronger gate.
+ *
+ * The generic role refusal would leave a staff member guessing at a screen
+ * that offered them the button, so this names the reason.
+ */
+const adminOnlyErasure = [
+  requireAuth,
+  (req, res, next) => {
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        error: 'Only an administrator can erase a learner’s records. Ask an administrator to action this request.',
+      })
+    }
+    next()
+  },
+]
+
+/**
  * Retention schedule. These are defaults for Axis to confirm with its own
  * advice; the platform enforces whatever is set here rather than leaving
  * "we delete old data" as an unbacked sentence in a privacy policy.
@@ -101,7 +125,7 @@ router.get('/learners/:id/export', ...staffOnly, async (req, res) => {
  * performed it, which is itself an accountability obligation. They reference
  * the learner by id only, and the record they pointed to no longer exists.
  */
-router.delete('/learners/:id', ...staffOnly, async (req, res) => {
+router.delete('/learners/:id', ...adminOnlyErasure, async (req, res) => {
   const t = await sequelize.transaction()
   try {
     const learner = await Learner.findByPk(req.params.id, { transaction: t })
