@@ -75,7 +75,9 @@ export default function About() {
       </section>
 
       {/* Mission & Vision */}
-      <section ref={ref} className="py-24 bg-surface">
+      {/* overflow-hidden: the cards slide in from the sides, and at mobile
+          widths that offset would push the page sideways. */}
+      <section ref={ref} className="overflow-hidden py-24 bg-surface">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12">
             <motion.div

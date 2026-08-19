@@ -76,7 +76,8 @@ export default function Philosophy() {
       </section>
 
       {/* The reframing at the heart of the brief */}
-      <section className="bg-surface py-20">
+      {/* overflow-hidden: as above — these two panels slide in horizontally. */}
+      <section className="overflow-hidden bg-surface py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-stretch gap-6 md:grid-cols-2">
             <motion.div
