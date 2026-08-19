@@ -78,15 +78,15 @@ export default function Resources() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm md:grid-cols-3">
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Resources</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Resources</p>
               <p className="mt-3 text-3xl font-bold text-ink">{stats.total}</p>
             </div>
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Topics</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Topics</p>
               <p className="mt-3 text-3xl font-bold text-ink">{stats.categories}</p>
             </div>
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Focus</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Focus</p>
               <p className="mt-3 text-lg font-semibold text-ink">Guided Growth</p>
             </div>
           </div>
@@ -97,7 +97,7 @@ export default function Resources() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm">
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-muted" />
               <input
                 type="text"
                 value={searchQuery}
@@ -108,7 +108,7 @@ export default function Resources() {
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/70">Category</label>
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">Category</label>
               <div className="flex flex-wrap gap-2">
                 {CATEGORIES.map((category) => (
                   <button
@@ -132,7 +132,7 @@ export default function Resources() {
           ) : error ? (
             <div className="rounded-2xl border border-line-critical bg-tint-critical p-6 text-center text-critical">{error}</div>
           ) : filteredResources.length === 0 ? (
-            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted/70">
+            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted">
               <Sparkles className="mx-auto mb-4 h-12 w-12 text-ink-muted/30" />
               No resources match your current filters.
             </div>
@@ -158,25 +158,25 @@ export default function Resources() {
                   </div>
 
                   <div className="space-y-4 p-5">
-                    <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-[0.2em] text-ink-faint">
+                    <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-[0.2em] text-ink-muted">
                       <span>{resource.author}</span>
                       <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" /> {resource.readTime || '4 min read'}</span>
                     </div>
 
                     <div>
                       <h3 className="text-xl font-semibold text-ink">{resource.title}</h3>
-                      {resource.excerpt && <p className="mt-2 text-sm leading-relaxed text-ink-muted/70">{resource.excerpt}</p>}
+                      {resource.excerpt && <p className="mt-2 text-sm leading-relaxed text-ink-muted">{resource.excerpt}</p>}
                     </div>
 
                     {resource.tags && resource.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {resource.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted/70">{tag}</span>
+                          <span key={tag} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted">{tag}</span>
                         ))}
                       </div>
                     )}
 
-                    <button className="inline-flex items-center rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-gold/90">
+                    <button className="inline-flex items-center rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-navy-surface transition-colors hover:bg-gold/90">
                       Read article
                     </button>
                   </div>

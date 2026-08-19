@@ -174,7 +174,7 @@ Type the learner's name to confirm:`
     <div className="space-y-6">
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[14rem]">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-faint" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-ink-muted" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -274,7 +274,7 @@ Type the learner's name to confirm:`
 
       <div className="overflow-hidden rounded-xl border border-line bg-surface">
         {learners.length === 0 ? (
-          <p className="px-6 py-12 text-center text-sm text-ink-faint">
+          <p className="px-6 py-12 text-center text-sm text-ink-muted">
             No learner records yet. Create one to give a family access to the parent portal.
           </p>
         ) : (
@@ -284,10 +284,10 @@ Type the learner's name to confirm:`
                 <div className="flex flex-wrap items-center gap-3">
                   <div className="min-w-[12rem] flex-1">
                     <p className="font-medium text-ink">{learner.name}</p>
-                    <p className="text-sm text-ink-muted/70">
+                    <p className="text-sm text-ink-muted">
                       {[learner.programme, learner.curriculum, learner.gradeClass].filter(Boolean).join(' · ') || 'No programme set'}
                     </p>
-                    <p className="text-xs text-ink-faint">
+                    <p className="text-xs text-ink-muted">
                       Parent: {learner.parent?.name || 'unknown'} ({learner.parent?.email})
                     </p>
                   </div>
@@ -311,7 +311,7 @@ Type the learner's name to confirm:`
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-ink-faint">No educator assigned</span>
+                      <span className="text-xs text-ink-muted">No educator assigned</span>
                     )}
                   </div>
 
@@ -369,7 +369,7 @@ function AssignPanel({
 
   return (
     <div>
-      <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
+      <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
         <UserPlus className="h-4 w-4" /> Assign an educator
       </h4>
       <div className="space-y-2">
@@ -397,7 +397,7 @@ function AssignPanel({
         >
           Assign
         </button>
-        <p className="text-xs text-ink-faint">
+        <p className="text-xs text-ink-muted">
           Assigning gives this educator access to the learner’s record.
         </p>
       </div>
@@ -418,7 +418,7 @@ function SchedulePanel({
 
   return (
     <div>
-      <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
+      <h4 className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
         <CalendarPlus className="h-4 w-4" /> Schedule a session
       </h4>
       <div className="space-y-2">
@@ -452,7 +452,7 @@ function SchedulePanel({
         >
           Schedule
         </button>
-        <p className="text-xs text-ink-faint">Only assigned educators can be given a session.</p>
+        <p className="text-xs text-ink-muted">Only assigned educators can be given a session.</p>
       </div>
     </div>
   )

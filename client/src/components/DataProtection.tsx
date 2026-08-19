@@ -146,7 +146,7 @@ export default function DataProtection() {
                         {describeDays(report.policy[row.policyKey])}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={due > 0 ? 'font-semibold text-ink' : 'text-ink-faint'}>
+                        <span className={due > 0 ? 'font-semibold text-ink' : 'text-ink-muted'}>
                           {due}
                         </span>
                         {row.key === 'auditEntries' && due > 0 && (

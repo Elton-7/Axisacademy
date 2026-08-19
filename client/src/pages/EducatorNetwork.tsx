@@ -75,7 +75,7 @@ export default function EducatorNetwork() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl"
           >
-            <div className="section-label !text-left mb-4">Our Educators Network</div>
+            <div className="section-label text-gold-500 !text-left mb-4">Our Educators Network</div>
             <h1 className="mb-6 text-4xl font-semibold text-white md:text-5xl">
               The right learner, connected to the right educator
             </h1>
@@ -114,7 +114,7 @@ export default function EducatorNetwork() {
                 { stat: 'Growing breadth', body: 'The network expands as new languages, sports and specialisms are requested.' },
               ].map((item) => (
                 <div key={item.stat} className="rounded-2xl border border-line bg-surface-sunk p-6">
-                  <p className="font-mono text-xs uppercase tracking-[0.12em] text-gold-600">{item.stat}</p>
+                  <p className="font-mono text-xs uppercase tracking-[0.12em] text-gold-700">{item.stat}</p>
                   <p className="mt-3 text-sm leading-relaxed text-ink-muted">{item.body}</p>
                 </div>
               ))}
@@ -158,7 +158,7 @@ export default function EducatorNetwork() {
             })}
           </div>
 
-          <p className="mt-8 text-sm text-ink-faint">
+          <p className="mt-8 text-sm text-ink-muted">
             And other professionals, as the network continues to expand.
           </p>
 
@@ -200,7 +200,7 @@ export default function EducatorNetwork() {
                 viewport={{ once: true }}
                 className="relative rounded-2xl border border-line bg-surface-sunk p-6"
               >
-                <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-gold-600">
+                <span className="font-mono text-xs font-semibold uppercase tracking-[0.12em] text-gold-700">
                   Step {index + 1}
                 </span>
                 <h3 className="mt-3 text-base font-semibold text-ink">{step.title}</h3>

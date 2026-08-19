@@ -48,7 +48,7 @@ export default function Privacy() {
     <div className="pt-20">
       <section className="bg-navy py-20 text-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="section-label mb-4">Privacy & Child Safety</div>
+          <div className="section-label text-gold-500 mb-4">Privacy & Child Safety</div>
           <h1 className="text-4xl font-semibold sm:text-5xl">Respecting families’ information</h1>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-white/75">Axis Learning works with children and families. Privacy, consent, and appropriate access are essential parts of how this platform is designed.</p>
         </div>
@@ -56,7 +56,7 @@ export default function Privacy() {
 
       <section className="bg-surface-sunk py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-10 rounded-2xl border border-gold/30 bg-gold/10 p-6 text-sm leading-relaxed text-ink-muted/80">
+          <div className="mb-10 rounded-2xl border border-gold/30 bg-gold/10 p-6 text-sm leading-relaxed text-ink-muted">
             This page explains the website’s current privacy approach. Before launch, Axis should have its final privacy policy, consent procedures, retention periods, and contact details reviewed and approved by its authorised leadership and legal advisers.
           </div>
           <div className="grid gap-5 md:grid-cols-2">
@@ -64,7 +64,7 @@ export default function Privacy() {
               <article key={title} className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
                 <Icon className="mb-4 h-6 w-6 text-gold" />
                 <h2 className="text-lg font-semibold text-ink">{title}</h2>
-                <p className="mt-3 text-sm leading-relaxed text-ink-muted/70">{text}</p>
+                <p className="mt-3 text-sm leading-relaxed text-ink-muted">{text}</p>
               </article>
             ))}
           </div>

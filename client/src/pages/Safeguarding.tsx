@@ -73,7 +73,7 @@ export default function Safeguarding() {
     <div className="pt-20">
       <section className="bg-navy py-20 text-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="section-label mb-4">Child Safety</div>
+          <div className="section-label text-gold-500 mb-4">Child Safety</div>
           <h1 className="text-4xl font-semibold sm:text-5xl">How we keep your child safe</h1>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-white/75">
             Choosing who teaches your child — and who comes into your home — deserves more than a
@@ -133,13 +133,13 @@ export default function Safeguarding() {
                 {contact.email}
               </a>
             </div>
-            <p className="mt-5 text-sm text-ink-muted/80">
+            <p className="mt-5 text-sm text-ink-muted">
               If a child is in immediate danger, contact the police or the Kenya Childline on 116
               before contacting us.
             </p>
           </div>
 
-          <p className="mt-8 text-center text-sm text-ink-muted/80">
+          <p className="mt-8 text-center text-sm text-ink-muted">
             For how information is collected, used and retained, see our{' '}
             <Link to="/privacy" className="font-semibold text-gold-700 hover:underline">
               privacy and child safety policy

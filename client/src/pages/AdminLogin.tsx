@@ -53,12 +53,12 @@ export default function AdminLogin() {
         </div>
 
         <div className="p-7 sm:p-10 lg:p-14">
-          <Link to="/" className="mb-10 inline-flex items-center gap-2 text-sm text-ink-muted/60 transition-colors hover:text-gold-600 lg:hidden"><ArrowLeft className="h-4 w-4" /> Back to website</Link>
+          <Link to="/" className="mb-10 inline-flex items-center gap-2 text-sm text-ink-muted transition-colors hover:text-gold-700 lg:hidden"><ArrowLeft className="h-4 w-4" /> Back to website</Link>
           <div className="mb-8">
-            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold-50 text-gold-600"><LockKeyhole className="h-6 w-6" /></div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold-600">Welcome back</p>
+            <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold-50 text-gold-700"><LockKeyhole className="h-6 w-6" /></div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold-700">Welcome back</p>
             <h1 className="text-3xl font-semibold text-ink">Sign in to your account</h1>
-            <p className="mt-2 text-sm text-ink-muted/70">Use your staff credentials to continue to the dashboard.</p>
+            <p className="mt-2 text-sm text-ink-muted">Use your staff credentials to continue to the dashboard.</p>
           </div>
 
         {error && (
@@ -71,20 +71,20 @@ export default function AdminLogin() {
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="admin-email" className="mb-2 block text-sm font-medium text-ink">Work email</label>
-            <input id="admin-email" type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@axislearning.co.ke" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-faint focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
+            <input id="admin-email" type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@axislearning.co.ke" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-muted focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
           </div>
           <div>
-            <div className="mb-2 flex items-center justify-between"><label htmlFor="admin-password" className="block text-sm font-medium text-ink">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-ink-muted/60 hover:text-gold-600">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div>
-            <input id="admin-password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-faint focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
+            <div className="mb-2 flex items-center justify-between"><label htmlFor="admin-password" className="block text-sm font-medium text-ink">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-gold-700">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div>
+            <input id="admin-password" type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-muted focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" />
           </div>
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-ink-muted/70"><input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} className="h-4 w-4 rounded border-line-strong text-gold-500 focus:ring-gold-500" /> Keep me signed in</label>
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-ink-muted"><input type="checkbox" checked={rememberMe} onChange={(event) => setRememberMe(event.target.checked)} className="h-4 w-4 rounded border-line-strong text-gold-500 focus:ring-gold-500" /> Keep me signed in</label>
           <button type="submit" disabled={loading} className="btn-primary flex w-full items-center justify-center gap-2 rounded-xl py-3.5 disabled:cursor-not-allowed disabled:opacity-50">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
         <p className="mt-8 text-center text-xs leading-relaxed text-ink-muted/50">Authorized personnel only. Your activity may be monitored for security.</p>
-        <Link to="/" className="mt-5 block text-center text-sm text-ink-muted/70 hover:text-gold-600">Return to website</Link>
+        <Link to="/" className="mt-5 block text-center text-sm text-ink-muted hover:text-gold-700">Return to website</Link>
         </div>
       </div>
     </div>

@@ -81,15 +81,15 @@ export default function Partners() {
           {partners.length > 0 && (
           <div className="grid gap-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm md:grid-cols-3">
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Partners</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Partners</p>
               <p className="mt-3 text-3xl font-bold text-ink">{stats.total}</p>
             </div>
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Categories</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Categories</p>
               <p className="mt-3 text-3xl font-bold text-ink">{stats.categories}</p>
             </div>
             <div className="rounded-xl bg-surface p-4">
-              <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Network</p>
+              <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Network</p>
               <p className="mt-3 text-lg font-semibold text-ink">Growing</p>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function Partners() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm">
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-muted" />
               <input
                 type="text"
                 value={searchQuery}
@@ -112,7 +112,7 @@ export default function Partners() {
             </div>
 
             <div>
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/70">Category</label>
+              <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">Category</label>
               <div className="flex flex-wrap gap-2">
                 {CATEGORIES.map((category) => (
                   <button
@@ -136,7 +136,7 @@ export default function Partners() {
           ) : error ? (
             <div className="rounded-2xl border border-line-critical bg-tint-critical p-6 text-center text-critical">{error}</div>
           ) : filteredPartners.length === 0 ? (
-            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted/70">
+            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted">
               <Sparkles className="mx-auto mb-4 h-12 w-12 text-ink-muted/30" />
               {partners.length === 0 ? (
                 <>
@@ -177,13 +177,13 @@ export default function Partners() {
 
                     <div>
                       <h3 className="text-xl font-semibold text-ink">{partner.name}</h3>
-                      {partner.description && <p className="mt-2 text-sm leading-relaxed text-ink-muted/70 line-clamp-3">{partner.description}</p>}
+                      {partner.description && <p className="mt-2 text-sm leading-relaxed text-ink-muted line-clamp-3">{partner.description}</p>}
                     </div>
 
                     {partner.focusAreas && partner.focusAreas.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {partner.focusAreas.slice(0, 3).map((area) => (
-                          <span key={area} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted/70">{area}</span>
+                          <span key={area} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted">{area}</span>
                         ))}
                       </div>
                     )}
@@ -195,8 +195,8 @@ export default function Partners() {
                             Visit website →
                           </a>
                         )}
-                        {partner.email && <p className="text-xs text-ink-muted/60">{partner.email}</p>}
-                        {partner.phone && <p className="text-xs text-ink-muted/60">{partner.phone}</p>}
+                        {partner.email && <p className="text-xs text-ink-muted">{partner.email}</p>}
+                        {partner.phone && <p className="text-xs text-ink-muted">{partner.phone}</p>}
                       </div>
                     )}
                   </div>

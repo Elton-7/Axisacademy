@@ -25,7 +25,7 @@ export default function CTASection() {
                 <h2 className="mb-2 text-2xl font-semibold text-ink">
                   Begin your learning journey today
                 </h2>
-                <p className="max-w-xl text-sm leading-relaxed text-ink-muted/80">
+                <p className="max-w-xl text-sm leading-relaxed text-ink-muted">
                   Whether you are seeking homeschooling support, academic tutoring, language learning, enrichment programmes, or personalized educational guidance, Axis is ready to help.
                 </p>
                 <a href={telHref} className="mt-3 inline-flex items-center gap-2 font-semibold text-ink hover:underline">

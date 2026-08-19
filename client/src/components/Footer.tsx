@@ -51,11 +51,11 @@ export default function Footer() {
               <img src={axisMark} alt="" width={42} height={28} className="h-8 w-auto" />
               <div>
                 <span className="block text-sm font-semibold uppercase tracking-[0.15em] text-gold-500">Axis</span>
-                <p className="text-[0.55rem] uppercase tracking-[0.1em] text-gold-500/70">Learning</p>
+                <p className="text-[0.55rem] uppercase tracking-[0.1em] text-gold-500">Learning</p>
               </div>
             </Link>
-            <p className="mb-1 text-sm italic text-gold-500/80">Learn · Think · Create · Explore · Thrive</p>
-            <p className="mb-6 text-xs text-white/40">A Division of Guraxis Limited</p>
+            <p className="mb-1 text-sm italic text-gold-500">Learn · Think · Create · Explore · Thrive</p>
+            <p className="mb-6 text-xs text-white/65">A Division of Guraxis Limited</p>
             <div className="flex gap-3">
               {socialLinks.map(({ icon: Icon, href, label }) => (
                 <a
@@ -119,7 +119,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-white/10 pt-8 text-center">
-          <p className="text-xs text-white/30">
+          <p className="text-xs text-white/60">
             © {new Date().getFullYear()} Axis Learning. All Rights Reserved.
           </p>
         </div>

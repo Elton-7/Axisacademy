@@ -55,7 +55,7 @@ function AccordionItem({ faq, isOpen, onToggle, index }: AccordionItemProps) {
         transition={{ duration: 0.3 }}
         className="overflow-hidden"
       >
-        <div className="px-6 py-4 bg-surface-sunk text-ink-muted/70 leading-relaxed whitespace-pre-wrap border-t border-line">
+        <div className="px-6 py-4 bg-surface-sunk text-ink-muted leading-relaxed whitespace-pre-wrap border-t border-line">
           {faq.answer}
         </div>
       </motion.div>
@@ -169,7 +169,7 @@ export default function FAQPage() {
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-muted" />
               <input
                 type="text"
                 placeholder="Search FAQs..."
@@ -181,7 +181,7 @@ export default function FAQPage() {
 
             {/* Category Filter */}
             <div>
-              <label className="text-xs font-semibold text-ink-muted/70 mb-2 block">CATEGORY</label>
+              <label className="text-xs font-semibold text-ink-muted mb-2 block">CATEGORY</label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSelectedCategory('all')}
@@ -210,7 +210,7 @@ export default function FAQPage() {
             </div>
 
             {/* Results count */}
-            <p className="text-sm text-ink-muted/60">
+            <p className="text-sm text-ink-muted">
               Showing {filteredFaqs.length} of {faqs.length} questions
             </p>
           </div>
@@ -231,7 +231,7 @@ export default function FAQPage() {
           ) : filteredFaqs.length === 0 ? (
             <div className="text-center py-12">
               <HelpCircle className="h-12 w-12 text-ink-muted/30 mx-auto mb-4" />
-              <p className="text-lg text-ink-muted/60 mb-6">
+              <p className="text-lg text-ink-muted mb-6">
                 {searchQuery ? 'No FAQs match your search. Try different keywords.' : 'No FAQs found.'}
               </p>
               <Link

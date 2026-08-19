@@ -29,7 +29,7 @@ export default function LearningPaths() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl"
           >
-            <div className="section-label !text-left mb-4">Learning Paths</div>
+            <div className="section-label text-gold-500 !text-left mb-4">Learning Paths</div>
             <h1 className="mb-6 text-4xl font-semibold text-white md:text-5xl">
               How learning actually happens with Axis
             </h1>
@@ -52,7 +52,7 @@ export default function LearningPaths() {
                 href={`#${path.slug}`}
                 className="inline-flex items-center gap-2 rounded-full border border-line px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:border-gold-500 hover:text-gold-700"
               >
-                <Icon className="h-4 w-4 text-gold-600" />
+                <Icon className="h-4 w-4 text-gold-700" />
                 {path.title}
               </a>
             )
@@ -79,7 +79,7 @@ export default function LearningPaths() {
                     <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-navy-900">
                       <Icon className="h-7 w-7 text-gold-500" />
                     </div>
-                    <p className="font-mono text-xs uppercase tracking-[0.15em] text-gold-600">
+                    <p className="font-mono text-xs uppercase tracking-[0.15em] text-gold-700">
                       Option {String(index + 1).padStart(2, '0')}
                     </p>
                     <h2 className="mt-2 text-2xl font-semibold text-ink">{path.title}</h2>
@@ -113,7 +113,7 @@ export default function LearningPaths() {
                             <span className="text-sm text-ink-muted">
                               {item.label}
                               {item.caption && (
-                                <span className="block text-xs text-ink-faint">{item.caption}</span>
+                                <span className="block text-xs text-ink-muted">{item.caption}</span>
                               )}
                             </span>
                           </li>

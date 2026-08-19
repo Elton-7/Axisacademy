@@ -37,7 +37,7 @@ export default function About() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="section-label mb-4">About Us</div>
+            <div className="section-label text-gold-500 mb-4">About Us</div>
             <h1 className="text-4xl md:text-5xl font-semibold text-white mb-6">
               Who We Are
             </h1>
@@ -52,7 +52,7 @@ export default function About() {
       {/* Tagline pillars */}
       <section className="bg-gold-500 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <p className="mb-10 text-center font-mono text-xs uppercase tracking-[0.3em] text-ink/70">
+          <p className="mb-10 text-center font-mono text-xs uppercase tracking-[0.3em] text-navy-surface/75">
             Learn • Think • Create • Explore • Thrive
           </p>
           <div className="grid grid-cols-2 gap-8 md:grid-cols-5">
@@ -65,9 +65,9 @@ export default function About() {
                 viewport={{ once: true }}
                 className="text-center"
               >
-                <pillar.icon className="mx-auto mb-3 h-8 w-8 text-ink" />
-                <div className="mb-1 text-xl font-bold text-ink">{pillar.title}</div>
-                <div className="text-sm leading-snug text-ink/75">{pillar.desc}</div>
+                <pillar.icon className="mx-auto mb-3 h-8 w-8 text-navy-surface" />
+                <div className="mb-1 text-xl font-bold text-navy-surface">{pillar.title}</div>
+                <div className="text-sm leading-snug text-navy-surface/80">{pillar.desc}</div>
               </motion.div>
             ))}
           </div>
@@ -88,7 +88,7 @@ export default function About() {
             >
               <Target className="w-12 h-12 text-gold-500 mb-6" />
               <h2 className="text-2xl font-semibold text-ink mb-4">Our Mission</h2>
-              <p className="text-ink-muted/80 leading-relaxed">
+              <p className="text-ink-muted leading-relaxed">
                 To develop learners whom the world needs more than they need the world. We achieve this 
                 by providing personalized, high-quality education that nurtures critical thinking, creativity, 
                 and character development.
@@ -102,7 +102,7 @@ export default function About() {
             >
               <Eye className="w-12 h-12 text-gold-500 mb-6" />
               <h2 className="text-2xl font-semibold text-ink mb-4">Our Vision</h2>
-              <p className="text-ink-muted/80 leading-relaxed">
+              <p className="text-ink-muted leading-relaxed">
                 To build a world where learners are creators of opportunity, not merely seekers of it. 
                 We envision an educational ecosystem that empowers every individual to discover their 
                 unique potential and contribute meaningfully to society.
@@ -130,7 +130,7 @@ export default function About() {
                 className="bg-surface rounded-2xl p-8 border border-line card-hover"
               >
                 <h3 className="text-lg font-semibold text-ink mb-3">{value.title}</h3>
-                <p className="text-ink-muted/70 text-sm leading-relaxed">{value.desc}</p>
+                <p className="text-ink-muted text-sm leading-relaxed">{value.desc}</p>
               </motion.div>
             ))}
           </div>

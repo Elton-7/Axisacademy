@@ -42,16 +42,16 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
         {/* Qualifications */}
         {educator.qualifications && (
           <div className="mb-4">
-            <p className="text-xs font-semibold text-ink-muted/70 mb-1">QUALIFICATIONS</p>
-            <p className="text-sm text-ink-muted/60 line-clamp-2">{educator.qualifications}</p>
+            <p className="text-xs font-semibold text-ink-muted mb-1">QUALIFICATIONS</p>
+            <p className="text-sm text-ink-muted line-clamp-2">{educator.qualifications}</p>
           </div>
         )}
 
         {/* Expertise */}
         {educator.expertise && (
           <div className="mb-4">
-            <p className="text-xs font-semibold text-ink-muted/70 mb-1">EXPERTISE</p>
-            <p className="text-sm text-ink-muted/60 line-clamp-2">{educator.expertise}</p>
+            <p className="text-xs font-semibold text-ink-muted mb-1">EXPERTISE</p>
+            <p className="text-sm text-ink-muted line-clamp-2">{educator.expertise}</p>
           </div>
         )}
 
@@ -60,7 +60,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <BookOpen className="h-4 w-4 text-gold" />
-              <span className="text-xs font-semibold text-ink-muted/70">SUBJECTS</span>
+              <span className="text-xs font-semibold text-ink-muted">SUBJECTS</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {educator.subjects.slice(0, 3).map((subject) => (
@@ -69,7 +69,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
                 </span>
               ))}
               {educator.subjects.length > 3 && (
-                <span className="text-xs text-ink-muted/60 px-2 py-1">+{educator.subjects.length - 3} more</span>
+                <span className="text-xs text-ink-muted px-2 py-1">+{educator.subjects.length - 3} more</span>
               )}
             </div>
           </div>
@@ -80,7 +80,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Languages className="h-4 w-4 text-gold" />
-              <span className="text-xs font-semibold text-ink-muted/70">LANGUAGES</span>
+              <span className="text-xs font-semibold text-ink-muted">LANGUAGES</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {educator.languages.slice(0, 3).map((lang) => (
@@ -89,7 +89,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
                 </span>
               ))}
               {educator.languages.length > 3 && (
-                <span className="text-xs text-ink-muted/60 px-2 py-1">+{educator.languages.length - 3} more</span>
+                <span className="text-xs text-ink-muted px-2 py-1">+{educator.languages.length - 3} more</span>
               )}
             </div>
           </div>
@@ -100,7 +100,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
           {educator.email && (
             <a
               href={`mailto:${educator.email}`}
-              className="flex items-center gap-2 text-sm text-ink-muted/70 hover:text-gold transition-colors"
+              className="flex items-center gap-2 text-sm text-ink-muted hover:text-gold transition-colors"
             >
               <Mail className="h-4 w-4" />
               <span className="truncate">{educator.email}</span>
@@ -109,7 +109,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
           {educator.phone && (
             <a
               href={`tel:${educator.phone}`}
-              className="flex items-center gap-2 text-sm text-ink-muted/70 hover:text-gold transition-colors"
+              className="flex items-center gap-2 text-sm text-ink-muted hover:text-gold transition-colors"
             >
               <Phone className="h-4 w-4" />
               {educator.phone}

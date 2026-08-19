@@ -729,7 +729,7 @@ export default function AdminDashboard() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-2xl font-bold text-ink">Admin Dashboard</h1>
-            <p className="text-ink-muted/60 text-sm">Manage content and track engagement</p>
+            <p className="text-ink-muted text-sm">Manage content and track engagement</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {activeTab === 'dashboard' && (
@@ -786,7 +786,7 @@ export default function AdminDashboard() {
                     <stat.icon className="w-5 h-5" />
                   </div>
                   <p className="text-2xl font-bold text-ink">{stat.value}</p>
-                  <p className="text-ink-muted/60 text-sm">{stat.label}</p>
+                  <p className="text-ink-muted text-sm">{stat.label}</p>
                 </motion.div>
               ))}
             </div>
@@ -796,7 +796,7 @@ export default function AdminDashboard() {
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h2 className="text-lg font-semibold text-ink">Recent Activity</h2>
-                <p className="text-sm text-ink-muted/60">Latest protected administrative actions</p>
+                <p className="text-sm text-ink-muted">Latest protected administrative actions</p>
               </div>
               <div className="flex gap-2">
                 <select value={auditAction} onChange={(event) => setAuditAction(event.target.value)} className="rounded-lg border border-line px-2 py-1.5 text-xs text-ink-muted">
@@ -885,7 +885,7 @@ export default function AdminDashboard() {
                       <span>I confirm that the appropriate consent has been verified for public publication of this photo or video.</span>
                     </label>
                     <input type="text" placeholder="Signed media release reference (e.g. MR-2026-014)" value={galleryForm.consentReference} onChange={(e) => setGalleryForm({...galleryForm, consentReference: e.target.value})} className="w-full rounded-lg border border-line-warning bg-surface px-4 py-2 text-sm outline-none focus:border-gold-500" />
-                    <p className="text-xs text-ink-muted/70">Recorded with your name and the date, so consent can be evidenced or withdrawn later.</p>
+                    <p className="text-xs text-ink-muted">Recorded with your name and the date, so consent can be evidenced or withdrawn later.</p>
                   </div>
                   <div className="flex gap-2">
                     <button onClick={saveGalleryItem} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
@@ -1392,7 +1392,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between border-b border-line px-6 py-4">
                 <div>
                   <h2 className="text-lg font-semibold text-ink">Newsletter Subscribers</h2>
-                  <p className="text-sm text-ink-muted/60">{subscribers.length} total subscribers</p>
+                  <p className="text-sm text-ink-muted">{subscribers.length} total subscribers</p>
                 </div>
               </div>
               {subscriberError ? (
@@ -1431,7 +1431,7 @@ export default function AdminDashboard() {
               <div className="flex items-center justify-between border-b border-line px-6 py-4">
                 <div>
                   <h2 className="text-lg font-semibold text-ink">Enrollment Applications</h2>
-                  <p className="text-sm text-ink-muted/60">{enrollmentTotal} total applications</p>
+                  <p className="text-sm text-ink-muted">{enrollmentTotal} total applications</p>
                 </div>
               </div>
               {enrollmentError ? (

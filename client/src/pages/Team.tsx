@@ -93,9 +93,9 @@ export default function Team() {
 
       <section className="bg-surface py-10">
         <div className="mx-auto grid max-w-7xl gap-5 px-4 sm:px-6 md:grid-cols-3 lg:px-8">
-          <div className="rounded-2xl bg-surface-sunk p-6"><Network className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">A growing network</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted/70">Axis brings together teachers, tutors, specialists, coaches, artists, and other learning professionals.</p></div>
-          <div className="rounded-2xl bg-surface-sunk p-6"><SlidersHorizontal className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">Matched to the learner</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted/70">We begin by understanding the learner, then identify the expertise and support that can help them thrive.</p></div>
-          <div className="rounded-2xl bg-surface-sunk p-6"><MapPin className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">Beyond one location</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted/70">The network helps Axis support families through online, home-based, centre-based, and blended learning.</p></div>
+          <div className="rounded-2xl bg-surface-sunk p-6"><Network className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">A growing network</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted">Axis brings together teachers, tutors, specialists, coaches, artists, and other learning professionals.</p></div>
+          <div className="rounded-2xl bg-surface-sunk p-6"><SlidersHorizontal className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">Matched to the learner</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted">We begin by understanding the learner, then identify the expertise and support that can help them thrive.</p></div>
+          <div className="rounded-2xl bg-surface-sunk p-6"><MapPin className="mb-4 h-6 w-6 text-gold" /><h2 className="font-semibold text-ink">Beyond one location</h2><p className="mt-2 text-sm leading-relaxed text-ink-muted">The network helps Axis support families through online, home-based, centre-based, and blended learning.</p></div>
         </div>
       </section>
 
@@ -105,7 +105,7 @@ export default function Team() {
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-muted" />
               <input
                 type="text"
                 placeholder="Search by name, expertise, subjects, or languages..."
@@ -144,7 +144,7 @@ export default function Team() {
             </div>
 
             {/* Results count */}
-            <p className="text-sm text-ink-muted/60">
+            <p className="text-sm text-ink-muted">
               {educators.length > 0
                 ? `Showing ${filteredEducators.length} of ${educators.length} educators`
                 : ''}
@@ -170,7 +170,7 @@ export default function Team() {
                 <>
                   <Sparkles className="mx-auto mb-4 h-12 w-12 text-ink-muted/30" />
                   <p className="text-lg font-semibold text-ink">Our educator profiles are being prepared.</p>
-                  <p className="mx-auto mt-2 max-w-lg text-ink-muted/60">
+                  <p className="mx-auto mt-2 max-w-lg text-ink-muted">
                     Axis works through a growing national network of teachers, tutors, language
                     educators, coaches and specialists. Individual profiles will appear here as each
                     educator's details and photograph are confirmed.
@@ -180,7 +180,7 @@ export default function Team() {
                   </Link>
                 </>
               ) : (
-                <p className="text-lg text-ink-muted/60">
+                <p className="text-lg text-ink-muted">
                   {searchQuery ? 'No educators match your search. Try a different query.' : 'No educators in this category.'}
                 </p>
               )}

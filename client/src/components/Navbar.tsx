@@ -90,7 +90,7 @@ export default function Navbar() {
                 the header with no company name anywhere on a small screen. */}
             <div>
               <span className="block text-base font-semibold uppercase leading-tight tracking-[0.15em] text-gold-500 sm:text-lg">Axis</span>
-              <p className="text-[0.55rem] uppercase tracking-[0.1em] text-gold-500/80 sm:text-[0.6rem]">Learning</p>
+              <p className="text-[0.55rem] uppercase tracking-[0.1em] text-gold-500 sm:text-[0.6rem]">Learning</p>
             </div>
           </Link>
 

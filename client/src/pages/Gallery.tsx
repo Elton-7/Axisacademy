@@ -78,7 +78,7 @@ export default function Gallery() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm">
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-muted" />
               <input
                 type="text"
                 value={searchQuery}
@@ -90,7 +90,7 @@ export default function Gallery() {
 
             <div className="grid gap-4 lg:grid-cols-2">
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/70">Type</label>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">Type</label>
                 <div className="flex flex-wrap gap-2">
                   {TYPES.map((type) => (
                     <button
@@ -105,7 +105,7 @@ export default function Gallery() {
               </div>
 
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/70">Category</label>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">Category</label>
                 <div className="flex flex-wrap gap-2">
                   {CATEGORIES.map((category) => (
                     <button
@@ -130,7 +130,7 @@ export default function Gallery() {
           ) : error ? (
             <div className="rounded-2xl border border-line-critical bg-tint-critical p-6 text-center text-critical">{error}</div>
           ) : filteredItems.length === 0 ? (
-            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted/70">
+            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted">
               <Sparkles className="mx-auto mb-4 h-12 w-12 text-ink-muted/30" />
               {items.length === 0 ? (
                 <>
@@ -165,13 +165,13 @@ export default function Gallery() {
 
                     <div>
                       <h3 className="text-xl font-semibold text-ink">{item.title}</h3>
-                      {item.description && <p className="mt-2 text-sm leading-relaxed text-ink-muted/70">{item.description}</p>}
+                      {item.description && <p className="mt-2 text-sm leading-relaxed text-ink-muted">{item.description}</p>}
                     </div>
 
                     {item.tags && item.tags.length > 0 && (
                       <div className="flex flex-wrap gap-2">
                         {item.tags.slice(0, 4).map((tag) => (
-                          <span key={tag} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted/70">{tag}</span>
+                          <span key={tag} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted">{tag}</span>
                         ))}
                       </div>
                     )}

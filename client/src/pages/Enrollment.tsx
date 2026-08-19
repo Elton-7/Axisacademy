@@ -59,7 +59,7 @@ export default function Enrollment() {
         <div className="mx-auto max-w-2xl rounded-2xl bg-surface px-8 py-16 text-center shadow-sm">
           <CheckCircle className="mx-auto mb-5 h-16 w-16 text-positive" />
           <h1 className="mb-3 text-3xl font-semibold text-ink">Application received</h1>
-          <p className="mb-8 text-ink-muted/70">Thank you. Our team will contact you within 24 hours to discuss the next steps.</p>
+          <p className="mb-8 text-ink-muted">Thank you. Our team will contact you within 24 hours to discuss the next steps.</p>
           <div className="flex flex-wrap justify-center gap-3">
             <button onClick={() => setSubmitted(false)} className="btn-primary">Submit another application</button>
             <Link to="/" className="rounded-lg border border-line px-5 py-3 text-sm font-medium text-ink hover:bg-surface-sunk">Return home</Link>
@@ -73,7 +73,7 @@ export default function Enrollment() {
     <div className="pt-20">
       <section className="bg-navy-900 py-20 text-center">
         <div className="mx-auto max-w-3xl px-4">
-          <div className="section-label mb-4">Admissions</div>
+          <div className="section-label text-gold-500 mb-4">Admissions</div>
           <h1 className="mb-5 text-4xl font-semibold text-white md:text-5xl">Start a conversation about your learner</h1>
           <p className="text-lg text-white/70">Tell us what you need. An Axis education consultant will help you identify the right next step.</p>
         </div>
@@ -124,12 +124,12 @@ export default function Enrollment() {
 
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <label htmlFor="currentSchool" className="mb-2 block text-sm font-medium text-ink">Current school <span className="font-normal text-ink-muted/60">(optional)</span></label>
+              <label htmlFor="currentSchool" className="mb-2 block text-sm font-medium text-ink">Current school <span className="font-normal text-ink-muted">(optional)</span></label>
               <input id="currentSchool" {...register('currentSchool', { maxLength: { value: 160, message: 'School name must be 160 characters or fewer' } })} className={inputClass} />
               {errors.currentSchool && <p className="mt-1 text-xs text-critical">{errors.currentSchool.message}</p>}
             </div>
             <div>
-              <label htmlFor="curriculum" className="mb-2 block text-sm font-medium text-ink">Current curriculum <span className="font-normal text-ink-muted/60">(optional)</span></label>
+              <label htmlFor="curriculum" className="mb-2 block text-sm font-medium text-ink">Current curriculum <span className="font-normal text-ink-muted">(optional)</span></label>
               <select id="curriculum" {...register('curriculum')} className={`${inputClass} bg-surface`}>
                 <option value="">Not sure / prefer to discuss</option>
                 <option value="CBC">CBC</option><option value="Montessori">Montessori</option><option value="Cambridge">Cambridge</option><option value="IGCSE">IGCSE</option><option value="A Levels">A Levels</option><option value="IB">IB</option><option value="Other">Other</option>
@@ -139,12 +139,12 @@ export default function Enrollment() {
 
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <label htmlFor="gradeClass" className="mb-2 block text-sm font-medium text-ink">Grade or class <span className="font-normal text-ink-muted/60">(optional)</span></label>
+              <label htmlFor="gradeClass" className="mb-2 block text-sm font-medium text-ink">Grade or class <span className="font-normal text-ink-muted">(optional)</span></label>
               <input id="gradeClass" placeholder="e.g. Grade 5 or Year 10" {...register('gradeClass', { maxLength: { value: 80, message: 'Grade or class must be 80 characters or fewer' } })} className={inputClass} />
               {errors.gradeClass && <p className="mt-1 text-xs text-critical">{errors.gradeClass.message}</p>}
             </div>
             <div>
-              <label htmlFor="subjects" className="mb-2 block text-sm font-medium text-ink">Subjects or interests <span className="font-normal text-ink-muted/60">(optional)</span></label>
+              <label htmlFor="subjects" className="mb-2 block text-sm font-medium text-ink">Subjects or interests <span className="font-normal text-ink-muted">(optional)</span></label>
               <input id="subjects" placeholder="e.g. Maths, French, chess" {...register('subjects', { maxLength: { value: 500, message: 'Please keep this under 500 characters' } })} className={inputClass} />
               {errors.subjects && <p className="mt-1 text-xs text-critical">{errors.subjects.message}</p>}
             </div>
@@ -158,17 +158,17 @@ export default function Enrollment() {
               </select>
             </div>
             <div>
-              <label htmlFor="preferredDays" className="mb-2 block text-sm font-medium text-ink">Preferred days <span className="font-normal text-ink-muted/60">(optional)</span></label>
+              <label htmlFor="preferredDays" className="mb-2 block text-sm font-medium text-ink">Preferred days <span className="font-normal text-ink-muted">(optional)</span></label>
               <input id="preferredDays" placeholder="e.g. Weekdays" {...register('preferredDays', { maxLength: { value: 120, message: 'Please keep this under 120 characters' } })} className={inputClass} />
             </div>
             <div>
-              <label htmlFor="preferredTimes" className="mb-2 block text-sm font-medium text-ink">Preferred times <span className="font-normal text-ink-muted/60">(optional)</span></label>
+              <label htmlFor="preferredTimes" className="mb-2 block text-sm font-medium text-ink">Preferred times <span className="font-normal text-ink-muted">(optional)</span></label>
               <input id="preferredTimes" placeholder="e.g. After 4pm" {...register('preferredTimes', { maxLength: { value: 120, message: 'Please keep this under 120 characters' } })} className={inputClass} />
             </div>
           </div>
 
           <div>
-            <label htmlFor="learningNeeds" className="mb-2 block text-sm font-medium text-ink">What support would help this learner? <span className="font-normal text-ink-muted/60">(optional)</span></label>
+            <label htmlFor="learningNeeds" className="mb-2 block text-sm font-medium text-ink">What support would help this learner? <span className="font-normal text-ink-muted">(optional)</span></label>
             <textarea id="learningNeeds" rows={3} {...register('learningNeeds', { maxLength: { value: 2000, message: 'Please keep this under 2,000 characters' } })} className={`${inputClass} resize-none`} placeholder="Share learning goals, strengths, or challenges. Please do not include medical or diagnostic records here." />
             {errors.learningNeeds && <p className="mt-1 text-xs text-critical">{errors.learningNeeds.message}</p>}
           </div>

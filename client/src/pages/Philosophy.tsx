@@ -62,7 +62,7 @@ export default function Philosophy() {
             transition={{ duration: 0.6 }}
             className="max-w-3xl"
           >
-            <div className="section-label !text-left mb-4">Our Educational Philosophy</div>
+            <div className="section-label text-gold-500 !text-left mb-4">Our Educational Philosophy</div>
             <h1 className="text-4xl font-semibold leading-tight text-white md:text-5xl">
               Every learner is different, and education should be designed around the learner.
             </h1>
@@ -87,10 +87,10 @@ export default function Philosophy() {
               viewport={{ once: true }}
               className="rounded-3xl border border-line bg-surface-sunk p-10"
             >
-              <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-faint">
+              <p className="font-mono text-xs uppercase tracking-[0.15em] text-ink-muted">
                 Education usually asks
               </p>
-              <p className="mt-4 font-serif text-3xl italic leading-snug text-ink-faint">
+              <p className="mt-4 font-serif text-3xl italic leading-snug text-ink-muted">
                 “Which class is the learner in?”
               </p>
               <p className="mt-6 text-sm leading-relaxed text-ink-muted">
@@ -142,7 +142,7 @@ export default function Philosophy() {
                 viewport={{ once: true }}
                 className="flex items-start gap-4 rounded-2xl border border-line bg-surface p-6"
               >
-                <span className="font-mono text-sm font-semibold text-gold-600">
+                <span className="font-mono text-sm font-semibold text-gold-700">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <span className="text-base font-medium leading-snug text-ink">{question}</span>

@@ -125,29 +125,29 @@ export default function PipelineBoard() {
       {summary && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-line bg-surface p-5">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <Users className="h-4 w-4" /> In the pipeline
             </div>
             <p className="mt-2 text-3xl font-semibold tabular-nums text-ink">{summary.totals.active}</p>
           </div>
           <div className="rounded-xl border border-line bg-surface p-5">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <TrendingUp className="h-4 w-4" /> Enrolled
             </div>
             <p className="mt-2 text-3xl font-semibold tabular-nums text-positive">{summary.totals.enrolled}</p>
           </div>
           <div className="rounded-xl border border-line bg-surface p-5">
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <TrendingDown className="h-4 w-4" /> Lost
             </div>
             <p className="mt-2 text-3xl font-semibold tabular-nums text-critical">{summary.totals.lost}</p>
           </div>
           <div className="rounded-xl border border-line bg-surface p-5">
-            <div className="text-xs font-semibold uppercase tracking-wide text-ink-faint">Conversion</div>
+            <div className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Conversion</div>
             <p className="mt-2 text-3xl font-semibold tabular-nums text-ink">
               {summary.totals.conversionRate === null ? '—' : `${summary.totals.conversionRate}%`}
             </p>
-            <p className="mt-1 text-xs text-ink-faint">
+            <p className="mt-1 text-xs text-ink-muted">
               {summary.totals.conversionRate === null
                 ? 'No enquiry has reached an outcome yet'
                 : 'Of enquiries that reached an outcome'}
@@ -159,7 +159,7 @@ export default function PipelineBoard() {
       {/* Stage distribution */}
       {summary && (
         <div className="rounded-xl border border-line bg-surface p-6">
-          <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-faint">
+          <h3 className="text-sm font-semibold uppercase tracking-wide text-ink-muted">
             Where enquiries are sitting
           </h3>
           <div className="mt-4 space-y-2">
@@ -188,13 +188,13 @@ export default function PipelineBoard() {
       <div className="overflow-hidden rounded-xl border border-line bg-surface">
         <div className="border-b border-line px-6 py-4">
           <h3 className="text-lg font-semibold text-ink">Enquiries</h3>
-          <p className="text-sm text-ink-muted/60">
+          <p className="text-sm text-ink-muted">
             Move an enquiry as the family progresses. Marking one lost asks why.
           </p>
         </div>
 
         {enrollments.length === 0 ? (
-          <p className="px-6 py-12 text-center text-sm text-ink-faint">No enquiries yet.</p>
+          <p className="px-6 py-12 text-center text-sm text-ink-muted">No enquiries yet.</p>
         ) : (
           <div className="divide-y divide-line">
             {enrollments.map((enrollment) => {
@@ -211,13 +211,13 @@ export default function PipelineBoard() {
                         </span>
                       )}
                     </p>
-                    <p className="text-sm text-ink-muted/70">
+                    <p className="text-sm text-ink-muted">
                       {enrollment.programme || 'No programme named'}
                       {enrollment.parentName && enrollment.studentName ? ` · ${enrollment.parentName}` : ''}
                       {enrollment.preferredChannel ? ` · prefers ${enrollment.preferredChannel}` : ''}
                     </p>
                     {enrollment.stageNote && (
-                      <p className="mt-1 text-xs italic text-ink-faint">{enrollment.stageNote}</p>
+                      <p className="mt-1 text-xs italic text-ink-muted">{enrollment.stageNote}</p>
                     )}
                   </div>
 
@@ -226,7 +226,7 @@ export default function PipelineBoard() {
                       className={`text-xs tabular-nums ${
                         stalled >= 14 && enrollment.pipelineStage !== 'Active Learner' && enrollment.pipelineStage !== 'Lost'
                           ? 'font-semibold text-critical'
-                          : 'text-ink-faint'
+                          : 'text-ink-muted'
                       }`}
                     >
                       {stalled}d in stage

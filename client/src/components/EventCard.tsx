@@ -61,12 +61,12 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
         <h3 className="text-lg font-semibold text-ink mb-2">{event.title}</h3>
 
         {/* Description */}
-        <p className="text-sm text-ink-muted/70 line-clamp-2 mb-4">{event.description}</p>
+        <p className="text-sm text-ink-muted line-clamp-2 mb-4">{event.description}</p>
 
         {/* Event Details */}
         <div className="space-y-2 mb-4 pb-4 border-b border-line-strong/50">
           {/* Dates */}
-          <div className="flex items-center gap-2 text-sm text-ink-muted/60">
+          <div className="flex items-center gap-2 text-sm text-ink-muted">
             <Calendar className="h-4 w-4 text-gold flex-shrink-0" />
             <span className="font-medium">
               {formatDate(startDate)}
@@ -76,7 +76,7 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
 
           {/* Location */}
           {event.location && (
-            <div className="flex items-center gap-2 text-sm text-ink-muted/60">
+            <div className="flex items-center gap-2 text-sm text-ink-muted">
               <MapPin className="h-4 w-4 text-gold flex-shrink-0" />
               <span>{event.location}</span>
             </div>
@@ -84,7 +84,7 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
 
           {/* Capacity */}
           {event.capacity && (
-            <div className="flex items-center gap-2 text-sm text-ink-muted/60">
+            <div className="flex items-center gap-2 text-sm text-ink-muted">
               <Users className="h-4 w-4 text-gold flex-shrink-0" />
               <span>Capacity: {event.capacity} participants</span>
             </div>
@@ -92,7 +92,7 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
 
           {/* Programme */}
           {event.programme && (
-            <div className="flex items-center gap-2 text-sm text-ink-muted/60">
+            <div className="flex items-center gap-2 text-sm text-ink-muted">
               <Tag className="h-4 w-4 text-gold flex-shrink-0" />
               <span>{event.programme}</span>
             </div>
@@ -100,14 +100,14 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
 
           {/* Price */}
           {event.priceKES && (
-            <div className="text-sm font-semibold text-gold">
+            <div className="text-sm font-semibold text-gold-700">
               KES {event.priceKES.toLocaleString()}
             </div>
           )}
 
           {/* Age Group */}
           {event.ageGroup && (
-            <div className="text-xs bg-surface/60 text-ink-muted/70 px-2 py-1 rounded inline-block">
+            <div className="text-xs bg-surface/60 text-ink-muted px-2 py-1 rounded inline-block">
               Age: {event.ageGroup}
             </div>
           )}
@@ -115,7 +115,7 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
 
         {/* Registration Deadline */}
         {event.registrationDeadline && new Date(event.registrationDeadline) > new Date() && (
-          <div className="text-xs text-ink-muted/60 mb-4">
+          <div className="text-xs text-ink-muted mb-4">
             Registration closes: {formatDate(new Date(event.registrationDeadline))}
           </div>
         )}
@@ -137,7 +137,7 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
         {event.status === 'Completed' && event.recap && (
           <details className="mt-3 text-sm">
             <summary className="cursor-pointer font-medium text-ink hover:text-gold">View Event Recap</summary>
-            <p className="mt-2 text-ink-muted/70 whitespace-pre-wrap">{event.recap}</p>
+            <p className="mt-2 text-ink-muted whitespace-pre-wrap">{event.recap}</p>
           </details>
         )}
       </div>

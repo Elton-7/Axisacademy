@@ -49,7 +49,7 @@ export default function ServicesSection() {
                 </ul>
                 <Link
                   to={`/services/${service.slug}`}
-                  className="mt-auto inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-600 transition-colors hover:text-gold-700"
+                  className="mt-auto inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-700 transition-colors hover:text-gold-700"
                 >
                   Learn more
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />

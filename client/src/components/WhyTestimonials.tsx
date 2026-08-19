@@ -72,7 +72,7 @@ export default function WhyTestimonials() {
             </h2>
             {testimonials.length === 0 ? (
               <div className="rounded-[1.5rem] border border-line bg-surface-sunk p-8">
-                <p className="text-sm leading-relaxed text-ink-muted/70">
+                <p className="text-sm leading-relaxed text-ink-muted">
                   We would rather publish nothing here than invent it. Axis is collecting
                   testimonials from families and learners, and they will appear here once they
                   have been given with permission.
@@ -95,7 +95,7 @@ export default function WhyTestimonials() {
                     className="relative rounded-[1.5rem] border border-line bg-surface-sunk p-6 shadow-sm"
                   >
                     <span className="absolute left-4 top-4 font-serif text-6xl leading-none text-gold/30">"</span>
-                    <p className="pl-6 text-sm leading-relaxed italic text-ink-muted/70">{t.text}</p>
+                    <p className="pl-6 text-sm leading-relaxed italic text-ink-muted">{t.text}</p>
                     <p className="mt-4 text-right text-sm font-semibold text-ink">
                       — {t.author}
                       {t.role ? `, ${t.role}` : ''}

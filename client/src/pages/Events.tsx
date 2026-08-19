@@ -90,7 +90,7 @@ export default function Events() {
             className="max-w-3xl"
           >
             <div className="flex items-center gap-3 mb-4">
-              <Calendar className="h-8 w-8 text-gold" />
+              <Calendar className="h-8 w-8 text-gold-700" />
               <h1 className="text-4xl sm:text-5xl font-bold text-white">
                 Axis Learning Events
               </h1>
@@ -108,7 +108,7 @@ export default function Events() {
           <div className="space-y-4">
             {/* Search */}
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-muted" />
               <input
                 type="text"
                 placeholder="Search events by title, description, programme, or location..."
@@ -121,7 +121,7 @@ export default function Events() {
             {/* Status and Category Filters */}
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1">
-                <label className="text-xs font-semibold text-ink-muted/70 mb-2 block">Status</label>
+                <label className="text-xs font-semibold text-ink-muted mb-2 block">Status</label>
                 <div className="flex flex-wrap gap-2">
                   <button
                     onClick={() => setSelectedStatus('all')}
@@ -152,7 +152,7 @@ export default function Events() {
 
             {/* Category Filters */}
             <div>
-              <label className="text-xs font-semibold text-ink-muted/70 mb-2 block">Category</label>
+              <label className="text-xs font-semibold text-ink-muted mb-2 block">Category</label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSelectedCategory('all')}
@@ -182,7 +182,7 @@ export default function Events() {
             </div>
 
             {/* Results count */}
-            <p className="text-sm text-ink-muted/60">
+            <p className="text-sm text-ink-muted">
               Showing {filteredEvents.length} of {events.length} events
             </p>
           </div>
@@ -194,7 +194,7 @@ export default function Events() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center items-center py-20">
-              <Loader className="h-8 w-8 text-gold animate-spin" />
+              <Loader className="h-8 w-8 text-gold-700 animate-spin" />
             </div>
           ) : error ? (
             <div className="bg-tint-critical border border-line-critical rounded-lg p-6 text-center">
@@ -203,7 +203,7 @@ export default function Events() {
           ) : filteredEvents.length === 0 ? (
             <div className="text-center py-12">
               <Calendar className="h-12 w-12 text-ink-muted/30 mx-auto mb-4" />
-              <p className="text-lg text-ink-muted/60">
+              <p className="text-lg text-ink-muted">
                 {searchQuery ? 'No events match your search. Try a different query.' : 'No events found.'}
               </p>
             </div>

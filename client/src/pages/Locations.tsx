@@ -111,7 +111,7 @@ export default function Locations() {
 
       <section className="bg-surface py-10">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-gold/30 bg-gold/10 p-5 text-sm leading-relaxed text-ink-muted/80">
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-gold/30 bg-gold/10 p-5 text-sm leading-relaxed text-ink-muted">
             <Info className="mt-0.5 h-5 w-5 shrink-0 text-gold-dark" />
             <p><strong className="text-ink">A clear guide to our locations:</strong> Axis offices support consultation and coordination; learning centres host Axis programmes; partner facilities are approved venues; and educator hubs help us connect families with suitable educators. A listing does not necessarily mean Axis owns the facility.</p>
           </div>
@@ -119,7 +119,7 @@ export default function Locations() {
             {facilityTypes.map((facility) => (
               <div key={facility.type} className="rounded-xl border border-line p-5">
                 <h2 className="font-semibold text-ink">{facility.type}</h2>
-                <p className="mt-2 text-sm text-ink-muted/70">{facility.desc}</p>
+                <p className="mt-2 text-sm text-ink-muted">{facility.desc}</p>
               </div>
             ))}
           </div>
@@ -129,19 +129,19 @@ export default function Locations() {
       <section className="bg-surface-sunk py-10">
         <div className="mx-auto grid max-w-7xl gap-4 px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
           <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Total locations</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Total locations</p>
             <p className="mt-3 text-3xl font-bold text-ink">{stats.total}</p>
           </div>
           <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Learning centres</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Learning centres</p>
             <p className="mt-3 text-3xl font-bold text-ink">{stats.centres}</p>
           </div>
           <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Partner facilities</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Partner facilities</p>
             <p className="mt-3 text-3xl font-bold text-ink">{stats.partner}</p>
           </div>
           <div className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-            <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Head office</p>
+            <p className="text-xs uppercase tracking-[0.2em] text-ink-muted">Head office</p>
             <p className="mt-3 text-3xl font-bold text-ink">{stats.headOffice}</p>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function Locations() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm">
             <div className="relative">
-              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-faint" />
+              <Search className="absolute left-4 top-3 h-5 w-5 text-ink-muted" />
               <input
                 type="text"
                 value={searchQuery}
@@ -163,7 +163,7 @@ export default function Locations() {
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/70">Location type</label>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">Location type</label>
                 <div className="flex flex-wrap gap-2">
                   {LOCATION_TYPES.map((type) => (
                     <button
@@ -180,7 +180,7 @@ export default function Locations() {
               </div>
 
               <div>
-                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/70">County</label>
+                <label className="mb-2 block text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">County</label>
                 <select
                   value={selectedCounty}
                   onChange={(e) => setSelectedCounty(e.target.value)}
@@ -204,7 +204,7 @@ export default function Locations() {
           ) : error ? (
             <div className="rounded-2xl border border-line-critical bg-tint-critical p-6 text-center text-critical">{error}</div>
           ) : filteredLocations.length === 0 ? (
-            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted/70">
+            <div className="rounded-2xl border border-line bg-surface p-12 text-center text-ink-muted">
               <MapPin className="mx-auto mb-4 h-12 w-12 text-ink-muted/30" />
               No locations match your current filter.
             </div>
@@ -228,7 +228,7 @@ export default function Locations() {
                     <h3 className="text-2xl font-semibold">{location.name}</h3>
                   </div>
 
-                  <div className="space-y-4 p-5 text-sm text-ink-muted/70">
+                  <div className="space-y-4 p-5 text-sm text-ink-muted">
                     <div className="flex items-start gap-3">
                       <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
                       <div>
@@ -241,7 +241,7 @@ export default function Locations() {
 
                     {location.programmes && location.programmes.length > 0 && (
                       <div>
-                        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/60">Programmes</p>
+                        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">Programmes</p>
                         <div className="flex flex-wrap gap-2">
                           {location.programmes.slice(0, 4).map((programme) => (
                             <span key={programme} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs font-medium text-ink">{programme}</span>
@@ -250,7 +250,7 @@ export default function Locations() {
                       </div>
                     )}
 
-                    <div className="border-t border-line pt-4 text-xs uppercase tracking-[0.15em] text-ink-muted/60">
+                    <div className="border-t border-line pt-4 text-xs uppercase tracking-[0.15em] text-ink-muted">
                       {location.phone && <p className="mt-2">Phone: {location.phone}</p>}
                       {location.email && <p className="mt-2">Email: {location.email}</p>}
                     </div>
@@ -268,7 +268,7 @@ export default function Locations() {
           <div className="max-w-3xl">
             <div className="section-label !text-left mb-3">Axis Across Kenya</div>
             <h2 className="text-3xl font-semibold text-ink">A national education network</h2>
-            <p className="mt-4 text-lg leading-relaxed text-ink-muted/70">
+            <p className="mt-4 text-lg leading-relaxed text-ink-muted">
               Axis Learning is not a Nairobi-only organisation. Through physical learning centres,
               partner facilities, home-based educators, online educators and our wider educator
               network, we are able to serve families in virtually every county.
@@ -290,7 +290,7 @@ export default function Locations() {
           </div>
 
           <div className="mt-10">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted/60">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">
               All 47 counties
             </p>
             <div className="flex flex-wrap gap-2">
@@ -304,7 +304,7 @@ export default function Locations() {
                   className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
                     selectedCounty === county
                       ? 'border-gold bg-gold text-navy-surface'
-                      : 'border-line bg-surface text-ink-muted/70 hover:border-gold hover:text-ink'
+                      : 'border-line bg-surface text-ink-muted hover:border-gold hover:text-navy-surface'
                   }`}
                 >
                   {county}
@@ -326,7 +326,7 @@ export default function Locations() {
           </div>
           <Link
             to="/enroll"
-            className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-gold px-5 py-3 text-sm font-semibold text-ink transition-colors hover:bg-gold-light"
+            className="inline-flex shrink-0 items-center gap-2 rounded-lg bg-gold px-5 py-3 text-sm font-semibold text-navy-surface transition-colors hover:bg-gold-light"
           >
             Talk to an education consultant <ArrowRight className="h-4 w-4" />
           </Link>

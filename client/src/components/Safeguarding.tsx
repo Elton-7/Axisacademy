@@ -131,15 +131,15 @@ export default function Safeguarding() {
       {/* What needs attention */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-line bg-surface p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-faint">Cleared to teach</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Cleared to teach</p>
           <p className="mt-2 text-3xl font-semibold tabular-nums text-positive">{vetting.filter((v) => v.cleared).length}</p>
         </div>
         <div className="rounded-xl border border-line bg-surface p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-faint">Cannot be assigned</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Cannot be assigned</p>
           <p className="mt-2 text-3xl font-semibold tabular-nums text-critical">{uncleared.length}</p>
         </div>
         <div className="rounded-xl border border-line bg-surface p-5">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-faint">Open concerns</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">Open concerns</p>
           <p className="mt-2 text-3xl font-semibold tabular-nums text-critical">{openConcerns.length}</p>
         </div>
       </div>
@@ -155,7 +155,7 @@ export default function Safeguarding() {
           </p>
         </div>
         {concerns.length === 0 ? (
-          <p className="px-6 py-10 text-center text-sm text-ink-faint">No concerns have been raised.</p>
+          <p className="px-6 py-10 text-center text-sm text-ink-muted">No concerns have been raised.</p>
         ) : (
           <div className="divide-y divide-line">
             {concerns.map((c) => (
@@ -167,7 +167,7 @@ export default function Safeguarding() {
                       {c.learner ? ` · ${c.learner.name}` : ''}
                     </p>
                     <p className="mt-1 text-sm text-ink-muted">{c.detail}</p>
-                    <p className="mt-1 text-xs text-ink-faint">
+                    <p className="mt-1 text-xs text-ink-muted">
                       Raised by {c.raisedBy?.name || 'unknown'} ({c.raisedByRole}) ·{' '}
                       {new Date(c.createdAt).toLocaleString()}
                     </p>
@@ -205,14 +205,14 @@ export default function Safeguarding() {
       <div className="overflow-hidden rounded-xl border border-line bg-surface">
         <div className="border-b border-line px-6 py-4">
           <h3 className="flex items-center gap-2 text-lg font-semibold text-ink">
-            <BadgeCheck className="h-5 w-5 text-gold-600" /> Educator vetting
+            <BadgeCheck className="h-5 w-5 text-gold-700" /> Educator vetting
           </h3>
           <p className="text-sm text-ink-muted">
             An educator cannot be assigned to a learner until clearance is current.
           </p>
         </div>
         {vetting.length === 0 ? (
-          <p className="px-6 py-10 text-center text-sm text-ink-faint">No educator accounts yet.</p>
+          <p className="px-6 py-10 text-center text-sm text-ink-muted">No educator accounts yet.</p>
         ) : (
           <div className="divide-y divide-line">
             {vetting.map((v) => (
@@ -221,7 +221,7 @@ export default function Safeguarding() {
                   <div className="min-w-[12rem] flex-1">
                     <p className="font-medium text-ink">{v.name}</p>
                     <p className="text-sm text-ink-muted">{v.email}</p>
-                    <p className="mt-1 text-xs text-ink-faint">
+                    <p className="mt-1 text-xs text-ink-muted">
                       {v.goodConductNumber ? `Good conduct ${v.goodConductNumber}` : 'No certificate recorded'}
                       {v.goodConductExpiresOn ? ` · expires ${v.goodConductExpiresOn}` : ''}
                       {v.tscNumber ? ` · TSC ${v.tscNumber}` : ''}
@@ -298,7 +298,7 @@ export default function Safeguarding() {
                           className="mt-1 w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-gold-500" />
                       </label>
                       <label className="text-xs text-ink-muted">
-                        TSC number <span className="text-ink-faint">(if a registered teacher)</span>
+                        TSC number <span className="text-ink-muted">(if a registered teacher)</span>
                         <input value={form.tscNumber} onChange={(e) => setForm({ ...form, tscNumber: e.target.value })}
                           className="mt-1 w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-ink outline-none focus:border-gold-500" />
                       </label>

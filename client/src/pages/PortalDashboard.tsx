@@ -58,7 +58,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
       <header className="border-b border-line bg-surface">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-600">Axis Learning</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-700">Axis Learning</p>
             <h1 className="mt-1 text-2xl font-semibold text-ink">
               {isParent ? 'Parent portal' : 'Educator portal'}
             </h1>
@@ -97,7 +97,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
           <>
             {/* Learner selector */}
             <div className="mb-6 rounded-2xl border border-line bg-surface p-6">
-              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
+              <h3 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-muted">
                 <Users className="h-4 w-4" />
                 {isParent ? 'My learners' : 'Assigned learners'}
               </h3>
@@ -115,7 +115,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
                       }`}
                     >
                       <span className="block text-sm font-medium text-ink">{learner.name}</span>
-                      <span className="block text-xs text-ink-muted/70">
+                      <span className="block text-xs text-ink-muted">
                         {learner.programme || 'Programme to be confirmed'}
                         {learner.attendance.percentage !== null && ` · ${learner.attendance.percentage}% attendance`}
                       </span>
@@ -167,7 +167,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
                     {overview.upcomingSessions.map((item) => (
                       <li key={item.id} className="text-sm text-ink-muted">
                         {item.subject}
-                        <span className="block text-xs text-ink-muted/60">{formatDateTime(item.scheduledFor)}</span>
+                        <span className="block text-xs text-ink-muted">{formatDateTime(item.scheduledFor)}</span>
                       </li>
                     ))}
                   </ul>
@@ -184,7 +184,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
                     {overview.messages.map((item) => (
                       <li key={item.id} className="text-sm text-ink-muted">
                         <p className="font-medium">{item.subject}</p>
-                        <p className="text-xs text-ink-muted/60">{item.preview}</p>
+                        <p className="text-xs text-ink-muted">{item.preview}</p>
                       </li>
                     ))}
                   </ul>
@@ -197,10 +197,10 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
         )}
 
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-gold-200 bg-gold-50/60 p-5">
-          <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-gold-600" />
+          <HelpCircle className="mt-0.5 h-5 w-5 shrink-0 text-gold-700" />
           <div>
             <h3 className="text-sm font-semibold text-ink">Need help?</h3>
-            <p className="mt-1 text-sm text-ink-muted/70">
+            <p className="mt-1 text-sm text-ink-muted">
               Contact the Axis team if you need help accessing your account or learning workspace.
             </p>
             <Link to="/contact" className="mt-3 inline-block text-sm font-semibold text-gold-700 hover:underline">
@@ -209,7 +209,7 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
           </div>
         </div>
 
-        <Link to="/" className="mt-8 inline-block text-sm text-ink-muted/60 hover:text-gold-600">
+        <Link to="/" className="mt-8 inline-block text-sm text-ink-muted hover:text-gold-700">
           Return to main website
         </Link>
       </main>

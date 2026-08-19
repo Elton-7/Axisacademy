@@ -15,7 +15,7 @@ export default function AboutSection() {
           <h2 className="mb-4 text-3xl font-semibold text-ink sm:text-4xl">
             Thoughtful education that meets each learner where they are.
           </h2>
-          <p className="text-lg leading-relaxed text-ink-muted/70">
+          <p className="text-lg leading-relaxed text-ink-muted">
             Axis Learning offers calm, personalized, and future-focused learning experiences for children, teenagers, and adults.
           </p>
         </div>
@@ -30,10 +30,10 @@ export default function AboutSection() {
             transition={{ duration: 0.6 }}
             className="rounded-[2rem] border border-line bg-surface-sunk p-8 shadow-sm"
           >
-            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-gold">
+            <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-gold-700">
               Why families choose us
             </p>
-            <div className="space-y-4 text-base leading-relaxed text-ink-muted/70">
+            <div className="space-y-4 text-base leading-relaxed text-ink-muted">
               <p>
                 We believe education should adapt to the learner—not the learner to the system.
               </p>
@@ -73,7 +73,7 @@ export default function AboutSection() {
                   <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.15em] text-ink">
                     {item.title}
                   </h3>
-                  <p className="leading-relaxed text-ink-muted/70">{item.body}</p>
+                  <p className="leading-relaxed text-ink-muted">{item.body}</p>
                 </div>
               </motion.div>
             ))}

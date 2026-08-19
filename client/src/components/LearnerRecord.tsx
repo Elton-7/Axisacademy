@@ -34,7 +34,7 @@ function SessionRow({
     <div className="flex flex-wrap items-center gap-3 border-b border-line py-3 last:border-b-0">
       <div className="min-w-[10rem] flex-1">
         <p className="text-sm font-medium text-ink">{session.subject}</p>
-        <p className="text-xs text-ink-muted/70">
+        <p className="text-xs text-ink-muted">
           {formatDateTime(session.scheduledFor)} · {session.durationMinutes} min
           {session.deliveryMode ? ` · ${session.deliveryMode}` : ''}
         </p>
@@ -42,7 +42,7 @@ function SessionRow({
           <p className="mt-1 text-xs text-ink-muted">Covered: {session.topicsCovered}</p>
         )}
         {session.lessonNotes && (
-          <p className="mt-1 text-xs italic text-ink-faint">{session.lessonNotes}</p>
+          <p className="mt-1 text-xs italic text-ink-muted">{session.lessonNotes}</p>
         )}
         {session.concernFlagged && (
           <p className="mt-1 flex items-center gap-1 text-xs font-medium text-critical">
@@ -135,7 +135,7 @@ export default function LearnerRecord({
     <div className="space-y-6">
       <div className="rounded-2xl border border-line bg-surface p-6">
         <h3 className="text-lg font-semibold text-ink">{learner.name}</h3>
-        <p className="text-sm text-ink-muted/70">
+        <p className="text-sm text-ink-muted">
           {[learner.programme, learner.curriculum, learner.gradeClass].filter(Boolean).join(' · ') ||
             'Programme to be confirmed'}
         </p>
@@ -148,14 +148,14 @@ export default function LearnerRecord({
             { label: 'Upcoming', value: attendance.scheduled },
           ].map((stat) => (
             <div key={stat.label} className="rounded-xl bg-surface-sunk p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-ink-faint">{stat.label}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">{stat.label}</p>
               <p className="mt-1 text-2xl font-semibold tabular-nums text-ink">{stat.value}</p>
             </div>
           ))}
         </div>
 
         {attendance.percentage === null && (
-          <p className="mt-3 text-xs text-ink-faint">
+          <p className="mt-3 text-xs text-ink-muted">
             No sessions have been marked yet, so there is no attendance figure to show.
           </p>
         )}
@@ -169,11 +169,11 @@ export default function LearnerRecord({
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-6">
-        <h4 className="mb-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
+        <h4 className="mb-2 text-sm font-semibold uppercase tracking-wide text-ink-muted">
           Timetable &amp; attendance
         </h4>
         {sessions.length === 0 ? (
-          <p className="py-6 text-sm text-ink-faint">No sessions scheduled yet.</p>
+          <p className="py-6 text-sm text-ink-muted">No sessions scheduled yet.</p>
         ) : (
           sessions.map((session) => (
             <SessionRow key={session.id} session={session} canMark={canMark} onMark={markSession} />
@@ -182,11 +182,11 @@ export default function LearnerRecord({
       </div>
 
       <div className="rounded-2xl border border-line bg-surface p-6">
-        <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
+        <h4 className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-muted">
           <ClipboardCheck className="h-4 w-4" /> Academic record
         </h4>
         {assessments.length === 0 ? (
-          <p className="py-6 text-sm text-ink-faint">No results recorded yet.</p>
+          <p className="py-6 text-sm text-ink-muted">No results recorded yet.</p>
         ) : (
           <div className="divide-y divide-line">
             {assessments.map((assessment) => (
@@ -200,7 +200,7 @@ export default function LearnerRecord({
                       </span>
                     )}
                   </p>
-                  <p className="text-xs text-ink-muted/70">
+                  <p className="text-xs text-ink-muted">
                     {assessment.subject} · {assessment.type} · {assessment.assessedOn}
                   </p>
                   {assessment.comment && (

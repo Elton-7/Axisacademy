@@ -84,7 +84,7 @@ export default function Programmes() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="section-label mb-4">Programmes</div>
+            <div className="section-label text-gold-500 mb-4">Programmes</div>
             <h1 className="text-4xl md:text-5xl font-semibold text-white mb-6">
               Our Learning Programmes
             </h1>
@@ -128,15 +128,15 @@ export default function Programmes() {
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-semibold text-gold-600 bg-gold-50 px-3 py-1 rounded-full uppercase tracking-wide">
+                    <span className="text-xs font-semibold text-gold-700 bg-gold-50 px-3 py-1 rounded-full uppercase tracking-wide">
                       {programme.category}
                     </span>
                     <BookOpen className="w-5 h-5 text-navy-300" />
                   </div>
                   <h3 className="text-lg font-semibold text-ink mb-3">{programme.title}</h3>
-                  <p className="text-ink-muted/70 text-sm mb-6 leading-relaxed">{programme.description}</p>
+                  <p className="text-ink-muted text-sm mb-6 leading-relaxed">{programme.description}</p>
 
-                  <div className="grid grid-cols-2 gap-3 mb-6 text-xs text-ink-muted/60">
+                  <div className="grid grid-cols-2 gap-3 mb-6 text-xs text-ink-muted">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-3.5 h-3.5" />
                       {programme.duration}

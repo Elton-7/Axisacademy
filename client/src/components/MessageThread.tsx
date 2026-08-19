@@ -77,7 +77,7 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-6">
-      <h4 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-faint">
+      <h4 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-ink-muted">
         <MessagesSquare className="h-4 w-4" /> Conversation
       </h4>
 
@@ -91,7 +91,7 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
         <>
           <div className="max-h-96 space-y-3 overflow-y-auto pr-1">
             {messages.length === 0 ? (
-              <p className="py-6 text-center text-sm text-ink-faint">
+              <p className="py-6 text-center text-sm text-ink-muted">
                 No messages yet. Anything you write here is seen by Axis and by this learner’s
                 educators.
               </p>
@@ -109,7 +109,7 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
                     {!message.isMine && (
                       <p className="mb-1 text-xs font-semibold text-ink-muted">
                         {message.senderName}
-                        <span className="ml-2 font-normal text-ink-faint">
+                        <span className="ml-2 font-normal text-ink-muted">
                           {roleLabel[message.senderRole]}
                         </span>
                       </p>
@@ -117,7 +117,7 @@ export default function MessageThread({ learnerId }: { learnerId: number }) {
                     <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.body}</p>
                     <p
                       className={`mt-1 text-[0.65rem] ${
-                        message.isMine ? 'text-white/50' : 'text-ink-faint'
+                        message.isMine ? 'text-white/50' : 'text-ink-muted'
                       }`}
                     >
                       {formatWhen(message.createdAt)}

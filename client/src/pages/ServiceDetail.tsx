@@ -26,7 +26,7 @@ function SectionBlock({ section }: { section: ServiceSection }) {
         <dl className="mt-8 grid gap-4 md:grid-cols-2">
           {section.glossary.map((entry) => (
             <div key={entry.term} className="rounded-2xl border border-line bg-surface p-6 shadow-sm">
-              <dt className="text-sm font-semibold uppercase tracking-[0.15em] text-gold-600">{entry.term}</dt>
+              <dt className="text-sm font-semibold uppercase tracking-[0.15em] text-gold-700">{entry.term}</dt>
               <dd className="mt-3 text-sm leading-relaxed text-ink-muted">{entry.definition}</dd>
             </div>
           ))}
@@ -188,7 +188,7 @@ export default function ServiceDetail() {
                   </div>
                   <h3 className="text-lg font-semibold text-ink">{entry.shortTitle}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-ink-muted">{entry.tagline}</p>
-                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-600">
+                  <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-700">
                     Learn more
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </span>

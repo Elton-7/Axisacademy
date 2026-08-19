@@ -211,7 +211,7 @@ export default function Accounts() {
               Cancel
             </button>
           </div>
-          <p className="mt-3 text-xs text-ink-faint">
+          <p className="mt-3 text-xs text-ink-muted">
             A temporary password is generated and shown once. Axis never stores it in readable form.
           </p>
         </div>
@@ -219,17 +219,17 @@ export default function Accounts() {
 
       <div className="overflow-hidden rounded-xl border border-line bg-surface">
         {accounts.length === 0 ? (
-          <p className="px-6 py-12 text-center text-sm text-ink-faint">No accounts yet.</p>
+          <p className="px-6 py-12 text-center text-sm text-ink-muted">No accounts yet.</p>
         ) : (
           <div className="divide-y divide-line">
             {accounts.map((account) => (
               <div key={account.id} className="flex flex-wrap items-center gap-3 px-6 py-4">
                 <div className="min-w-[12rem] flex-1">
-                  <p className={account.isActive ? 'font-medium text-ink' : 'font-medium text-ink-faint line-through'}>
+                  <p className={account.isActive ? 'font-medium text-ink' : 'font-medium text-ink-muted line-through'}>
                     {account.name}
                   </p>
                   <p className="text-sm text-ink-muted">{account.email}</p>
-                  <p className="mt-1 text-xs text-ink-faint">
+                  <p className="mt-1 text-xs text-ink-muted">
                     {account.lastLoginAt
                       ? `Last signed in ${new Date(account.lastLoginAt).toLocaleDateString()}`
                       : 'Never signed in'}
@@ -241,7 +241,7 @@ export default function Accounts() {
                   {roleLabel[account.role]}
                 </span>
                 {!account.isActive && (
-                  <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-ink-faint">
+                  <span className="rounded-full bg-surface-muted px-3 py-1 text-xs font-semibold text-ink-muted">
                     Disabled
                   </span>
                 )}

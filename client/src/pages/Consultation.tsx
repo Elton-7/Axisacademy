@@ -75,7 +75,7 @@ export default function Consultation() {
       <section className="bg-navy-900 py-20">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
-            <div className="section-label mb-4">Book a Consultation</div>
+            <div className="section-label text-gold-500 mb-4">Book a Consultation</div>
             <h1 className="mb-5 text-4xl font-semibold text-white md:text-5xl">
               Talk to an education consultant
             </h1>
@@ -96,7 +96,7 @@ export default function Consultation() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => trackConversion('whatsapp_opened')}
-            className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:scale-105"
+            className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-5 py-2.5 text-sm font-semibold text-navy-surface transition-transform hover:scale-105"
           >
             <MessageCircle className="h-4 w-4" /> WhatsApp us
           </a>
@@ -177,13 +177,13 @@ export default function Consultation() {
             <div className="grid gap-5 sm:grid-cols-2">
               <div>
                 <label htmlFor="studentName" className="mb-2 block text-sm font-medium text-ink">
-                  Learner’s name <span className="font-normal text-ink-muted/60">(optional)</span>
+                  Learner’s name <span className="font-normal text-ink-muted">(optional)</span>
                 </label>
                 <input id="studentName" {...register('studentName')} className={inputClass} />
               </div>
               <div>
                 <label htmlFor="learnerAge" className="mb-2 block text-sm font-medium text-ink">
-                  Learner’s age <span className="font-normal text-ink-muted/60">(optional)</span>
+                  Learner’s age <span className="font-normal text-ink-muted">(optional)</span>
                 </label>
                 <input id="learnerAge" type="number" min={1} max={100} {...register('learnerAge')} className={inputClass} />
               </div>
@@ -205,7 +205,7 @@ export default function Consultation() {
 
             <div className="rounded-xl bg-surface-sunk p-5">
               <p className="mb-4 flex items-center gap-2 text-sm font-medium text-ink">
-                <Clock className="h-4 w-4 text-gold-600" /> When suits you?
+                <Clock className="h-4 w-4 text-gold-700" /> When suits you?
               </p>
               <div className="grid gap-5 sm:grid-cols-2">
                 <div>
@@ -239,7 +239,7 @@ export default function Consultation() {
               <input
                 type="checkbox"
                 {...register('contactConsent', { required: 'Please confirm that Axis may contact you' })}
-                className="mt-0.5 h-4 w-4 rounded border-line-strong text-gold-600 focus:ring-gold-500"
+                className="mt-0.5 h-4 w-4 rounded border-line-strong text-gold-700 focus:ring-gold-500"
               />
               <span>
                 Axis Learning may contact me about this request. We will not share your details with
@@ -257,7 +257,7 @@ export default function Consultation() {
               {isSubmitting ? 'Sending...' : 'Request a consultation'}
             </button>
 
-            <p className="text-center text-xs text-ink-faint">
+            <p className="text-center text-xs text-ink-muted">
               We normally confirm a time within one working day. Nothing is charged for a consultation.
             </p>
           </form>

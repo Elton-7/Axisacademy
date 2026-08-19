@@ -1,11 +1,8 @@
 // Walks every public page at narrow widths and reports anything that overflows.
-const { chromium } = require('playwright-core')
+import { chromium } from 'playwright-core'
 
-const ROUTES = [
-  '/', '/about', '/philosophy', '/services', '/learning-paths', '/programmes',
-  '/educator-network', '/team', '/locations', '/events', '/gallery', '/resources',
-  '/partners', '/faq', '/contact', '/consultation', '/enroll', '/privacy', '/safeguarding',
-]
+import { staticRoutes } from './routes.mjs'
+const ROUTES = staticRoutes.map((r) => r.path)
 const WIDTHS = [320, 390]
 const BASE = process.env.BASE || 'http://localhost:5173'
 

@@ -13,7 +13,7 @@ export default function Services() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="section-label mb-4">Our Services</div>
+            <div className="section-label text-gold-500 mb-4">Our Services</div>
             <h1 className="mb-6 text-4xl font-semibold text-white md:text-5xl">
               Learning that begins with the learner
             </h1>
@@ -58,7 +58,7 @@ export default function Services() {
                     <div className="flex flex-wrap items-center gap-6">
                       <Link
                         to={`/services/${service.slug}`}
-                        className="group/btn inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-600 transition-colors hover:text-gold-700"
+                        className="group/btn inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-gold-700 transition-colors hover:text-gold-700"
                       >
                         Learn more
                         <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
@@ -85,7 +85,7 @@ export default function Services() {
             className="mt-12 rounded-3xl border border-gold-200 bg-gold-50 p-10 text-center"
           >
             <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-surface shadow-sm">
-              <Compass className="h-7 w-7 text-gold-600" />
+              <Compass className="h-7 w-7 text-gold-700" />
             </div>
             <h2 className="text-2xl font-semibold text-ink sm:text-3xl">
               Not sure which of these your learner needs?

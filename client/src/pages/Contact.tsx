@@ -73,7 +73,7 @@ export default function Contact() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <div className="section-label mb-4">Contact Us</div>
+            <div className="section-label text-gold-500 mb-4">Contact Us</div>
             <h1 className="text-4xl md:text-5xl font-semibold text-white mb-6">
               Get In Touch
             </h1>
@@ -103,7 +103,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-ink">Phone</p>
-                      <p className="text-ink-muted/70 text-sm group-hover:text-gold-700">{contact.phoneDisplay}</p>
+                      <p className="text-ink-muted text-sm group-hover:text-gold-700">{contact.phoneDisplay}</p>
                     </div>
                   </a>
                   <a
@@ -118,7 +118,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-ink">WhatsApp</p>
-                      <p className="text-ink-muted/70 text-sm group-hover:text-gold-700">
+                      <p className="text-ink-muted text-sm group-hover:text-gold-700">
                         Message us to book a consultation
                       </p>
                     </div>
@@ -129,7 +129,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-ink">Email</p>
-                      <p className="text-ink-muted/70 text-sm group-hover:text-gold-700">{contact.email}</p>
+                      <p className="text-ink-muted text-sm group-hover:text-gold-700">{contact.email}</p>
                     </div>
                   </a>
                   <div className="flex items-start gap-4">
@@ -138,7 +138,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-ink">Location</p>
-                      <p className="text-ink-muted/70 text-sm">Nairobi, Kenya</p>
+                      <p className="text-ink-muted text-sm">Nairobi, Kenya</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
@@ -147,7 +147,7 @@ export default function Contact() {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-ink">Hours</p>
-                      <p className="text-ink-muted/70 text-sm">Mon - Sat: 8:00 AM - 6:00 PM</p>
+                      <p className="text-ink-muted text-sm">Mon - Sat: 8:00 AM - 6:00 PM</p>
                     </div>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ export default function Contact() {
                   >
                     <CheckCircle className="w-16 h-16 text-positive mx-auto mb-4" />
                     <h3 className="text-2xl font-semibold text-ink mb-2">Message Sent!</h3>
-                    <p className="text-ink-muted/70">We'll get back to you within 24 hours.</p>
+                    <p className="text-ink-muted">We'll get back to you within 24 hours.</p>
                   </motion.div>
                 ) : (
                   <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" noValidate>
