@@ -7,11 +7,17 @@ import PipelineBoard from '../components/PipelineBoard'
 import LearnerAdmin from '../components/LearnerAdmin'
 import Safeguarding from '../components/Safeguarding'
 import Accounts from '../components/Accounts'
+import DataProtection from '../components/DataProtection'
 import { auditApi, authApi, contactsApi, enrollmentsApi, newsletterApi, statsApi, galleryApi, resourcesApi, partnersApi, educatorsApi, eventsApi, faqsApi, locationsApi } from '../services/apiClient'
 import type { AuditLog, Contact, DashboardStats, Enrollment, Newsletter, GalleryItem, Resource, Partner, Educator, Event, FAQ, Location, GalleryType, GalleryCategory, ResourceCategory, PartnerCategory, EducatorCategory, EventCategory, EventStatus, FAQCategory, LocationType } from '../types'
 
+const TAB_LABELS: Record<string, string> = {
+  faqs: 'FAQs',
+  'data-protection': 'Data protection',
+}
+
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pipeline' | 'learners' | 'accounts' | 'safeguarding' | 'gallery' | 'resources' | 'partners' | 'educators' | 'events' | 'faqs' | 'locations'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pipeline' | 'learners' | 'accounts' | 'safeguarding' | 'data-protection' | 'gallery' | 'resources' | 'partners' | 'educators' | 'events' | 'faqs' | 'locations'>('dashboard')
   
   // Dashboard state
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -748,7 +754,7 @@ export default function AdminDashboard() {
         {/* Tab Navigation */}
         <div className="bg-surface rounded-xl border border-line mb-6 overflow-hidden">
           <div className="flex border-b border-line overflow-x-auto">
-            {(['dashboard', 'pipeline', 'learners', 'accounts', 'safeguarding', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations'] as const).map((tab) => (
+            {(['dashboard', 'pipeline', 'learners', 'accounts', 'safeguarding', 'data-protection', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -758,7 +764,7 @@ export default function AdminDashboard() {
                     : 'bg-surface text-ink-muted hover:bg-surface-sunk'
                 }`}
               >
-                {tab === 'faqs' ? 'FAQs' : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {TAB_LABELS[tab] ?? tab.charAt(0).toUpperCase() + tab.slice(1)}
               </button>
             ))}
           </div>
@@ -837,6 +843,8 @@ export default function AdminDashboard() {
 
         {/* Safeguarding Tab — brief §38 */}
         {activeTab === 'safeguarding' && <Safeguarding />}
+
+        {activeTab === 'data-protection' && <DataProtection />}
 
         {/* Gallery Tab */}
         {activeTab === 'gallery' && (

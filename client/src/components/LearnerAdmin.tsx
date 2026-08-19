@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { CalendarPlus, Loader2, Plus, Search, UserPlus, X } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { apiErrorMessage } from '../utils/apiError'
 import { learnersApi, safeguardingApi } from '../services/apiClient'
 import type { AdminLearner, AssignableUser } from '../types'
 
@@ -122,10 +123,7 @@ export default function LearnerAdmin() {
       toast.success('Session scheduled')
       await load(search)
     } catch (err) {
-      const message =
-        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-        'Could not schedule this session.'
-      toast.error(message)
+      toast.error(apiErrorMessage(err, 'Could not schedule this session.'))
     }
   }
 
@@ -160,10 +158,7 @@ Type the learner's name to confirm:`
       toast.success(`${learner.name} erased`)
       await load(search)
     } catch (err) {
-      const message =
-        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-        'Could not erase this learner.'
-      toast.error(message)
+      toast.error(apiErrorMessage(err, 'Could not erase this learner.'))
     }
   }
 

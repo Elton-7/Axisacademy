@@ -58,6 +58,8 @@ import {
   AssessmentType,
   ApiResponse,
   ApiListResponse,
+  RetentionReport,
+  RetentionRemoved,
 } from '../types'
 
 /**
@@ -573,6 +575,17 @@ export const safeguardingApi = {
 
   async eraseLearner(learnerId: number, confirmName: string) {
     await api.delete(`/data-protection/learners/${learnerId}`, { data: { confirmName } })
+  },
+
+  /** What is past its retention period. Reading is staff; applying is admin. */
+  async getRetention() {
+    const { data } = await api.get<ApiResponse<RetentionReport>>('/data-protection/retention')
+    return unwrap(data)
+  },
+
+  async applyRetention() {
+    const { data } = await api.post<ApiResponse<RetentionRemoved>>('/data-protection/retention/apply')
+    return unwrap(data)
   },
 }
 

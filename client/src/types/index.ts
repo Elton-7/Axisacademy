@@ -757,3 +757,29 @@ export interface UpdateLocationRequest {
   isActive?: boolean
   sortOrder?: number
 }
+
+/** Retention policy, in days, as the server defines it. */
+export interface RetentionPolicy {
+  unconvertedEnquiryDays: number
+  contactMessageDays: number
+  auditLogDays: number
+}
+
+/** Counts of records already past their retention period. */
+export interface RetentionDue {
+  unconvertedEnquiries: number
+  contactMessages: number
+  auditEntries: number
+}
+
+export interface RetentionReport {
+  policy: RetentionPolicy
+  dueForDeletion: RetentionDue
+  note: string
+}
+
+/** What applying the schedule actually removed. */
+export interface RetentionRemoved {
+  unconvertedEnquiries: number
+  contactMessages: number
+}

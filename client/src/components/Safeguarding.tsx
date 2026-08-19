@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { AlertTriangle, BadgeCheck, Loader2, ShieldAlert } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { apiErrorMessage } from '../utils/apiError'
 import { safeguardingApi } from '../services/apiClient'
 import type { ConcernStatus, SafeguardingConcern, VettingRow, VettingStatus } from '../types'
 
@@ -76,10 +77,7 @@ export default function Safeguarding() {
       await load()
     } catch (err) {
       // The API refuses incomplete clearance for a reason; show that reason.
-      const message =
-        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-        'Could not update vetting.'
-      toast.error(message)
+      toast.error(apiErrorMessage(err, 'Could not update vetting.'))
     }
   }
 
@@ -92,10 +90,7 @@ export default function Safeguarding() {
       toast.success(`${name} marked ${status.toLowerCase()}`)
       await load()
     } catch (err) {
-      const message =
-        (err as { response?: { data?: { error?: string } } })?.response?.data?.error ||
-        'Could not update vetting.'
-      toast.error(message)
+      toast.error(apiErrorMessage(err, 'Could not update vetting.'))
     }
   }
 
