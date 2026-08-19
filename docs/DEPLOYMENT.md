@@ -248,5 +248,7 @@ navigates to a value from the API or the URL.
 - **The mailboxes do not exist yet.** Until `info@`, `enquiries@` and
   `no-reply@axislearning.co.ke` are created and their SMTP details set, every
   enquiry notification is written to the log and nobody is emailed.
-- **Test coverage.** Vetting, portal scoping and the safeguarding rules are
-  covered by `npm test`. The admin CMS routes are not.
+- **Retention periods are still defaults.** The schedule in the Data protection
+  tab uses two years for an unconverted enquiry and one year for a contact
+  message. Those are placeholders for Axis to confirm, and applying the
+  schedule is deliberately manual until they are.

@@ -13,6 +13,26 @@ const { body, validationResult } = require('express-validator')
 /** STRING(n) knows its own n; TEXT has no limit. */
 const columnLimit = (Model, field) => Model.rawAttributes?.[field]?.type?.options?.length
 
+/**
+ * The length a field will actually accept.
+ *
+ * Two things constrain it and both have to be read. The column gives a maximum;
+ * a model `validate: { len: [min, max] }` can set a minimum and can be tighter
+ * than the column — FAQ answers are TEXT but must be at least 10 characters.
+ * Reading only the column let a too-short answer through to Sequelize, which
+ * rejected it as "Validation len on answer failed": accurate, and useless to
+ * the person typing.
+ */
+const lengthRule = (Model, field) => {
+  const attr = Model.rawAttributes?.[field]
+  const [min, max] = attr?.validate?.len || []
+  const column = columnLimit(Model, field)
+  return {
+    min: min || 0,
+    max: max ?? column ?? undefined,
+  }
+}
+
 const enumValues = (Model, field) => Model.rawAttributes?.[field]?.values ?? []
 
 /** Turns `startDate` into `Start date` for messages aimed at an admin. */
@@ -30,7 +50,7 @@ const labelFor = (field) =>
  */
 const text = (Model, field, { required = false, partial = false, label } = {}) => {
   const name = label || labelFor(field)
-  const limit = columnLimit(Model, field)
+  const { min, max } = lengthRule(Model, field)
 
   // A required field may be absent on an update (nothing changed) but must not
   // arrive empty — that would blank a NOT NULL column with an empty string.
@@ -42,8 +62,13 @@ const text = (Model, field, { required = false, partial = false, label } = {}) =
     chain = chain.optional({ values: 'falsy' }).trim()
   }
 
-  if (limit) {
-    chain = chain.isLength({ max: limit }).withMessage(`${name} must be ${limit} characters or fewer`)
+  if (min && max) {
+    chain = chain.isLength({ min, max })
+      .withMessage(`${name} must be between ${min} and ${max} characters`)
+  } else if (max) {
+    chain = chain.isLength({ max }).withMessage(`${name} must be ${max} characters or fewer`)
+  } else if (min) {
+    chain = chain.isLength({ min }).withMessage(`${name} must be at least ${min} characters`)
   }
   return chain
 }
@@ -115,5 +140,5 @@ const handleValidation = (req, res, next) => {
 
 module.exports = {
   text, enumField, urlField, emailField, intField, dateField, boolField, arrayField,
-  handleValidation, columnLimit, enumValues,
+  handleValidation, columnLimit, lengthRule, enumValues,
 }
