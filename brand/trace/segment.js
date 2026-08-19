@@ -109,9 +109,32 @@ function segment(path, { minArea = 30, whiteCut = 235 } = {}) {
   for (let i = 0; i < w * h; i++) {
     if (px[i * ch + 3] < 128) continue
     if (lum(i) > whiteCut) continue
+
+    const r = px[i * ch], g = px[i * ch + 1], b = px[i * ch + 2]
+    const max = Math.max(r, g, b), min = Math.min(r, g, b)
+    const saturation = max === 0 ? 0 : (max - min) / max
+
+    /**
+     * Hue decides wherever the pixel has enough colour to have one, and only
+     * the washed-out pixels fall back to the nearest centroid.
+     *
+     * Letting the centroids decide everything was wrong. They are seeded from
+     * the most saturated pixels, so the blue centroid sits near the bright
+     * figure and swoosh — far from the dark navy of the wordmark, which then
+     * landed closer to the violet of "Thrive" and put a purple patch inside
+     * the letter I. The letter's own hue, 213, was never ambiguous.
+     *
+     * The fallback still matters: anti-aliased pixels inside a stroke lose
+     * their hue entirely, and dropping those is what left holes in the text.
+     */
+    if (saturation >= 0.25) {
+      fam[i] = familyOf(r, g, b)
+      if (fam[i]) continue
+    }
+
     let best = null, bestD = Infinity
     for (const { f, c } of centroids) {
-      const d = (px[i * ch] - c[0]) ** 2 + (px[i * ch + 1] - c[1]) ** 2 + (px[i * ch + 2] - c[2]) ** 2
+      const d = (r - c[0]) ** 2 + (g - c[1]) ** 2 + (b - c[2]) ** 2
       if (d < bestD) { bestD = d; best = f }
     }
     fam[i] = best
@@ -143,7 +166,46 @@ function segment(path, { minArea = 30, whiteCut = 235 } = {}) {
           if (y > y1) y1 = y
         }
         const thin = Math.min(x1 - x0, y1 - y0) <= 2
-        if (c.pixels.length >= minArea && !thin) continue
+
+        /**
+         * A patch buried inside another shape is a misclassification, whatever
+         * its size.
+         *
+         * Nearest-centroid works on colour alone, so a navy pixel in the darker
+         * part of the AXIS gradient can land closer to the violet of "Thrive"
+         * than to navy. That put a 301-pixel violet patch inside the letter I,
+         * which then fitted its own gradient and drew a visibly lighter band
+         * across the letter.
+         *
+         * Touching the background is what distinguishes a real shape from a
+         * patch: the star and the book's bands all open onto it, while a
+         * misread patch is enclosed.
+         */
+        let background = 0
+        let boundary = 0
+        const touching = {}
+        for (const i of c.pixels) {
+          const x = i % w, y = (i / w) | 0
+          const near = []
+          if (x > 0) near.push(i - 1)
+          if (x < w - 1) near.push(i + 1)
+          if (y > 0) near.push(i - w)
+          if (y < h - 1) near.push(i + w)
+          for (const n of near) {
+            if (fam[n] === c.family) continue
+            boundary++
+            if (!fam[n]) background++
+            else touching[fam[n]] = (touching[fam[n]] || 0) + 1
+          }
+        }
+        const ranked = Object.entries(touching).sort((a, b) => b[1] - a[1])
+        const enclosed =
+          boundary > 0 &&
+          background / boundary < 0.15 &&
+          ranked.length > 0 &&
+          ranked[0][1] / (boundary - background) > 0.85
+
+        if (c.pixels.length >= minArea && !thin && !enclosed) continue
         const votes = {}
         for (const i of c.pixels) {
           const x = i % w, y = (i / w) | 0

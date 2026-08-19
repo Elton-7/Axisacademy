@@ -30,25 +30,31 @@ and re-crops the viewBox, which is how the reduced version is produced.
 
 ## The vectors are traced, not original
 
-`axis-mark.svg` and `axis-logo.svg` were traced from the supplied bitmap. They
-are close but they are a reconstruction, not the artwork the designer drew.
+`axis-mark.svg` and `axis-logo.svg` were traced from the supplied bitmap, so
+they are a reconstruction rather than the curves the designer drew. Both are
+now close enough to use anywhere.
 
-**The mark is faithful.** Measured against the source it differs by an average
-of 4.7 levels out of 255, and only 1.6% of pixels differ by more than 60 —
-essentially the anti-aliased boundary. At any size it is indistinguishable.
+Measured against the source, the mark differs by an average of 4.7 levels out
+of 255 and the lockup by 6.0, with under 2.2% of pixels differing by more than
+60 — which is the anti-aliased boundary, where any reconstruction differs. Side
+by side at full size neither is distinguishable from the original.
 
-**The lockup is good, not perfect.** Letterforms are solid and correct, but at
-roughly 2.5x magnification faint seams are visible inside one or two letters,
-where the wordmark's gradient crosses a colour boundary. Fine for print at
-normal sizes; worth knowing before it goes on a banner.
+The earlier caveat about seams inside the letters is fixed. It was not a gap
+between shapes but a misclassification: nearest-centroid matching, seeded from
+the most saturated pixels, put the blue centroid near the bright figure and
+swoosh, far enough from the dark navy of the wordmark that some of it landed
+closer to the violet of "Thrive". A 301-pixel violet patch inside the letter I
+then fitted its own gradient and drew a lighter band across it. Hue now decides
+wherever a pixel has enough colour to have one, and the centroids are only
+consulted for washed-out pixels — where they are still needed, since
+anti-aliased pixels inside a stroke have no hue at all.
 
 Both carry per-shape linear gradients fitted from the bitmap, so the depth in
 the original is preserved rather than flattened.
 
-**If Axis can obtain the original vector artwork (SVG, AI or EPS) from whoever
-designed the logo, use that instead.** It would remove the caveat above and
-make a light-on-dark version of the wordmark straightforward, which would let
-the full lockup work in the footer and on the login pages.
+Original vector artwork from the designer would still be preferable if it
+exists — it is the real thing rather than a reconstruction, and it would make a
+light-on-dark wordmark trivial. It is no longer needed for quality.
 
 ## Reproducing the trace
 

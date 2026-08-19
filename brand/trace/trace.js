@@ -248,7 +248,7 @@ function fitGradient(comp, px, w, ch) {
 // ------------------------------------------------------------------- emit
 const hex = ([r, g, b]) => '#' + [r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('')
 
-function trace(src, { epsilon = 0.9, minArea = 40, dilation = 0.4, keepComponent } = {}) {
+function trace(src, { epsilon = 0.9, minArea = 40, dilation = 0.4, keepComponent, seam = true } = {}) {
   const seg = segment(src, { minArea })
   const { px, w, h, ch, label } = seg
 
@@ -268,6 +268,34 @@ function trace(src, { epsilon = 0.9, minArea = 40, dilation = 0.4, keepComponent
   ordered.forEach((comp, n) => {
     const member = new Uint8Array(w * h)
     for (const i of comp.pixels) member[i] = 1
+
+    /**
+     * Grow the shape by a pixel, but only into other shapes — never into the
+     * background.
+     *
+     * Smoothing pulls every outline back slightly. Along an edge two shapes
+     * share, both retreat and a hairline of background opens between them,
+     * which is what showed through the AXIS letters. Overlapping them by a
+     * pixel closes it, and painting largest-first hides the overlap.
+     *
+     * The restriction is what makes this safe: dilating uniformly also thickens
+     * the outer silhouette against the background, which measurably degraded
+     * the whole trace when tried. Letters never touch each other — background
+     * separates them — so nothing merges.
+     */
+    if (seam) {
+      const grown = new Uint8Array(member)
+      for (const i of comp.pixels) {
+        const x = i % w, y = (i / w) | 0
+        const near = []
+        if (x > 0) near.push(i - 1)
+        if (x < w - 1) near.push(i + 1)
+        if (y > 0) near.push(i - w)
+        if (y < h - 1) near.push(i + w)
+        for (const n of near) if (!member[n] && seg.fam[n]) grown[n] = 1
+      }
+      member.set(grown)
+    }
     const loops = boundaryLoops((x, y) => member[y * w + x] === 1, w, h)
     if (!loops.length) return
 
