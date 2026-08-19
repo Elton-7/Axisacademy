@@ -1,4 +1,4 @@
-import axisMark from '../assets/axis-mark.png'
+import axisMark from '../assets/axis-mark.svg'
 import { Link } from 'react-router-dom'
 import { Phone, Mail, Globe, Facebook, Instagram, Youtube, Linkedin } from 'lucide-react'
 import NewsletterSignup from './NewsletterSignup'

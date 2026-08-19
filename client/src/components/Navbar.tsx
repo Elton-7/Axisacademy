@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import axisMark from '../assets/axis-mark.png'
+import axisMark from '../assets/axis-mark.svg'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone, ChevronDown } from 'lucide-react'
