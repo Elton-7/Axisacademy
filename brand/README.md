@@ -10,7 +10,8 @@ not vector artwork.
 | --- | --- |
 | `client/src/assets/axis-mark.svg` | the mark in the header and footer |
 | `client/public/favicon.svg` | browser tab, on browsers that take SVG |
-| `client/public/favicon-32.png`, `favicon-192.png` | browser tab, everywhere else |
+| `client/public/favicon-32.png` | browser tab, everywhere else |
+| `client/public/favicon-192.png` | large tab and pinned-site icon |
 | `client/public/apple-touch-icon.png` | iOS home screen |
 | `client/public/og-image.png` | link previews on WhatsApp, Facebook, LinkedIn |
 | `client/src/assets/axis-logo.png` | full lockup; the source for the preview above |
@@ -18,6 +19,14 @@ not vector artwork.
 
 The mark is used rather than the full lockup wherever the background is navy,
 because the wordmark is navy and would disappear against it.
+
+**Small icons use only the figure and star, not the whole mark.** A browser tab
+is often 16px, and at that size the full mark — book, figure, star and rays —
+collapses into an unreadable smudge. The figure reaching for the star is close
+to square, so it fills the icon instead of being letterboxed, and it still
+reads at 16px. `favicon-192.png` and `apple-touch-icon.png` keep the full mark,
+which has room for the detail. `trace/trace.js` takes a `keepComponent` filter
+and re-crops the viewBox, which is how the reduced version is produced.
 
 ## The vectors are traced, not original
 

@@ -86,9 +86,11 @@ export default function Navbar() {
               height={32}
               className="h-8 w-auto transition-transform group-hover:scale-105"
             />
-            <div className="hidden sm:block">
-              <span className="block text-lg font-semibold uppercase leading-tight tracking-[0.15em] text-gold-500">Axis</span>
-              <p className="text-[0.6rem] uppercase tracking-[0.1em] text-gold-500/80">Learning</p>
+            {/* Shown on phones too: the mark is pictorial, so hiding this left
+                the header with no company name anywhere on a small screen. */}
+            <div>
+              <span className="block text-base font-semibold uppercase leading-tight tracking-[0.15em] text-gold-500 sm:text-lg">Axis</span>
+              <p className="text-[0.55rem] uppercase tracking-[0.1em] text-gold-500/80 sm:text-[0.6rem]">Learning</p>
             </div>
           </Link>
 

@@ -248,12 +248,20 @@ function fitGradient(comp, px, w, ch) {
 // ------------------------------------------------------------------- emit
 const hex = ([r, g, b]) => '#' + [r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('')
 
-function trace(src, { epsilon = 0.9, minArea = 40, dilation = 0.4 } = {}) {
+function trace(src, { epsilon = 0.9, minArea = 40, dilation = 0.4, keepComponent } = {}) {
   const seg = segment(src, { minArea })
   const { px, w, h, ch, label } = seg
 
   // Larger shapes first so small details (the star over the swoosh) stay on top.
-  const ordered = seg.kept.slice().sort((a, b) => b.pixels.length - a.pixels.length)
+  let ordered = seg.kept.slice().sort((a, b) => b.pixels.length - a.pixels.length)
+  // Lets a caller build a reduced mark — a favicon cannot show every detail.
+  if (keepComponent) {
+    ordered = ordered.filter((c) => {
+      let y0 = Infinity, y1 = -Infinity
+      for (const i of c.pixels) { const y = (i / w) | 0; if (y < y0) y0 = y; if (y > y1) y1 = y }
+      return keepComponent({ family: c.family, area: c.pixels.length, top: y0, bottom: y1 })
+    })
+  }
 
   const defs = []
   const body = []
@@ -290,7 +298,25 @@ function trace(src, { epsilon = 0.9, minArea = 40, dilation = 0.4 } = {}) {
     body.push(`<path fill="${fill}" fill-rule="evenodd" d="${d}"/>`)
   })
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" role="img" aria-label="Axis Learning">` +
+  // Crop to what is actually drawn. Without this a filtered mark keeps the
+  // full canvas and the remaining artwork shrinks into a corner of it.
+  let vb = `0 0 ${w} ${h}`
+  if (keepComponent && ordered.length) {
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity
+    for (const c of ordered) {
+      for (const i of c.pixels) {
+        const x = i % w, y = (i / w) | 0
+        if (x < x0) x0 = x
+        if (x > x1) x1 = x
+        if (y < y0) y0 = y
+        if (y > y1) y1 = y
+      }
+    }
+    const pad = 2
+    vb = `${x0 - pad} ${y0 - pad} ${x1 - x0 + pad * 2} ${y1 - y0 + pad * 2}`
+  }
+
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${vb}" role="img" aria-label="Axis Learning">` +
     (defs.length ? `<defs>${defs.join('')}</defs>` : '') +
     body.join('') + '</svg>'
 }
