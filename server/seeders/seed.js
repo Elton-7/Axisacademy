@@ -408,6 +408,22 @@ const seedData = async () => {
     ]
 
     for (const configuredUser of configuredUsers) {
+      /**
+       * A missing email or hash means the account is simply not created, which
+       * is correct — but silently. Someone starting the stack without
+       * ADMIN_PASSWORD_HASH gets a working site with no way into the admin
+       * panel and nothing explaining the absence. Say so.
+       */
+      if (!configuredUser.email || !configuredUser.passwordHash) {
+        console.log(
+          `No ${configuredUser.role} account created: set ` +
+          `${configuredUser.role.toUpperCase()}_EMAIL and ${configuredUser.role.toUpperCase()}_PASSWORD_HASH ` +
+          `(admin uses ADMIN_EMAIL / ADMIN_PASSWORD_HASH). ` +
+          `Hash one with: node -e "require('bcryptjs').hash('your-password',12).then(console.log)"`
+        )
+        continue
+      }
+
       if (configuredUser.email && configuredUser.passwordHash) {
         const [user, created] = await User.findOrCreate({
           where: { email: configuredUser.email.toLowerCase().trim() },
