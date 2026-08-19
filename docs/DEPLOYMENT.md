@@ -6,13 +6,13 @@ the API or the database.
 | What | Where | Config |
 | --- | --- | --- |
 | React site | Netlify | `netlify.toml` |
-| Express API + PostgreSQL | Render (or any Docker host) | `render.yaml`, `server/Dockerfile` |
+| Express API + PostgreSQL | Render | `render.yaml` |
 | Domain, DNS and mailboxes | Truehost | registrar control panel |
 
-`docker-compose.yml` at the repository root is **not** part of this. It runs the
-whole stack on one machine for local work — localhost origins, the database
-port published to the host, the server's source mounted over the image — and
-its `.env.example` covers only that.
+Local work needs neither: run PostgreSQL on the machine, `npm run dev` in
+`server/`, and `npm run dev` in `client/`. There is no container in the loop
+anywhere, which is why the Docker Compose file was removed — it duplicated
+that setup and rotted unnoticed until someone tried to start it.
 
 ## Order
 
@@ -22,9 +22,16 @@ so it cannot be built correctly until the API has an address.
 ### 1. The API and database
 
 Render reads `render.yaml` and creates both the web service and a managed
-PostgreSQL instance. Nothing in the application depends on Render — the server
-is a plain Dockerfile, so Railway, Fly or a VPS work identically and only that
-file changes.
+PostgreSQL instance. It runs the app directly on Node — `npm ci`, then
+`node server.js` — because the server needs nothing beyond Node and a
+PostgreSQL client, and a container only added a build step.
+
+`server/Dockerfile` is kept for hosts that require an image, and it runs the
+app under `tini` as a non-root user. **It is not exercised by this deploy**, so
+build and run it before depending on it.
+
+Nothing here is specific to Render. Railway runs the same two commands;
+a VPS needs Node 20+, PostgreSQL, and something to keep the process alive.
 
 Set these in the dashboard rather than in the repository:
 
@@ -195,11 +202,10 @@ harmless ownership notices too.
 
 Two things this does not do for you:
 
-- **The container has no `pg_dump`.** `server/Dockerfile` is a Node image. Run
-  backups from a machine that has the PostgreSQL client tools, or add them to
-  the image — but the client must be **at least as new as the server** (18
-  here), or `pg_dump` refuses with a version mismatch. Alpine's default
-  `postgresql-client` may be older, which is why it is not added blindly.
+- **The host has no `pg_dump`.** Render's Node runtime does not ship the
+  PostgreSQL client tools, and neither does `server/Dockerfile`. Run backups
+  from a machine that has them — but the client must be **at least as new as
+  the server** (18 here), or `pg_dump` refuses with a version mismatch.
 - **Nothing schedules it.** Add a cron job, a Render cron service, or a Task
   Scheduler entry. Render also takes its own daily snapshots on paid plans;
   these dumps are independent of that and portable between hosts.

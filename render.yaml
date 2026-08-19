@@ -2,9 +2,13 @@
 #
 # Render is used here because it hosts a Node service and a managed PostgreSQL
 # instance together, issues TLS certificates automatically, and takes daily
-# backups on paid plans. Nothing in the application is tied to it — the server
-# is a plain Dockerfile, so Railway, Fly or a VPS work the same way. Only this
-# file would change.
+# backups on paid plans.
+#
+# This runs the app directly on Node rather than building a container. The
+# server has no system dependencies beyond Node and a PostgreSQL client, so a
+# container bought nothing here and cost a build step. server/Dockerfile is
+# kept for hosts that require an image — see docs/DEPLOYMENT.md, and test it
+# before relying on it, because this deploy does not exercise it.
 #
 # The front end is NOT deployed from here. It is a static build on Netlify,
 # configured by netlify.toml at the repository root.
@@ -18,10 +22,13 @@
 services:
   - type: web
     name: axis-learning-api
-    runtime: docker
-    dockerfilePath: ./server/Dockerfile
-    dockerContext: ./server
+    runtime: node
+    rootDir: server
     plan: starter
+    # npm ci installs from the lockfile, so a deploy cannot quietly pick up a
+    # different dependency tree from the one the tests ran against.
+    buildCommand: npm ci
+    startCommand: node server.js
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV
