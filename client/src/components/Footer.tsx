@@ -19,6 +19,7 @@ const quickLinks = [
   { href: '/partners', label: 'Partners' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
+  { href: '/safeguarding', label: 'Child Safety' },
   { href: '/privacy', label: 'Privacy & Child Safety' },
 ]
 

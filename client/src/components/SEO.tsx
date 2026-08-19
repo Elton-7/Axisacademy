@@ -74,6 +74,10 @@ const pages: Record<string, { title: string; description: string }> = {
     title: 'Privacy & Child Safety | Axis Learning',
     description: 'Learn how Axis Learning approaches privacy, consent, learner media, and role-based access to information.',
   },
+  '/safeguarding': {
+    title: 'How We Keep Your Child Safe | Axis Learning',
+    description: 'Educator vetting that must be current before assignment, home-session check-in and check-out, safeguarding concerns that reach staff only, and consent recorded before any photograph is published.',
+  },
 }
 
 const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://www.axislearning.co.ke').replace(/\/$/, '')

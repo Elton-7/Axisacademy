@@ -27,6 +27,7 @@ import NotFound from './pages/NotFound'
 import PortalLogin from './pages/PortalLogin'
 import PortalDashboard from './pages/PortalDashboard'
 import Privacy from './pages/Privacy'
+import Safeguarding from './pages/Safeguarding'
 
 function ProtectedAdminRoute() {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null)
@@ -88,6 +89,7 @@ function App() {
           <Route path="partners" element={<Partners />} />
           <Route path="contact" element={<Contact />} />
           <Route path="privacy" element={<Privacy />} />
+          <Route path="safeguarding" element={<Safeguarding />} />
           <Route path="enroll" element={<Enrollment />} />
           <Route path="consultation" element={<Consultation />} />
           <Route path="admin/login" element={<AdminLogin />} />
