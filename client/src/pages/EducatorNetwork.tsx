@@ -161,6 +161,21 @@ export default function EducatorNetwork() {
           <p className="mt-8 text-sm text-ink-faint">
             And other professionals, as the network continues to expand.
           </p>
+
+          <div className="mt-8 rounded-2xl border border-line bg-surface p-6">
+            <p className="leading-relaxed text-ink-muted">
+              <span className="font-semibold text-ink">Every one of them is vetted before they are
+              assigned.</span>{' '}
+              Clearance has to be current — not simply once obtained — and it is checked against the
+              expiry date on the certificate.
+            </p>
+            <Link
+              to="/safeguarding"
+              className="mt-3 inline-block font-semibold text-gold-700 hover:underline"
+            >
+              How we keep your child safe
+            </Link>
+          </div>
         </div>
       </section>
 
