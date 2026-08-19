@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Search, Filter, Loader, Network, MapPin, SlidersHorizontal } from 'lucide-react'
+import { Search, Filter, Loader, Network, MapPin, SlidersHorizontal, Sparkles } from 'lucide-react'
 import { Educator, EducatorCategory } from '../types'
 import { educatorsApi } from '../services/apiClient'
 import EducatorCard from '../components/EducatorCard'
@@ -145,7 +145,9 @@ export default function Team() {
 
             {/* Results count */}
             <p className="text-sm text-ink-muted/60">
-              Showing {filteredEducators.length} of {educators.length} educators
+              {educators.length > 0
+                ? `Showing ${filteredEducators.length} of ${educators.length} educators`
+                : ''}
             </p>
           </div>
         </div>
@@ -166,6 +168,7 @@ export default function Team() {
             <div className="py-12 text-center">
               {educators.length === 0 ? (
                 <>
+                  <Sparkles className="mx-auto mb-4 h-12 w-12 text-ink-muted/30" />
                   <p className="text-lg font-semibold text-ink">Our educator profiles are being prepared.</p>
                   <p className="mx-auto mt-2 max-w-lg text-ink-muted/60">
                     Axis works through a growing national network of teachers, tutors, language

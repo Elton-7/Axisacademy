@@ -75,6 +75,10 @@ export default function Partners() {
 
       <section className="bg-surface py-8">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Hidden until there is something to count. A row of large zeros
+              reads as a broken page rather than as one still being filled;
+              the empty state below explains the wait properly. */}
+          {partners.length > 0 && (
           <div className="grid gap-4 rounded-2xl border border-line bg-surface-sunk p-4 shadow-sm md:grid-cols-3">
             <div className="rounded-xl bg-surface p-4">
               <p className="text-xs uppercase tracking-[0.2em] text-ink-faint">Partners</p>
@@ -89,6 +93,7 @@ export default function Partners() {
               <p className="mt-3 text-lg font-semibold text-ink">Growing</p>
             </div>
           </div>
+          )}
         </div>
       </section>
 
