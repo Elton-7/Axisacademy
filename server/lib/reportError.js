@@ -110,7 +110,7 @@ const reportFailedResponses = (req, res, next) => {
       method: req.method,
       path: req.originalUrl,
       status: res.statusCode,
-      userId: req.user?.id,
+      userId: req.user?.userId,
     })
   })
   next()

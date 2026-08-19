@@ -94,7 +94,7 @@ app.use((err, req, res, _next) => {
     method: req.method,
     path: req.originalUrl,
     status: 500,
-    userId: req.user?.id,
+    userId: req.user?.userId,
   })
   // The message is never returned: it can carry a query or a connection string.
   res.status(500).json({
