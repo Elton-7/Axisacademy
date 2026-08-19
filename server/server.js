@@ -10,15 +10,16 @@ const { runMigrations } = require('./lib/migrator')
 const {
   reportError, requestId, reportFailedResponses, installProcessHandlers, markErrorReported,
 } = require('./lib/reportError')
+const { preflight } = require('./lib/preflight')
 const sequelize = require('./config/database')
 const seedData = require('./seeders/seed')
 
 const app = express()
 const PORT = process.env.PORT || 5000
 
-if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
-  throw new Error('JWT_SECRET must be configured in production')
-}
+// Before anything else: a production server with the wrong configuration
+// should not reach the point of accepting requests.
+preflight()
 
 /**
  * Every managed host puts a load balancer in front of the app, so the client

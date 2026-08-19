@@ -224,6 +224,25 @@ the request id.
 Nothing here depends on a vendor. Adopting Sentry or similar later means
 pointing it at these logs, or one call inside `lib/reportError.js`.
 
+## Known advisories
+
+`npm audit` reports two moderate advisories against production dependencies.
+Both were assessed on 19 August 2026 and neither is exploitable here; both
+would require a major upgrade to clear, which is a larger risk than what it
+would fix.
+
+- **uuid via sequelize** — the flaw needs a buffer passed to the generator.
+  Sequelize's `UUIDV4` does not pass one and nothing here calls uuid directly.
+  `sequelize@6.37.8` is the newest v6; clearing it means v7.
+- **react-router open redirect** — needs an attacker-controlled URL reaching
+  `<Link to>` or `navigate()`. Every target is a literal, a slug from
+  `content/services.ts`, or a static nav entry; the one query parameter
+  (`?programme=`) fills a form field and is never navigated to.
+  `react-router-dom@6.30.6` is the newest v6; the fix is in v7.
+
+Re-check both when either package is upgraded, and before adding any route that
+navigates to a value from the API or the URL.
+
 ## Still outstanding
 
 - **The mailboxes do not exist yet.** Until `info@`, `enquiries@` and
