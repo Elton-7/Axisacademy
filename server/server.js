@@ -7,6 +7,9 @@ require('dotenv').config()
 const { contactLimiter, generalApiLimiter } = require('./middleware/rateLimiter')
 const { syncDatabase } = require('./models')
 const { runMigrations } = require('./lib/migrator')
+const {
+  reportError, requestId, reportFailedResponses, installProcessHandlers, markErrorReported,
+} = require('./lib/reportError')
 const sequelize = require('./config/database')
 const seedData = require('./seeders/seed')
 
@@ -38,6 +41,9 @@ app.use(cors({
 }))
 // 'dev' is colourised and terse; 'combined' is the standard log format
 // production log shippers expect.
+// Ahead of the request log so every line can be tied to one request.
+app.use(requestId)
+app.use(reportFailedResponses)
 app.use(morgan(process.env.NODE_ENV === 'production' ? 'combined' : 'dev'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
@@ -76,17 +82,31 @@ app.use('/api/audit', require('./routes/audit'))
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).json({ error: 'Endpoint not found' })
+  res.status(404).json({ success: false, error: 'Endpoint not found' })
 })
 
-// Error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).json({ error: 'Internal server error' })
+// Error handler. Anything a route did not catch itself arrives here.
+app.use((err, req, res, _next) => {
+  markErrorReported(res)
+  reportError('request', err, {
+    requestId: req.id,
+    method: req.method,
+    path: req.originalUrl,
+    status: 500,
+    userId: req.user?.id,
+  })
+  // The message is never returned: it can carry a query or a connection string.
+  res.status(500).json({
+    success: false,
+    error: 'Internal server error',
+    requestId: req.id,
+  })
 })
 
 // Start server
 const startServer = async () => {
+  installProcessHandlers()
+
   try {
     // Order matters. sync creates tables that do not exist; migrations then
     // apply the changes it cannot make to tables that already do.

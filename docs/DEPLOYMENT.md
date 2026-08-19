@@ -114,12 +114,61 @@ makes a bad deploy recoverable, and it is only cheap to write at the time.
 rate limiting and the audit log see the real client address rather than the
 load balancer. Trusting every hop would let a client forge the header.
 
+## Backups
+
+```
+npm run backup                                          write a dump
+npm run restore -- --file <dump> --database <scratch>   rehearse a restore
+```
+
+`backup` writes a compressed `pg_dump` custom-format file to `server/backups`
+(git-ignored — a dump holds real learner records and must never be committed)
+and prunes anything older than `BACKUP_KEEP_DAYS`, default 14. The old file is
+deleted only after the new one is safely written, and a failed dump leaves no
+file behind, because a truncated dump looks like a backup and is not one.
+
+`restore` refuses to write over the database the application uses unless forced,
+creates the target, restores, and then prints row counts per table. **Those
+counts are the check, not the exit code** — `pg_restore` reports non-zero for
+harmless ownership notices too.
+
+Two things this does not do for you:
+
+- **The container has no `pg_dump`.** `server/Dockerfile` is a Node image. Run
+  backups from a machine that has the PostgreSQL client tools, or add them to
+  the image — but the client must be **at least as new as the server** (18
+  here), or `pg_dump` refuses with a version mismatch. Alpine's default
+  `postgresql-client` may be older, which is why it is not added blindly.
+- **Nothing schedules it.** Add a cron job, a Render cron service, or a Task
+  Scheduler entry. Render also takes its own daily snapshots on paid plans;
+  these dumps are independent of that and portable between hosts.
+
+Still to agree: how long backups are kept, how much data loss is acceptable if
+the database is lost, and where the dumps live — a dump beside the database it
+came from does not survive losing the machine. Rehearse a restore before you
+need one; the restore command above exists so that costs a minute.
+
+## Error monitoring
+
+Every 5xx is written as a single structured JSON line, and every request
+carries an `X-Request-Id` — echoed back in the response, and included in the
+error body — so a report of "it failed at about two o'clock" can be tied to the
+exact log line.
+
+Set `ERROR_WEBHOOK_URL` to also receive a summary of each failure by POST; any
+endpoint accepting JSON works, including a Slack or Discord incoming webhook.
+Repeats of the same failure are suppressed for five minutes so a broken
+endpoint cannot flood the channel, while every occurrence is still logged.
+
+Unhandled rejections and uncaught exceptions are reported before the process
+exits. Error messages are never returned to the client — they can carry a query
+or a connection string — so the caller sees only `Internal server error` and
+the request id.
+
+Nothing here depends on a vendor. Adopting Sentry or similar later means
+pointing it at these logs, or one call inside `lib/reportError.js`.
+
 ## Still outstanding
 
-- **Backups.** Render takes daily snapshots on paid plans. Neither the
-  retention period nor an acceptable amount of data loss has been agreed, and
-  a restore has never been rehearsed.
-- **Error monitoring.** Nothing reports a production failure. If the API starts
-  returning 500s, the first report will come from a parent.
 - **Test coverage.** Vetting, portal scoping and the safeguarding rules are
   covered by `npm test`. The admin CMS routes are not.
