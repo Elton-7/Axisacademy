@@ -13,7 +13,11 @@ exports.submitContact = [
   async (req, res) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {
-      return res.status(400).json({ success: false, errors: errors.array() })
+      return res.status(400).json({
+        success: false,
+        error: errors.array()[0]?.msg || 'Please check the form and try again',
+        errors: errors.array().map((e) => ({ field: e.path || e.param, message: e.msg })),
+      })
     }
 
     try {
@@ -39,7 +43,7 @@ exports.submitContact = [
         data: contact 
       })
     } catch (error) {
-      res.status(500).json({ error: 'Failed to submit contact form' })
+      res.status(500).json({ success: false, error: 'Failed to submit contact form' })
     }
   }
 ]
@@ -81,7 +85,7 @@ exports.getAllContacts = async (req, res) => {
       limit,
     })
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch contacts' })
+    res.status(500).json({ success: false, error: 'Failed to fetch contacts' })
   }
 }
 

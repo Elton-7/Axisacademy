@@ -109,7 +109,24 @@ after(async () => {
   serverProcess?.kill()
 })
 
+/**
+ * Served by controllers/ rather than routes/, which is how they escaped the
+ * first pass at making the responses consistent: /services and /testimonials
+ * were still returning bare arrays long after everything else was enveloped.
+ * They are listed separately because they are not full CRUD resources.
+ */
+const CONTROLLER_LISTS = ['services', 'testimonials']
+
 describe('every content route answers in one shape', () => {
+  for (const name of CONTROLLER_LISTS) {
+    test(`GET /${name} returns an enveloped list`, async () => {
+      const { status, body } = await api(`/${name}`)
+      assert.equal(status, 200)
+      assert.equal(body.success, true, `${name} did not envelope its list`)
+      assert.ok(Array.isArray(body.data), `${name} data was not an array`)
+    })
+  }
+
   for (const name of RESOURCES) {
     test(`GET /${name} returns an enveloped list`, async () => {
       const { status, body } = await api(`/${name}?limit=1`)
