@@ -90,6 +90,8 @@ export default function SEO() {
   }
 
   const canonical = `${SITE_URL}${pathname === '/' ? '' : pathname}`
+  // Must be absolute: the crawlers that read this do not resolve relative paths.
+  const previewImage = `${SITE_URL}/og-image.png`
 
   return (
     <Helmet>
@@ -101,9 +103,14 @@ export default function SEO() {
       <meta property="og:description" content={page.description} />
       <meta property="og:type" content="website" />
       <meta property="og:url" content={canonical} />
+      <meta property="og:image" content={previewImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content="Axis Learning" />
 
       <meta name="twitter:title" content={page.title} />
       <meta name="twitter:description" content={page.description} />
+      <meta name="twitter:image" content={previewImage} />
 
       <meta
         name="robots"

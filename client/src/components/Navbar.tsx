@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import axisMark from '../assets/axis-mark.png'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X, Phone, ChevronDown } from 'lucide-react'
@@ -71,11 +72,20 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between gap-6">
           {/* Logo */}
-          <Link to="/" className="group flex items-center gap-3">
-            <div className="relative flex h-12 w-12 items-center justify-center rounded-xl border-2 border-gold-500 transition-transform group-hover:scale-105">
-              <span className="font-serif text-2xl font-bold text-gold-500">A</span>
-              <div className="absolute -bottom-1 -right-1 h-4 w-4 border-b-2 border-r-2 border-gold-500" />
-            </div>
+          {/* shrink-0: the row is tight at xl, and without it flex compresses the
+              brand and its wordmark overflows into the navigation links. */}
+          <Link
+            to="/"
+            className="group flex shrink-0 items-center gap-3"
+            aria-label="Axis Learning — home"
+          >
+            <img
+              src={axisMark}
+              alt=""
+              width={48}
+              height={32}
+              className="h-8 w-auto transition-transform group-hover:scale-105"
+            />
             <div className="hidden sm:block">
               <span className="block text-lg font-semibold uppercase leading-tight tracking-[0.15em] text-gold-500">Axis</span>
               <p className="text-[0.6rem] uppercase tracking-[0.1em] text-gold-500/80">Learning</p>
