@@ -74,6 +74,10 @@ const pages: Record<string, { title: string; description: string }> = {
     title: 'Privacy & Child Safety | Axis Learning',
     description: 'Learn how Axis Learning approaches privacy, consent, learner media, and role-based access to information.',
   },
+  '/terms': {
+    title: 'Terms of Use | Axis Learning',
+    description: 'The terms covering use of this website. Nothing is booked, sold or paid for here — the agreement for teaching a learner is separate and agreed in writing.',
+  },
   '/safeguarding': {
     title: 'How We Keep Your Child Safe | Axis Learning',
     description: 'Educator vetting that must be current before assignment, home-session check-in and check-out, safeguarding concerns that reach staff only, and consent recorded before any photograph is published.',

@@ -123,7 +123,7 @@ export default function Consultation() {
               href={whatsappHref('Hello Axis Learning, I have just requested a consultation.')}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-white"
+              className="mt-8 inline-flex items-center gap-2 rounded-full bg-[#25D366] px-6 py-3 text-sm font-semibold text-navy-surface"
             >
               <MessageCircle className="h-4 w-4" /> Message us on WhatsApp
             </a>

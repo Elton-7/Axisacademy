@@ -21,6 +21,7 @@ const quickLinks = [
   { href: '/contact', label: 'Contact' },
   { href: '/safeguarding', label: 'Child Safety' },
   { href: '/privacy', label: 'Privacy & Child Safety' },
+  { href: '/terms', label: 'Terms of Use' },
 ]
 
 /**
