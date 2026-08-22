@@ -193,8 +193,9 @@ export default function Contact() {
                     )}
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-ink mb-2">First Name *</label>
+                        <label htmlFor="firstName" className="block text-sm font-medium text-ink mb-2">First Name *</label>
                         <input
+                          id="firstName"
                           {...register('firstName', { required: 'First name is required', validate: value => value.trim().length > 0 || 'First name is required', maxLength: { value: 50, message: 'First name must be 50 characters or fewer' } })}
                           className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="John"
@@ -202,8 +203,9 @@ export default function Contact() {
                         {errors.firstName && <p className="text-critical text-xs mt-1">{errors.firstName.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-ink mb-2">Last Name *</label>
+                        <label htmlFor="lastName" className="block text-sm font-medium text-ink mb-2">Last Name *</label>
                         <input
+                          id="lastName"
                           {...register('lastName', { required: 'Last name is required', validate: value => value.trim().length > 0 || 'Last name is required', maxLength: { value: 50, message: 'Last name must be 50 characters or fewer' } })}
                           className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="Doe"
@@ -214,8 +216,9 @@ export default function Contact() {
 
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-ink mb-2">Email *</label>
+                        <label htmlFor="email" className="block text-sm font-medium text-ink mb-2">Email *</label>
                         <input
+                          id="email"
                           type="email"
                           {...register('email', { 
                             required: 'Email is required',
@@ -228,8 +231,9 @@ export default function Contact() {
                         {errors.email && <p className="text-critical text-xs mt-1">{errors.email.message}</p>}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-ink mb-2">Phone</label>
+                        <label htmlFor="phone" className="block text-sm font-medium text-ink mb-2">Phone</label>
                         <input
+                          id="phone"
                           {...register('phone', { pattern: { value: /^[0-9+()\s-]{6,20}$/, message: 'Enter a valid phone number' }, maxLength: { value: 20, message: 'Phone must be 20 characters or fewer' } })}
                           className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
                           placeholder="{contact.phoneDisplay}"
@@ -238,8 +242,9 @@ export default function Contact() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-ink mb-2">Interested Programme</label>
+                      <label htmlFor="programme" className="block text-sm font-medium text-ink mb-2">Interested Programme</label>
                       <select
+                        id="programme"
                         {...register('programme')}
                         className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all bg-surface"
                       >
@@ -254,8 +259,9 @@ export default function Contact() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-ink mb-2">Subject *</label>
+                      <label htmlFor="subject" className="block text-sm font-medium text-ink mb-2">Subject *</label>
                       <input
+                        id="subject"
                         {...register('subject', { required: 'Subject is required', validate: value => value.trim().length > 0 || 'Subject is required', maxLength: { value: 100, message: 'Subject must be 100 characters or fewer' } })}
                         maxLength={100}
                         className="w-full px-4 py-3 rounded-lg border border-line focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 outline-none transition-all"
@@ -265,8 +271,9 @@ export default function Contact() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-ink mb-2">Message *</label>
+                      <label htmlFor="message" className="block text-sm font-medium text-ink mb-2">Message *</label>
                       <textarea
+                        id="message"
                         {...register('message', { required: 'Message is required', validate: value => value.trim().length > 0 || 'Message is required', maxLength: { value: 2000, message: 'Message must be 2,000 characters or fewer' } })}
                         maxLength={2000}
                         rows={5}
