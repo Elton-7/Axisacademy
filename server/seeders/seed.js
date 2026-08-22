@@ -104,6 +104,35 @@ const seedData = async () => {
         photo: '/team/naomie-kalachi.jpg',
         sortOrder: 8,
       },
+      // The Montessori coordinators, one per stage of the curriculum.
+      {
+        name: 'Wendy Claudia',
+        position: 'Montessori Infant & Toddler Coordinator',
+        category: 'Teacher',
+        photo: '/team/wendy-claudia.jpg',
+        sortOrder: 9,
+      },
+      {
+        name: 'Tabitha Wachira',
+        position: 'Montessori Early Childhood Coordinator',
+        category: 'Teacher',
+        photo: '/team/tabitha-wachira.jpg',
+        sortOrder: 10,
+      },
+      {
+        name: 'Fikirini Juma',
+        position: 'Montessori Elementary Coordinator',
+        category: 'Teacher',
+        photo: '/team/fikirini-juma.jpg',
+        sortOrder: 11,
+      },
+      {
+        name: 'Collins Isa',
+        position: 'Montessori Secondary Coordinator',
+        category: 'Teacher',
+        photo: '/team/collins-isa.jpg',
+        sortOrder: 12,
+      },
     ])
 
     await seedIfEmpty(Event, [
