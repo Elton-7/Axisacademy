@@ -95,20 +95,35 @@ export default function Enrollment() {
               {errors.parentName && <p className="mt-1 text-xs text-critical">{errors.parentName.message}</p>}
             </div>
           </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <label htmlFor="learnerAge" className="mb-2 block text-sm font-medium text-ink">Learner age</label>
-              <input id="learnerAge" type="number" min="1" max="100" {...register('learnerAge', { valueAsNumber: true, min: { value: 1, message: 'Age must be at least 1' }, max: { value: 100, message: 'Enter a valid age' } })} className={inputClass} />
-              {errors.learnerAge && <p className="mt-1 text-xs text-critical">{errors.learnerAge.message}</p>}
+              <label htmlFor="programme" className="mb-2 block text-sm font-medium text-ink">Programme *</label>
+              <select id="programme" {...register('programme', { required: 'Please select a programme' })} className={`${inputClass} bg-surface`}>
+                <option value="">Select a programme...</option>
+                <option value="Academic Learning & Homeschooling">Academic Learning & Homeschooling</option>
+                <option value="Academic Support & Tuition">Academic Support & Tuition</option>
+                <option value="African & Foreign Languages">African & Foreign Languages</option>
+                <option value="Talent & Creative Development">Talent & Creative Development</option>
+                <option value="Games & Sports">Games & Sports</option>
+                <option value="Individualised Learning Support">Individualised Learning Support</option>
+                <option value="Holiday Tuition">Holiday Tuition</option>
+                <option value="Examination Preparation">Examination Preparation</option>
+                <option value="Learner Discovery & Consultancy">Learner Discovery & Consultancy</option>
+                <option value="Other / not sure">Other / not sure</option>
+              </select>
+              {errors.programme && <p className="mt-1 text-xs text-critical">{errors.programme.message}</p>}
             </div>
-            <div className="md:col-span-2">
-              <label htmlFor="location" className="mb-2 block text-sm font-medium text-ink">Your location</label>
-              <input id="location" autoComplete="address-level2" placeholder="e.g. Garden City, Nairobi" {...register('location', { maxLength: { value: 120, message: 'Location must be 120 characters or fewer' } })} className={inputClass} />
-              {errors.location && <p className="mt-1 text-xs text-critical">{errors.location.message}</p>}
+            <div>
+              <label htmlFor="ageGroup" className="mb-2 block text-sm font-medium text-ink">Learner age group *</label>
+              <select id="ageGroup" {...register('ageGroup', { required: 'Please select an age group' })} className={`${inputClass} bg-surface`}>
+                <option value="">Select age group...</option>
+                <option value="child">Child</option>
+                <option value="teenager">Teenager</option>
+                <option value="adult">Adult</option>
+              </select>
+              {errors.ageGroup && <p className="mt-1 text-xs text-critical">{errors.ageGroup.message}</p>}
             </div>
           </div>
-
           <div className="grid gap-6 md:grid-cols-2">
             <div>
               <label htmlFor="email" className="mb-2 block text-sm font-medium text-ink">Email *</label>
@@ -119,6 +134,31 @@ export default function Enrollment() {
               <label htmlFor="phone" className="mb-2 block text-sm font-medium text-ink">Phone</label>
               <input id="phone" {...register('phone', { pattern: { value: /^[0-9+()\s-]{6,20}$/, message: 'Enter a valid phone number' }, maxLength: { value: 20, message: 'Phone must be 20 characters or fewer' } })} className={inputClass} />
               {errors.phone && <p className="mt-1 text-xs text-critical">{errors.phone.message}</p>}
+            </div>
+          </div>
+
+
+          {/* Optional detail, folded away.
+          
+              Fourteen fields used to stand between a parent and the two required
+              dropdowns, on a page that invites them to start a conversation. Closed,
+              the form asks five things; opened, it still collects everything. */}
+          <details className="rounded-2xl border border-line bg-surface-sunk p-5">
+            <summary className="cursor-pointer font-medium text-ink marker:text-gold-700">
+              Tell us more about the learner
+              <span className="ml-1 font-normal text-ink-muted">(optional — it helps us prepare)</span>
+            </summary>
+            <div className="mt-6 space-y-6">
+          <div className="grid gap-6 md:grid-cols-3">
+            <div>
+              <label htmlFor="learnerAge" className="mb-2 block text-sm font-medium text-ink">Learner age</label>
+              <input id="learnerAge" type="number" min="1" max="100" {...register('learnerAge', { valueAsNumber: true, min: { value: 1, message: 'Age must be at least 1' }, max: { value: 100, message: 'Enter a valid age' } })} className={inputClass} />
+              {errors.learnerAge && <p className="mt-1 text-xs text-critical">{errors.learnerAge.message}</p>}
+            </div>
+            <div className="md:col-span-2">
+              <label htmlFor="location" className="mb-2 block text-sm font-medium text-ink">Your location</label>
+              <input id="location" autoComplete="address-level2" placeholder="e.g. Garden City, Nairobi" {...register('location', { maxLength: { value: 120, message: 'Location must be 120 characters or fewer' } })} className={inputClass} />
+              {errors.location && <p className="mt-1 text-xs text-critical">{errors.location.message}</p>}
             </div>
           </div>
 
@@ -166,48 +206,19 @@ export default function Enrollment() {
               <input id="preferredTimes" placeholder="e.g. After 4pm" {...register('preferredTimes', { maxLength: { value: 120, message: 'Please keep this under 120 characters' } })} className={inputClass} />
             </div>
           </div>
-
           <div>
             <label htmlFor="learningNeeds" className="mb-2 block text-sm font-medium text-ink">What support would help this learner? <span className="font-normal text-ink-muted">(optional)</span></label>
             <textarea id="learningNeeds" rows={3} {...register('learningNeeds', { maxLength: { value: 2000, message: 'Please keep this under 2,000 characters' } })} className={`${inputClass} resize-none`} placeholder="Share learning goals, strengths, or challenges. Please do not include medical or diagnostic records here." />
             {errors.learningNeeds && <p className="mt-1 text-xs text-critical">{errors.learningNeeds.message}</p>}
           </div>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            <div>
-              <label htmlFor="programme" className="mb-2 block text-sm font-medium text-ink">Programme *</label>
-              <select id="programme" {...register('programme', { required: 'Please select a programme' })} className={`${inputClass} bg-surface`}>
-                <option value="">Select a programme...</option>
-                <option value="Academic Learning & Homeschooling">Academic Learning & Homeschooling</option>
-                <option value="Academic Support & Tuition">Academic Support & Tuition</option>
-                <option value="African & Foreign Languages">African & Foreign Languages</option>
-                <option value="Talent & Creative Development">Talent & Creative Development</option>
-                <option value="Games & Sports">Games & Sports</option>
-                <option value="Individualised Learning Support">Individualised Learning Support</option>
-                <option value="Holiday Tuition">Holiday Tuition</option>
-                <option value="Examination Preparation">Examination Preparation</option>
-                <option value="Learner Discovery & Consultancy">Learner Discovery & Consultancy</option>
-                <option value="Other / not sure">Other / not sure</option>
-              </select>
-              {errors.programme && <p className="mt-1 text-xs text-critical">{errors.programme.message}</p>}
-            </div>
-            <div>
-              <label htmlFor="ageGroup" className="mb-2 block text-sm font-medium text-ink">Learner age group *</label>
-              <select id="ageGroup" {...register('ageGroup', { required: 'Please select an age group' })} className={`${inputClass} bg-surface`}>
-                <option value="">Select age group...</option>
-                <option value="child">Child</option>
-                <option value="teenager">Teenager</option>
-                <option value="adult">Adult</option>
-              </select>
-              {errors.ageGroup && <p className="mt-1 text-xs text-critical">{errors.ageGroup.message}</p>}
-            </div>
-          </div>
-
           <div>
             <label htmlFor="notes" className="mb-2 block text-sm font-medium text-ink">Additional information</label>
             <textarea id="notes" rows={5} {...register('notes', { maxLength: { value: 2000, message: 'Notes must be 2,000 characters or fewer' } })} className={`${inputClass} resize-none`} placeholder="Tell us about learning goals, preferred schedule, or support needs..." />
             {errors.notes && <p className="mt-1 text-xs text-critical">{errors.notes.message}</p>}
           </div>
+            </div>
+          </details>
+
 
           <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-surface-sunk p-4 text-sm text-ink-muted">
             <input type="checkbox" {...register('contactConsent', { required: 'Please confirm that Axis may contact you' })} className="mt-0.5 h-4 w-4 rounded border-line-strong text-gold-500 focus:ring-gold-500" />

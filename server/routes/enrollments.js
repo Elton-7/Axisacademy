@@ -31,6 +31,23 @@ router.get('/', requireAuth, requireRole('admin', 'staff'), async (req, res) => 
 })
 
 // Create enrollment
+/**
+ * An untouched optional field arrives as an empty string, and Postgres will not
+ * accept one for an ENUM column.
+ *
+ * Enrollment has six ENUM columns, three of which the public form can leave
+ * blank. express-validator's checkFalsy skips validating an empty string but
+ * still passes it through, so `preferredLearningModel: ''` reached the database
+ * and came back as `invalid input value for enum`. Every parent who did not
+ * pick a learning model — the default — got a 500 on the enquiry form.
+ *
+ * Blank means "not answered", so it is stored as null.
+ */
+const blankToNull = (body) =>
+  Object.fromEntries(
+    Object.entries(body).map(([key, value]) => [key, value === '' ? null : value])
+  )
+
 router.post(
   '/',
   [
@@ -56,7 +73,7 @@ router.post(
   handleValidation,
   async (req, res) => {
     try {
-      const enrollment = await Enrollment.create(req.body)
+      const enrollment = await Enrollment.create(blankToNull(req.body))
 
       // Answer the parent immediately; alerting Axis must not be able to slow
       // that down or fail it. The enquiry is already saved either way.
@@ -66,6 +83,7 @@ router.post(
 
       res.status(201).json({ success: true, data: enrollment })
     } catch (error) {
+      console.error('Failed to create enrollment:', error)
       res.status(500).json({ success: false, error: 'Failed to create enrollment' })
     }
   }
@@ -100,7 +118,7 @@ router.post(
   async (req, res) => {
     try {
       const enrollment = await Enrollment.create({
-        ...req.body,
+        ...blankToNull(req.body),
         requestType: 'consultation',
         // The stage stays New Enquiry until Axis has actually agreed a time.
         // 'Consultation Booked' should mean a slot is in the diary, not that

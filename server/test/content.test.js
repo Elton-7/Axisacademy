@@ -104,6 +104,8 @@ after(async () => {
   await Partner.destroy({ where: { name: like }, force: true })
   await Resource.destroy({ where: { title: like }, force: true })
   await Gallery.destroy({ where: { title: like }, force: true })
+  await models.Enrollment.destroy({ where: { studentName: like }, force: true })
+  await models.Enrollment.destroy({ where: { parentName: like }, force: true })
   await User.destroy({ where: { id: Object.values(ids) } })
   await sequelize.close()
   serverProcess?.kill()
@@ -336,5 +338,65 @@ describe('gallery will not publish media without recorded consent', () => {
     })
     assert.equal(status, 201, JSON.stringify(body))
     assert.equal(body.success, true)
+  })
+})
+
+/**
+ * The public enquiry form, which is the only path a parent has.
+ *
+ * Enrollment has six ENUM columns and the form can leave three of them blank.
+ * An untouched select posts an empty string, which Postgres refuses for an
+ * ENUM, so the enquiry came back as a 500 — for every parent who did not pick
+ * a preferred learning model, which is the default.
+ */
+describe('a parent can send an enquiry', () => {
+  const base = () => ({
+    studentName: `${MARKER}Enquiry`,
+    email: 'enquiry-suite@axis.local',
+    programme: 'Academic Learning & Homeschooling',
+    ageGroup: 'child',
+    contactConsent: true,
+  })
+
+  test('the minimum an enquiry needs is accepted', async () => {
+    const { status, body } = await api('/enrollments', { method: 'POST', body: base() })
+    assert.equal(status, 201, JSON.stringify(body))
+    assert.equal(body.success, true)
+  })
+
+  test('untouched optional fields do not break it', async () => {
+    // Exactly what the form posts when only the required fields are filled.
+    const { status, body } = await api('/enrollments', {
+      method: 'POST',
+      body: {
+        ...base(),
+        preferredLearningModel: '', preferredDays: '', preferredTimes: '',
+        parentName: '', phone: '', location: '', currentSchool: '',
+        curriculum: '', gradeClass: '', subjects: '', learningNeeds: '', notes: '',
+      },
+    })
+    assert.equal(status, 201, JSON.stringify(body))
+    assert.equal(body.data.preferredLearningModel, null, 'blank should be stored as null')
+  })
+
+  test('a consultation request with no channel chosen is accepted', async () => {
+    const { status, body } = await api('/enrollments/consultation', {
+      method: 'POST',
+      body: {
+        parentName: `${MARKER}Consult`,
+        email: 'consult-suite@axis.local',
+        preferredChannel: '', phone: '', notes: '',
+        contactConsent: true,
+      },
+    })
+    assert.equal(status, 201, JSON.stringify(body))
+    assert.equal(body.data.preferredChannel, null)
+  })
+
+  test('consent is still required', async () => {
+    const { status } = await api('/enrollments', {
+      method: 'POST', body: { ...base(), contactConsent: false },
+    })
+    assert.equal(status, 400)
   })
 })
