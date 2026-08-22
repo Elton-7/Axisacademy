@@ -13,6 +13,8 @@
     --surface-sunk: 246 247 249;
     --surface-muted: 238 240 244;
     --line: 228 232 238;
+    /* Focus ring. Dark on light surfaces; see the dark block for its pair. */
+    --focus-ring: 10 22 40;
     --line-strong: 203 210 222;
     --ink: 10 22 40;
     --ink-muted: 51 69 106;
@@ -53,6 +55,7 @@
     --surface-sunk: 11 19 34;
     --surface-muted: 22 34 58;
     --line: 30 43 66;
+    --focus-ring: 201 168 76;
     --line-strong: 45 61 89;
     --ink: 238 241 246;
     --ink-muted: 169 182 205;
@@ -121,4 +124,33 @@
   .section-title {
     @apply text-3xl font-semibold text-ink sm:text-4xl;
   }
+}
+
+/**
+ * A focus indicator that can actually be seen.
+ *
+ * Every input already changed its border to gold on focus, but that is 2.29
+ * against the field behind it and 1.85 against the border it replaces — below
+ * what WCAG asks for and, more to the point, hard to spot while tabbing. The
+ * existing border change stays; this adds an outline that does not rely on it.
+ *
+ * outline rather than a ring: it follows the element's shape, is not clipped by
+ * an ancestor's overflow, and outline-offset separates it from the control.
+ *
+ * This sits after the utilities layer deliberately — 120 elements carry
+ * `outline-none`, and a base-layer rule would lose to them.
+ */
+*:focus-visible {
+  outline: 2px solid rgb(var(--focus-ring));
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+/* The dark brand surfaces keep their own pairing: the page may be in light
+   mode while the header and footer stay navy. */
+.bg-navy *:focus-visible,
+.bg-navy-900 *:focus-visible,
+nav *:focus-visible,
+footer *:focus-visible {
+  outline-color: rgb(201 168 76);
 }
