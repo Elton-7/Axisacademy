@@ -1,3 +1,4 @@
+const seedDemoPortal = require('./demoPortal')
 const { Service, Testimonial, User, Enrollment, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner } = require('../models')
 
 /**
@@ -805,6 +806,8 @@ If you are unsure, that is a normal position to be in — and not one you have t
         publishedAt: new Date('2026-07-14'),
       },
     ])
+
+    await seedDemoPortal()
 
     console.log('Seed data inserted successfully')
   } catch (error) {

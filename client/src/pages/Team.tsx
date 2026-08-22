@@ -154,7 +154,7 @@ export default function Team() {
       </section>
 
       {/* Educators Grid */}
-      <section className="py-16 bg-surface-sunk min-h-[60vh]">
+      <section className="bg-surface-sunk py-20 min-h-[60vh]">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {loading ? (
             <div className="flex justify-center items-center py-20">
@@ -186,7 +186,7 @@ export default function Team() {
               )}
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid items-stretch gap-8 sm:gap-10 md:grid-cols-2 lg:grid-cols-3">
               {filteredEducators.map((educator, index) => (
                 <EducatorCard key={educator.id} educator={educator} index={index} />
               ))}

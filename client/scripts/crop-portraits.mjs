@@ -27,7 +27,10 @@ const SRC = join(HERE, '..', 'photos-source')
 const OUT = join(HERE, '..', 'public', 'team')
 
 const RATIO = 380 / 256 // the shape the card shows
-const TARGET_W = 760 // 2x the card, so retina screens have pixels to use
+// A ceiling, not a target: a crop smaller than this is written at its own
+// size. It is high enough that no photograph here is downscaled on the way
+// out, so what the card gets is the detail the camera captured.
+const TARGET_W = 1200
 
 const PEOPLE = [
   { src: 'Ashley Ndanu.jpg', out: 'ashley-ndanu', fx: 0.4, fy: 0.27, cw: 0.95, faceAt: 0.4 },
@@ -44,6 +47,7 @@ const PEOPLE = [
   // row of interface buttons sits along the bottom. This window keeps to the
   // sharp left portion and stops above them.
   { src: 'Victor Muyekwe.jpg', out: 'victor-muyekwe', fx: 0.3, fy: 0.33, cw: 0.5, faceAt: 0.38 },
+  { src: 'laban.jpg', out: 'laban-kagiri', fx: 0.28, fy: 0.46, cw: 0.519, faceAt: 0.38 },
   { src: 'warren.jpg', out: 'warren-ndaro', fx: 0.474, fy: 0.36, cw: 0.233, faceAt: 0.36 },
 ]
 
@@ -81,7 +85,7 @@ for (const person of PEOPLE) {
       const ctx = canvas.getContext('2d')
       ctx.imageSmoothingQuality = 'high'
       ctx.drawImage(img, x, y, cw, ch, 0, 0, canvas.width, canvas.height)
-      return { data: canvas.toDataURL('image/jpeg', 0.92), w: canvas.width, h: canvas.height }
+      return { data: canvas.toDataURL('image/jpeg', 0.95), w: canvas.width, h: canvas.height }
     },
     { url, p: person, RATIO, TARGET_W }
   )
