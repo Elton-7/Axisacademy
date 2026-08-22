@@ -22,9 +22,33 @@
  *   npm run crop:team        (from client/)
  */
 import { chromium } from 'playwright-core'
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs'
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs'
 
 const DOCS = 'C:/Users/Elton/Documents'
+
+/**
+ * Original photographs, one per person, take priority over the posters.
+ *
+ * Drop a file named for the slug — amelie-mussard.jpg — into brand/photos and
+ * it is used instead of cutting that face out of a composite. Nothing else
+ * changes: same output filename, so the database rows already point at it.
+ *
+ * An original is worth having. The posters hold each photograph at between 164
+ * and 472 pixels across, where a card wants around 760 on a dense screen, and
+ * no amount of processing recovers detail that was thrown away when the poster
+ * was made.
+ */
+const ORIGINALS = new URL('../../brand/photos/', import.meta.url).pathname.replace(/^\//, '')
+
+const originalFor = (slug) => {
+  if (!existsSync(ORIGINALS)) return null
+  const match = readdirSync(ORIGINALS).find(
+    (f) => f.replace(/\.[^.]+$/, '').toLowerCase() === slug && /\.(jpe?g|png|webp)$/i.test(f)
+  )
+  return match ? ORIGINALS + match : null
+}
+
+const mimeFor = (path) => (/\.png$/i.test(path) ? 'image/png' : /\.webp$/i.test(path) ? 'image/webp' : 'image/jpeg')
 const OUT = new URL('../public/team/', import.meta.url).pathname.replace(/^\//, '')
 mkdirSync(OUT, { recursive: true })
 
@@ -110,6 +134,33 @@ for (const sheet of SHEETS) {
     const outside = Math.hypot(box.w / 2, Math.abs(person.dy) + box.h / 2) > sheet.r
     if (outside && !sheet.fill) {
       console.log(`  ${person.file}: window leaves the ring and no fill is set`)
+      continue
+    }
+
+    // An original replaces the poster crop entirely: cover the card's shape,
+    // centred, at whatever resolution the file actually has.
+    const original = originalFor(person.file)
+    if (original) {
+      const asUrl = `data:${mimeFor(original)};base64,` + readFileSync(original).toString('base64')
+      const shot = await page.evaluate(async ({ u, RATIO }) => {
+        const img = new Image()
+        img.src = u
+        await img.decode()
+        const scale = Math.min(img.width / RATIO, img.height)
+        const sw = scale * RATIO
+        const sh = scale
+        const out = document.createElement('canvas')
+        out.width = Math.round(sw)
+        out.height = Math.round(sh)
+        const ctx = out.getContext('2d')
+        ctx.imageSmoothingQuality = 'high'
+        ctx.drawImage(img, (img.width - sw) / 2, (img.height - sh) / 2, sw, sh, 0, 0, out.width, out.height)
+        return { data: out.toDataURL('image/jpeg', 0.9), w: out.width, h: out.height }
+      }, { u: asUrl, RATIO })
+
+      const buf = Buffer.from(shot.data.split(',')[1], 'base64')
+      writeFileSync(`${OUT}/${person.file}.jpg`, buf)
+      console.log(`  ${person.file.padEnd(20)} ${shot.w}x${shot.h}  ${(buf.length / 1024).toFixed(0)}KB  (original)`)
       continue
     }
 

@@ -4,6 +4,7 @@ import ServicesSection from '../components/ServicesSection'
 import LearningOptions from '../components/LearningOptions'
 import SafeguardingBand from '../components/SafeguardingBand'
 import WhyTestimonials from '../components/WhyTestimonials'
+import HowItWorks from '../components/HowItWorks'
 import CTASection from '../components/CTASection'
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <LearningOptions />
       <SafeguardingBand />
       <WhyTestimonials />
+      <HowItWorks />
       <CTASection />
     </>
   )
