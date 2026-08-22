@@ -34,12 +34,76 @@ const seedData = async () => {
       { title: 'Educational Consultancy & Learner Discovery', slug: 'learner-discovery', icon: 'Compass', description: 'For families who do not yet know what they need. We understand the learner first.', items: ['Learner discovery', 'Curriculum guidance', 'Pathway recommendation', 'Ongoing review'], order: 9 },
     ])
 
+    /**
+     * The coordinators Axis supplied on 22 August 2025, exactly as given.
+     *
+     * Name, role and photograph are what arrived, so name, role and photograph
+     * are what is here. Qualifications, experience, subjects, languages and
+     * biographies are left empty rather than filled in plausibly — the card
+     * omits an empty field, and an invented credential on a named real person
+     * is worse than a shorter profile. They are added through the admin as
+     * each person confirms their own details.
+     *
+     * `category` is the filter on the team page, so it names the subject area
+     * each person coordinates. Their actual job title lives in `position`.
+     */
     await seedIfEmpty(Educator, [
-      // Brief §18 asks for real profiles: name, photograph, qualifications,
-      // experience, subjects, languages and biography. The previous seed
-      // invented nine educators, complete with doctorates and working email
-      // addresses that do not exist. Real profiles are added through the admin
-      // dashboard.
+      {
+        name: 'Amelie Mussard',
+        position: 'Foreign Languages Coordinator',
+        category: 'Language Educator',
+        photo: '/team/amelie-mussard.jpg',
+        sortOrder: 1,
+      },
+      {
+        name: 'Humber Masese',
+        position: 'Sports & Physical Development Coordinator',
+        category: 'Coach',
+        photo: '/team/humber-masese.jpg',
+        sortOrder: 2,
+      },
+      {
+        name: 'Victor Muyekwe',
+        position: 'Performing Arts Coordinator',
+        category: 'Artist',
+        photo: '/team/victor-muyekwe.jpg',
+        sortOrder: 3,
+      },
+      {
+        name: 'Ajok Deng',
+        position: 'Creative Arts Coordinator',
+        category: 'Artist',
+        photo: '/team/ajok-deng.jpg',
+        sortOrder: 4,
+      },
+      {
+        name: 'Sunkuli Lerionka',
+        position: 'Communication & Leadership Coordinator',
+        category: 'Specialist Educator',
+        photo: '/team/sunkuli-lerionka.jpg',
+        sortOrder: 5,
+      },
+      {
+        name: 'Ashley Ndanu',
+        position: 'Technology & Innovation Coordinator',
+        category: 'Specialist Educator',
+        photo: '/team/ashley-ndanu.jpg',
+        sortOrder: 6,
+      },
+      {
+        name: 'Yoshira Audrey',
+        position: 'Inclusive Learning Coordinator — Sensory & Physical Disabilities',
+        category: 'Specialist Educator',
+        photo: '/team/yoshira-audrey.jpg',
+        sortOrder: 7,
+      },
+      {
+        name: 'Naomie Kalachi',
+        position: 'Integrated Learning Coordinator — Severe & Intellectual Disabilities',
+        category: 'Specialist Educator',
+        photo: '/team/naomie-kalachi.jpg',
+        sortOrder: 8,
+      },
     ])
 
     await seedIfEmpty(Event, [

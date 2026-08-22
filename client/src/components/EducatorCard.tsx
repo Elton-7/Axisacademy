@@ -30,7 +30,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
       <div className="p-6">
         {/* Name and Position */}
         <h3 className="text-lg font-semibold text-ink mb-1">{educator.name}</h3>
-        <p className="text-sm text-gold font-medium mb-3">{educator.position}</p>
+        <p className="text-sm text-gold-700 font-medium mb-3">{educator.position}</p>
 
         {/* Category */}
         <div className="inline-block mb-4">
