@@ -133,6 +133,44 @@ const seedData = async () => {
         photo: '/team/collins-isa.jpg',
         sortOrder: 12,
       },
+      // The CBC coordinators, one per stage of the national curriculum. Two
+      // names arrived with a trailing full stop on the supplied graphic; that
+      // is a typo in the artwork rather than part of the name.
+      {
+        name: 'Gloria Lakeiisha',
+        position: 'CBC Pre-Primary Coordinator',
+        category: 'Teacher',
+        photo: '/team/gloria-lakeiisha.jpg',
+        sortOrder: 13,
+      },
+      {
+        name: 'Mulati Mike',
+        position: 'CBC Lower Primary Coordinator',
+        category: 'Teacher',
+        photo: '/team/mulati-mike.jpg',
+        sortOrder: 14,
+      },
+      {
+        name: 'Adura Moses',
+        position: 'CBC Upper Primary Coordinator',
+        category: 'Teacher',
+        photo: '/team/adura-moses.jpg',
+        sortOrder: 15,
+      },
+      {
+        name: 'Martha Wesonga',
+        position: 'CBC Junior Secondary Coordinator',
+        category: 'Teacher',
+        photo: '/team/martha-wesonga.jpg',
+        sortOrder: 16,
+      },
+      {
+        name: 'Felistus Chepkemoi',
+        position: 'CBC Senior Secondary Coordinator',
+        category: 'Teacher',
+        photo: '/team/felistus-chepkemoi.jpg',
+        sortOrder: 17,
+      },
     ])
 
     await seedIfEmpty(Event, [
