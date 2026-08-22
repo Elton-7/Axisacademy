@@ -454,6 +454,14 @@ export const portalApi = {
       lessonNotes?: string
       concernFlagged?: boolean
       concernNote?: string
+      /**
+       * Required before a home-based session can be marked attended. The API
+       * has always accepted these; the type did not list them, so nothing ever
+       * sent them and no home visit could be recorded as attended.
+       */
+      checkInAt?: string | null
+      checkOutAt?: string | null
+      adultPresent?: boolean
     }
   ) {
     const { data } = await api.patch<ApiResponse<PortalSession>>(`/portal/sessions/${id}`, payload)

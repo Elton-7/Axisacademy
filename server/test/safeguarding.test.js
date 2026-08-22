@@ -393,3 +393,91 @@ describe('erasing a learner is reserved to administrators', () => {
     assert.ok(await Learner.findByPk(ids.learnerA))
   })
 })
+
+/**
+ * The fields a home visit has to record.
+ *
+ * The API enforced this from the start, but the portal sent a status on its
+ * own and its client type did not even list these three fields — so every
+ * attempt to mark a home visit attended was refused, and the educator saw
+ * "Could not save". The rule was unsatisfiable through the only interface an
+ * educator has.
+ */
+describe('a home visit records who was there', () => {
+  let sessionId
+
+  // Earlier tests in this file withdraw clearance and end assignments, so this
+  // block restores both rather than inheriting whatever they left behind.
+  before(async () => {
+    // Clearing requires the whole record, not just a certificate number —
+    // identity and references have to be dated too.
+    await api(`/learners/vetting/${ids.tutor1}`, {
+      method: 'PUT',
+      token: tokens.admin,
+      body: {
+        status: 'Cleared',
+        goodConductNumber: 'GC-HOMEVISIT',
+        goodConductExpiresOn: clearanceFor(),
+        identityVerifiedOn: '2026-01-10',
+        referencesCheckedOn: '2026-01-10',
+      },
+    })
+    await api(`/learners/${ids.learnerA}/educators`, {
+      method: 'POST', token: tokens.admin, body: { educatorUserId: ids.tutor1 },
+    })
+  })
+
+  test('a home-based session can be scheduled', async () => {
+    const result = await api(`/learners/${ids.learnerA}/sessions`, {
+      method: 'POST',
+      token: tokens.admin,
+      body: {
+        educatorUserId: ids.tutor1,
+        subject: 'Home Visit Suite',
+        scheduledFor: new Date(Date.now() + 3600_000).toISOString(),
+        deliveryMode: 'home-based',
+      },
+    })
+    assert.equal(result.status, 201, JSON.stringify(result.body))
+    sessionId = result.body.data.id
+  })
+
+  test('attended is refused without the times', async () => {
+    const result = await api(`/portal/sessions/${sessionId}`, {
+      method: 'PATCH', token: tokens.tutor1, body: { status: 'Attended' },
+    })
+    assert.equal(result.status, 400)
+    assert.match(result.body.error, /arrival and departure/i)
+  })
+
+  test('attended is refused when no adult is confirmed', async () => {
+    const result = await api(`/portal/sessions/${sessionId}`, {
+      method: 'PATCH',
+      token: tokens.tutor1,
+      body: {
+        status: 'Attended',
+        checkInAt: new Date().toISOString(),
+        checkOutAt: new Date(Date.now() + 3600_000).toISOString(),
+      },
+    })
+    assert.equal(result.status, 400)
+    assert.match(result.body.error, /responsible adult/i)
+  })
+
+  test('with all three it is accepted and stored', async () => {
+    const checkInAt = new Date().toISOString()
+    const checkOutAt = new Date(Date.now() + 3600_000).toISOString()
+    const result = await api(`/portal/sessions/${sessionId}`, {
+      method: 'PATCH',
+      token: tokens.tutor1,
+      body: { status: 'Attended', checkInAt, checkOutAt, adultPresent: true },
+    })
+    assert.equal(result.status, 200, JSON.stringify(result.body))
+
+    const saved = await Session.findByPk(sessionId)
+    assert.equal(saved.status, 'Attended')
+    assert.equal(saved.adultPresent, true)
+    assert.ok(saved.checkInAt, 'arrival time was not stored')
+    assert.ok(saved.checkOutAt, 'departure time was not stored')
+  })
+})
