@@ -171,6 +171,35 @@ const seedData = async () => {
         photo: '/team/felistus-chepkemoi.jpg',
         sortOrder: 17,
       },
+      // The Cambridge coordinators, one per stage of that curriculum.
+      {
+        name: 'Laban Kagiri',
+        position: 'Cambridge Early Years Coordinator',
+        category: 'Teacher',
+        photo: '/team/laban-kagiri.jpg',
+        sortOrder: 18,
+      },
+      {
+        name: 'Daisy Luvanda',
+        position: 'Cambridge Primary Coordinator',
+        category: 'Teacher',
+        photo: '/team/daisy-luvanda.jpg',
+        sortOrder: 19,
+      },
+      {
+        name: 'Warren Ndaro',
+        position: 'Cambridge Lower Secondary Coordinator',
+        category: 'Teacher',
+        photo: '/team/warren-ndaro.jpg',
+        sortOrder: 20,
+      },
+      {
+        name: 'Victory Adikinyi',
+        position: 'Cambridge Upper Secondary Coordinator — IGCSE & O Level',
+        category: 'Teacher',
+        photo: '/team/victory-adikinyi.jpg',
+        sortOrder: 21,
+      },
     ])
 
     await seedIfEmpty(Event, [
