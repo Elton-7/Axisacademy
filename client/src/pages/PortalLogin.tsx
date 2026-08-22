@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, Eye, EyeOff, GraduationCap, Loader2, LogIn, ShieldCheck, Users } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { apiErrorMessage } from '../utils/apiError'
 import { authApi } from '../services/apiClient'
 
 type PortalRole = 'student' | 'tutor'
@@ -49,9 +50,12 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
       toast.success(`Welcome to your ${role} portal`)
       navigate(config.dashboard, { replace: true })
     } catch (requestError: unknown) {
+      // The wrong-portal message is raised locally and is more useful than
+      // anything the API returns; everything else comes from the server, which
+      // knows whether this was a bad password or the rate limiter.
       const message = requestError instanceof Error && requestError.message.startsWith('This account')
         ? requestError.message
-        : 'We could not sign you in. Check your email and password, then try again.'
+        : apiErrorMessage(requestError, 'We could not sign you in. Check your email and password, then try again.')
       setError(message)
       toast.error(message)
     } finally {

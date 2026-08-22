@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { LockKeyhole, Loader2, LogIn, AlertCircle, Eye, EyeOff, ShieldCheck, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { apiErrorMessage } from '../utils/apiError'
 import { authApi } from '../services/apiClient'
 
 export default function AdminLogin() {
@@ -23,7 +24,16 @@ export default function AdminLogin() {
       toast.success('Welcome back')
       navigate('/admin', { replace: true })
     } catch (requestError: unknown) {
-      const message = 'Invalid email or password. Please try again.'
+      /**
+       * Say what the server said.
+       *
+       * A fixed "invalid email or password" is wrong whenever the refusal was
+       * something else — most often the rate limiter, which stops sign-ins
+       * after six attempts. Being told the password is wrong when it is not
+       * invites more attempts, which is exactly what the limiter is there to
+       * prevent, and sends people off to reset a password that worked.
+       */
+      const message = apiErrorMessage(requestError, 'Invalid email or password. Please try again.')
       setError(message)
       toast.error(message)
     } finally {
