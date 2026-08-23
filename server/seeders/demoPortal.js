@@ -241,7 +241,10 @@ const seedDemoPortal = async () => {
     },
   ])
 
-  console.log(`Demo portal data created for ${DEMO_LEARNER} (development only)`)
+  console.log(
+    `Demo portal data created for ${DEMO_LEARNER} — a learner who does not exist. ` +
+      'Remove SEED_DEMO_PORTAL and clear this record before enrolling a real family.'
+  )
 }
 
 module.exports = seedDemoPortal

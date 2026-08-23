@@ -1,3 +1,4 @@
+const { COORDINATOR_BIOS } = require('../content/coordinatorBios')
 const seedDemoPortal = require('./demoPortal')
 const { Service, Testimonial, User, Enrollment, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner } = require('../models')
 
@@ -48,7 +49,19 @@ const seedData = async () => {
      * `category` is the filter on the team page, so it names the subject area
      * each person coordinates. Their actual job title lives in `position`.
      */
-    await seedIfEmpty(Educator, [
+    /**
+     * The remit sentence is attached here, at insert time.
+     *
+     * A migration also backfills it, but migrations run before seeding, so on a
+     * database created from scratch that migration finds an empty table, updates
+     * nothing, and is then marked applied for good. Every fresh deploy would
+     * have shipped twenty-one coordinators with no description of what they do.
+     * The migration now only repairs databases seeded before the text existed.
+     */
+    const withBio = (rows) =>
+      rows.map((row) => ({ ...row, biography: row.biography ?? COORDINATOR_BIOS[row.name] }))
+
+    await seedIfEmpty(Educator, withBio([
       {
         name: 'Amelie Mussard',
         position: 'Foreign Languages Coordinator',
@@ -201,7 +214,7 @@ const seedData = async () => {
         photo: '/team/victory-adikinyi.jpg',
         sortOrder: 21,
       },
-    ])
+    ]))
 
     await seedIfEmpty(Event, [
       {
