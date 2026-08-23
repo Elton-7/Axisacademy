@@ -70,12 +70,17 @@ services:
 
       # The browser blocks every API call whose origin is not listed here, so
       # this must match the deployed site exactly, scheme included.
+      #
+      # This is the Netlify address while the site is being reviewed, because
+      # axislearning.co.ke has not been bought yet and a CORS_ORIGIN pointing at
+      # a domain that does not resolve blocks every request the site makes.
+      # Change both of these to the real origin the day the domain lands.
       - key: CORS_ORIGIN
-        value: https://www.axislearning.co.ke
+        value: https://axis-academy-site.netlify.app
 
       # Used in notification emails to link back to the admin dashboard.
       - key: SITE_URL
-        value: https://www.axislearning.co.ke
+        value: https://axis-academy-site.netlify.app
 
       # Optional. A JSON POST endpoint (Slack/Discord incoming webhook works)
       # that receives a summary of each 5xx. Failures are logged either way.
@@ -83,9 +88,29 @@ services:
         sync: false
 
       # Set in the dashboard rather than here: these are secrets.
+      #
+      # The tutor and student accounts are as necessary as the admin one. The
+      # seeder creates each account only when both its address and its hash are
+      # present, so leaving these out means the educator and parent portals have
+      # nobody who can sign in, and neither can be reviewed.
       - key: ADMIN_EMAIL
         sync: false
       - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: TUTOR_EMAIL
+        sync: false
+      - key: TUTOR_PASSWORD_HASH
+        sync: false
+      - key: STUDENT_EMAIL
+        sync: false
+      - key: STUDENT_PASSWORD_HASH
+        sync: false
+
+      # Set to true ONLY while the site is under review, so the two portals
+      # demonstrate with a worked example instead of an empty state. It puts a
+      # learner who does not exist into the database. Remove it, and clear that
+      # record, before any real family is enrolled.
+      - key: SEED_DEMO_PORTAL
         sync: false
       - key: SMTP_HOST
         sync: false
