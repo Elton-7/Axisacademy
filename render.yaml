@@ -71,16 +71,21 @@ services:
       # The browser blocks every API call whose origin is not listed here, so
       # this must match the deployed site exactly, scheme included.
       #
-      # This is the Netlify address while the site is being reviewed, because
-      # axislearning.co.ke has not been bought yet and a CORS_ORIGIN pointing at
-      # a domain that does not resolve blocks every request the site makes.
-      # Change both of these to the real origin the day the domain lands.
+      # All three origins the site is reachable on are listed, deliberately.
+      # DNS does not cut over everywhere at once, so during the switch some
+      # visitors arrive on the apex, some on www, and the Netlify address stays
+      # useful as a fallback while records propagate. Listing only the final one
+      # would break the site for everyone who has not picked up the new records
+      # yet. Drop the netlify.app entry once the domain is settled.
+      #
+      # No spaces after the commas is not a style preference — the server trims
+      # them now, but older deploys did not.
       - key: CORS_ORIGIN
-        value: https://axis-academy-site.netlify.app
+        value: https://www.axislearning.co.ke,https://axislearning.co.ke,https://axis-academy-site.netlify.app
 
       # Used in notification emails to link back to the admin dashboard.
       - key: SITE_URL
-        value: https://axis-academy-site.netlify.app
+        value: https://www.axislearning.co.ke
 
       # Optional. A JSON POST endpoint (Slack/Discord incoming webhook works)
       # that receives a summary of each 5xx. Failures are logged either way.

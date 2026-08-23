@@ -36,8 +36,21 @@ if (process.env.NODE_ENV === 'production') {
 
 // Middleware
 app.use(helmet())
+/**
+ * Origins are trimmed, because this value is typed into a hosting dashboard.
+ *
+ * A bare split kept the space in "a.example, b.example" as part of the second
+ * origin, so it matched nothing. The site then loaded and failed every request
+ * with a CORS error that names neither the space nor the variable — one of the
+ * worst faults to diagnose from the browser console, caused by the most natural
+ * possible way to type a list.
+ */
+const allowedOrigins = process.env.CORS_ORIGIN?.split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN?.split(',') || 'http://localhost:5173',
+  origin: allowedOrigins?.length ? allowedOrigins : 'http://localhost:5173',
   credentials: true
 }))
 // 'dev' is colourised and terse; 'combined' is the standard log format
