@@ -1,16 +1,20 @@
+headersOrigin = "config"
+redirectsOrigin = "config"
 plugins = []
-headers = []
-redirects = []
 
 [functions]
 
 [functions."*"]
 
 [build]
-publish = "C:\\Users\\Elton\\Desktop\\axis-academy\\axis-academy"
-publishOrigin = "default"
+publish = "C:\\Users\\Elton\\Desktop\\axis-academy\\axis-academy\\client\\dist"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npm run build"
+base = "C:\\Users\\Elton\\Desktop\\axis-academy\\axis-academy\\client"
 
 [build.environment]
+NODE_VERSION = "20"
 
 [build.processing]
 
@@ -23,3 +27,79 @@ publishOrigin = "default"
 [build.processing.js]
 
 [build.services]
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+X-Robots-Tag = "noindex, nofollow"
+X-Frame-Options = "SAMEORIGIN"
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+[[headers]]
+for = "/assets/*"
+
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+for = "/*.html"
+
+[headers.values]
+Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+for = "/sitemap.xml"
+
+[headers.values]
+Cache-Control = "public, max-age=3600"
+
+[[redirects]]
+from = "/admin"
+to = "/app.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/admin/*"
+to = "/app.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/portal/*"
+to = "/app.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/*"
+to = "/app.html"
+status = 404.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
