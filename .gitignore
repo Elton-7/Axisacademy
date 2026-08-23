@@ -36,3 +36,10 @@ Thumbs.db
 # Editor files
 .vscode/
 *.swp
+
+# Build caches and local tool state. These are regenerated on every build and
+# differ per machine; committing them adds thousands of lines of churn to
+# diffs and can serve a stale dependency graph to whoever checks the repo out.
+client/.vite/
+client/dist-ssr/
+.netlify/
