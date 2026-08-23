@@ -82,11 +82,32 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
       </div>
 
       <div className="relative flex flex-1 flex-col p-6 pt-8">
+        {/*
+          * A navy seal rather than an outlined chip.
+          *
+          * The first version was a thin gold glyph on a white square sitting on
+          * a white card, and it read as a small utility marker — at 24px the
+          * stroke all but disappeared. Filling it with the brand navy and
+          * setting the glyph in gold gives the mark real presence and uses the
+          * two colours the identity is built from. The ring is the card's own
+          * surface colour, which cuts the seal cleanly out of the photograph
+          * edge it overlaps whatever is behind it.
+          *
+          * The pair inverts in dark mode. Navy is fixed in both themes, so on a
+          * dark card the navy seal lost its edge entirely and left the glyph
+          * apparently floating. Gold fill with a navy glyph is the same two
+          * brand colours the other way round, and it carries against the dark
+          * ground the way navy carries against the light one.
+          *
+          * Decorative, so it stays hidden from screen readers: the role line
+          * directly beneath already says what this icon stands for, and
+          * announcing both would just repeat it.
+          */}
         <span
-          className="absolute -top-7 left-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-line bg-surface shadow-md transition-colors duration-500 group-hover:border-gold/50 group-hover:bg-tint-amber"
+          className="absolute -top-7 left-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-navy-900 shadow-lg ring-4 ring-surface transition-transform duration-500 ease-out group-hover:scale-105 dark:bg-gold-500"
           aria-hidden="true"
         >
-          <Icon className="h-6 w-6 text-gold-700" />
+          <Icon className="h-6 w-6 text-gold-500 dark:text-navy-900" strokeWidth={2} />
         </span>
 
         <h3 className="text-lg font-semibold leading-tight text-ink">{educator.name}</h3>
