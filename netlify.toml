@@ -41,6 +41,15 @@
 [[headers]]
   for = "/*"
   [headers.values]
+    # REMOVE THIS LINE AT LAUNCH.
+    #
+    # While the site is being reviewed it lives on a public netlify.app address
+    # and the real domain does not exist yet. Without this, Google is free to
+    # index the review copy, and axislearning.co.ke would later launch competing
+    # against an established duplicate of itself. robots.txt still says Allow,
+    # but a header cannot be ignored the way a robots directive can be, and it
+    # covers every asset rather than only crawlable pages.
+    X-Robots-Tag = "noindex, nofollow"
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
