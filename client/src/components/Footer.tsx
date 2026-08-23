@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Phone, Mail, Globe, Facebook, Instagram } from 'lucide-react'
 import NewsletterSignup from './NewsletterSignup'
 import { contact, SITE_URL, socialLinks } from '../content/contact'
+import { portalLinks } from '../content/portals'
 
 const quickLinks = [
   { href: '/about', label: 'About' },
@@ -22,17 +23,6 @@ const quickLinks = [
   { href: '/safeguarding', label: 'Child Safety' },
   { href: '/privacy', label: 'Privacy & Child Safety' },
   { href: '/terms', label: 'Terms of Use' },
-]
-
-/**
- * All three entrances sit together. Leaving the staff one unlinked hid it from
- * Axis without hiding it from anyone else — the panel is protected by the API
- * refusing unauthorised requests, not by the absence of a link.
- */
-const portalLinks = [
-  { href: '/portal/student', label: 'Parent & Learner Portal' },
-  { href: '/portal/tutor', label: 'Educator Portal' },
-  { href: '/admin/login', label: 'Staff Login' },
 ]
 
 /**

@@ -2,17 +2,20 @@ import { useState, useEffect, useRef } from 'react'
 import axisMark from '../assets/axis-mark.svg'
 import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Menu, X, Phone, ChevronDown } from 'lucide-react'
+import { Menu, X, Phone, ChevronDown, LogIn } from 'lucide-react'
 import { services } from '../content/services'
 import ThemeToggle from './ThemeToggle'
 import { contact, telHref } from '../content/contact'
+import { portalLinks } from '../content/portals'
 
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/learning-paths', label: 'Learning Paths' },
   { href: '/educator-network', label: 'Educators' },
-  { href: '/locations', label: 'Locations' },
+  // Locations has come out of the header and stays in the footer. The bar was
+  // eleven items wide before the portal entrance was added to it, and a page
+  // listing two centres earns its place less than the way in to an account.
   { href: '/events', label: 'Events' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/resources', label: 'Resources' },
@@ -20,11 +23,39 @@ const navLinks = [
   { href: '/contact', label: 'Contact' },
 ]
 
+/** Closes an open panel when the pointer goes elsewhere, or Escape is pressed. */
+function useDismissOnOutside(
+  isOpen: boolean,
+  ref: React.RefObject<HTMLDivElement>,
+  close: () => void
+) {
+  useEffect(() => {
+    if (!isOpen) return
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) close()
+    }
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') close()
+    }
+
+    document.addEventListener('mousedown', handlePointerDown)
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown)
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen])
+}
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isServicesOpen, setIsServicesOpen] = useState(false)
+  const [isPortalOpen, setIsPortalOpen] = useState(false)
   const servicesRef = useRef<HTMLDivElement>(null)
+  const portalRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -36,30 +67,19 @@ export default function Navbar() {
   useEffect(() => {
     setIsMobileOpen(false)
     setIsServicesOpen(false)
+    setIsPortalOpen(false)
   }, [location])
 
-  // Close the services dropdown on outside click or Escape.
-  useEffect(() => {
-    if (!isServicesOpen) return
-
-    const handlePointerDown = (event: MouseEvent) => {
-      if (servicesRef.current && !servicesRef.current.contains(event.target as Node)) {
-        setIsServicesOpen(false)
-      }
-    }
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsServicesOpen(false)
-    }
-
-    document.addEventListener('mousedown', handlePointerDown)
-    document.addEventListener('keydown', handleKeyDown)
-    return () => {
-      document.removeEventListener('mousedown', handlePointerDown)
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [isServicesOpen])
+  // Both dropdowns close on an outside click or Escape, through the same hook
+  // rather than two copies of the same listeners.
+  useDismissOnOutside(isServicesOpen, servicesRef, () => setIsServicesOpen(false))
+  useDismissOnOutside(isPortalOpen, portalRef, () => setIsPortalOpen(false))
 
   const isServicesActive = location.pathname.startsWith('/services')
+  const isPortalActive = location.pathname.startsWith('/portal') || location.pathname.startsWith('/admin')
+  // Found rather than hard-coded, so reordering the list cannot silently
+  // move the portal entrance somewhere else.
+  const educatorsIndex = navLinks.findIndex((link) => link.href === '/educator-network')
 
   return (
     <nav
@@ -152,7 +172,59 @@ export default function Navbar() {
               </AnimatePresence>
             </div>
 
-            {navLinks.slice(2).map((link) => (
+            {/* Up to and including Educators, then the portal entrance. */}
+            {navLinks.slice(2, educatorsIndex + 1).map((link) => (
+              <NavItem key={link.href} link={link} pathname={location.pathname} />
+            ))}
+
+            {/*
+              * The way in to an account had no place in the header at all: a
+              * parent returning to check their child's progress had to scroll
+              * to the foot of the page to find the link. It sits beside
+              * Educators because that is where someone already looking for
+              * people rather than programmes is reading.
+              */}
+            <div ref={portalRef} className="relative">
+              <button
+                onClick={() => setIsPortalOpen((open) => !open)}
+                aria-expanded={isPortalOpen}
+                aria-haspopup="true"
+                className={`flex items-center gap-1 whitespace-nowrap text-[0.8125rem] font-medium uppercase tracking-tight transition-colors ${
+                  isPortalActive ? 'text-gold-500' : 'text-white/90 hover:text-gold-500'
+                }`}
+              >
+                Portal
+                <ChevronDown className={`h-4 w-4 transition-transform ${isPortalOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {isPortalOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute left-1/2 top-full z-50 mt-4 w-[22rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-navy-900/98 p-2 shadow-2xl backdrop-blur-xl"
+                  >
+                    {portalLinks.map((portal) => (
+                      <Link
+                        key={portal.href}
+                        to={portal.href}
+                        className="flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-surface/5"
+                      >
+                        <LogIn className="mt-0.5 h-4 w-4 flex-shrink-0 text-gold-500" />
+                        <span>
+                          <span className="block text-sm font-medium text-white">{portal.label}</span>
+                          <span className="block text-xs leading-snug text-white/50">{portal.description}</span>
+                        </span>
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {navLinks.slice(educatorsIndex + 1).map((link) => (
               <NavItem key={link.href} link={link} pathname={location.pathname} />
             ))}
           </div>
@@ -220,7 +292,30 @@ export default function Navbar() {
                 </div>
               </div>
 
-              {navLinks.slice(2).map((link) => (
+              {navLinks.slice(2, educatorsIndex + 1).map((link) => (
+                <MobileNavItem key={link.href} link={link} pathname={location.pathname} />
+              ))}
+
+              {/* Expanded rather than collapsed: on a phone the portal is the
+                  most likely reason a returning parent opened this menu. */}
+              <div>
+                <p className={`py-2 text-sm font-medium uppercase tracking-wide ${isPortalActive ? 'text-gold-500' : 'text-white/90'}`}>
+                  Portal
+                </p>
+                <div className="mt-1 space-y-1 border-l border-white/10 pl-4">
+                  {portalLinks.map((portal) => (
+                    <Link
+                      key={portal.href}
+                      to={portal.href}
+                      className="block py-1.5 text-sm text-white/60 hover:text-gold-500"
+                    >
+                      {portal.label}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
+              {navLinks.slice(educatorsIndex + 1).map((link) => (
                 <MobileNavItem key={link.href} link={link} pathname={location.pathname} />
               ))}
 
