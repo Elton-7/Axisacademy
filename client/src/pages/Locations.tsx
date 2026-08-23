@@ -289,6 +289,26 @@ export default function Locations() {
             ))}
           </div>
 
+          {/*
+            * Brief 16 names this exact reassurance as a major selling point,
+            * and it answers the thing a parent actually does with a list of
+            * places: scan for their own, fail to find it, and assume Axis
+            * cannot reach them. It sits above the county list rather than
+            * below it, so it is read before that conclusion is drawn.
+            */}
+          <div className="mt-10 rounded-2xl border border-gold/30 bg-tint-amber p-6 sm:p-8">
+            <p className="text-lg font-semibold text-ink">Don&rsquo;t see your location listed?</p>
+            <p className="mt-2 max-w-2xl leading-relaxed text-ink-muted">
+              Don&rsquo;t worry. Axis connects families with educators through our growing national
+              educator network, so where you live is rarely the obstacle it appears to be. Tell us
+              where you are and we will tell you what is possible there.
+            </p>
+            <Link to="/enroll" className="btn-primary mt-5 inline-flex items-center gap-2">
+              Tell us where you are
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+          </div>
+
           <div className="mt-10">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-ink-muted">
               All 47 counties
