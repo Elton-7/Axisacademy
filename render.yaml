@@ -1,0 +1,135 @@
+# Deployment for the Axis Learning API and database.
+#
+# Render is used here because it hosts a Node service and a managed PostgreSQL
+# instance together, issues TLS certificates automatically, and takes daily
+# backups on paid plans.
+#
+# This runs the app directly on Node rather than building a container. The
+# server has no system dependencies beyond Node and a PostgreSQL client, so a
+# container bought nothing here and cost a build step. server/Dockerfile is
+# kept for hosts that require an image — see docs/DEPLOYMENT.md, and test it
+# before relying on it, because this deploy does not exercise it.
+#
+# The front end is NOT deployed from here. It is a static build on Netlify,
+# configured by netlify.toml at the repository root.
+#
+# Before the first deploy, set in the Render dashboard:
+#   JWT_SECRET             a long random value, not the development one
+#   ADMIN_EMAIL            and ADMIN_PASSWORD_HASH (bcrypt, generated locally)
+#   SMTP_*                 if enquiry notifications should send
+#   CORS_ORIGIN            the real site origin, once the domain resolves
+
+services:
+  - type: web
+    name: axis-learning-api
+    runtime: node
+    rootDir: server
+    plan: starter
+    # npm ci installs from the lockfile, so a deploy cannot quietly pick up a
+    # different dependency tree from the one the tests ran against.
+    buildCommand: npm ci
+    startCommand: node server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      # Creates missing tables but never alters existing ones. `alter` on a
+      # live database can rewrite columns holding learner records. Changes to
+      # existing tables come from server/migrations/ instead, which run at
+      # startup — see docs/DEPLOYMENT.md. Set SKIP_MIGRATIONS=true here if this
+      # service is ever scaled beyond one instance.
+      - key: DB_SYNC
+        value: safe
+
+      # Database connection, supplied by the managed instance below.
+      - key: DB_HOST
+        fromDatabase:
+          name: axis-learning-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: axis-learning-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: axis-learning-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: axis-learning-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: axis-learning-db
+          property: password
+
+      # Generated once by Render and never printed in a build log.
+      - key: JWT_SECRET
+        generateValue: true
+
+      # The browser blocks every API call whose origin is not listed here, so
+      # this must match the deployed site exactly, scheme included.
+      #
+      # All three origins the site is reachable on are listed, deliberately.
+      # DNS does not cut over everywhere at once, so during the switch some
+      # visitors arrive on the apex, some on www, and the Netlify address stays
+      # useful as a fallback while records propagate. Listing only the final one
+      # would break the site for everyone who has not picked up the new records
+      # yet. Drop the netlify.app entry once the domain is settled.
+      #
+      # No spaces after the commas is not a style preference — the server trims
+      # them now, but older deploys did not.
+      - key: CORS_ORIGIN
+        value: https://www.axislearning.co.ke,https://axislearning.co.ke,https://axis-academy-site.netlify.app
+
+      # Used in notification emails to link back to the admin dashboard.
+      - key: SITE_URL
+        value: https://www.axislearning.co.ke
+
+      # Optional. A JSON POST endpoint (Slack/Discord incoming webhook works)
+      # that receives a summary of each 5xx. Failures are logged either way.
+      - key: ERROR_WEBHOOK_URL
+        sync: false
+
+      # Set in the dashboard rather than here: these are secrets.
+      #
+      # The tutor and student accounts are as necessary as the admin one. The
+      # seeder creates each account only when both its address and its hash are
+      # present, so leaving these out means the educator and parent portals have
+      # nobody who can sign in, and neither can be reviewed.
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD_HASH
+        sync: false
+      - key: TUTOR_EMAIL
+        sync: false
+      - key: TUTOR_PASSWORD_HASH
+        sync: false
+      - key: STUDENT_EMAIL
+        sync: false
+      - key: STUDENT_PASSWORD_HASH
+        sync: false
+
+      # Set to true ONLY while the site is under review, so the two portals
+      # demonstrate with a worked example instead of an empty state. It puts a
+      # learner who does not exist into the database. Remove it, and clear that
+      # record, before any real family is enrolled.
+      - key: SEED_DEMO_PORTAL
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: NOTIFICATION_TO
+        sync: false
+      - key: NOTIFICATION_FROM
+        sync: false
+
+databases:
+  - name: axis-learning-db
+    databaseName: axis_learning
+    user: axis
+    plan: basic-256mb

@@ -1,0 +1,156 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Light is the base palette; `.dark` redefines only the tokens. Values are bare
+ * RGB channels so Tailwind's opacity modifiers (text-navy/70, bg-white/10) keep
+ * working in both themes.
+ */
+@layer base {
+  :root {
+    --surface: 255 255 255;
+    --surface-sunk: 246 247 249;
+    --surface-muted: 238 240 244;
+    --line: 228 232 238;
+    /* Focus ring. Dark on light surfaces; see the dark block for its pair. */
+    --focus-ring: 10 22 40;
+    --line-strong: 203 210 222;
+    --ink: 10 22 40;
+    --ink-muted: 51 69 106;
+    --ink-faint: 107 126 166;
+    --gold-50: 251 248 239;
+    --gold-600: 171 139 58;
+    --gold-700: 122 98 38;
+
+    /* Accent tints. Pale washes in light, deep muted versions of the same hue
+       in dark — so a coloured panel stays recognisably that colour instead of
+       becoming a bright patch on a dark page. */
+    --tint-blue: 239 246 255;
+    --tint-emerald: 236 253 245;
+    --tint-teal: 240 253 250;
+    --tint-purple: 250 245 255;
+    --tint-rose: 255 241 242;
+    --tint-amber: 255 251 235;
+    --tint-orange: 255 247 237;
+    --tint-indigo: 238 242 255;
+    --tint-yellow: 254 252 232;
+    --tint-sky: 240 249 255;
+    --tint-violet: 245 243 255;
+    --tint-critical: 254 242 242;
+    --tint-positive: 240 253 244;
+
+    /* Foreground and edge for the status tints. */
+    --on-critical: 185 28 28;
+    --on-positive: 21 128 61;
+    --on-warning: 180 83 9;
+    --on-info: 29 78 216;
+    --line-critical: 254 202 202;
+    --line-positive: 187 247 208;
+    --line-warning: 253 230 138;
+  }
+
+  .dark {
+    --surface: 16 26 44;
+    --surface-sunk: 11 19 34;
+    --surface-muted: 22 34 58;
+    --line: 30 43 66;
+    --focus-ring: 201 168 76;
+    --line-strong: 45 61 89;
+    --ink: 238 241 246;
+    --ink-muted: 169 182 205;
+    --ink-faint: 135 148 171;
+    /* Gold needs lifting on a dark ground to stay legible as a link colour. */
+    --gold-50: 30 26 16;
+    --gold-600: 212 185 106;
+    --gold-700: 224 198 124;
+
+    --tint-blue: 20 33 56;
+    --tint-emerald: 15 38 32;
+    --tint-teal: 14 37 38;
+    --tint-purple: 33 25 50;
+    --tint-rose: 45 24 30;
+    --tint-amber: 42 33 16;
+    --tint-orange: 44 30 18;
+    --tint-indigo: 26 29 58;
+    --tint-yellow: 40 36 15;
+    --tint-sky: 16 33 50;
+    --tint-violet: 30 27 54;
+    --tint-critical: 47 20 22;
+    --tint-positive: 16 40 26;
+
+    --on-critical: 248 155 155;
+    --on-positive: 122 219 158;
+    --on-warning: 233 179 96;
+    --on-info: 138 180 248;
+    --line-critical: 92 38 41;
+    --line-positive: 33 74 50;
+    --line-warning: 92 68 25;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-surface-sunk text-ink antialiased;
+  }
+  ::selection {
+    @apply bg-gold text-navy-surface;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] transition-all duration-300;
+  }
+  /* Gold stays gold in both themes, so its label stays the fixed dark navy
+     rather than the ink token, which would turn white and vanish. */
+  .btn-primary {
+    @apply btn bg-gold text-navy-surface shadow-lg shadow-gold/20 hover:-translate-y-0.5 hover:bg-gold-light;
+  }
+  .btn-secondary {
+    @apply btn border border-gold/50 bg-surface/90 text-gold-700 hover:border-gold hover:bg-gold-light/20;
+  }
+  .btn-navy {
+    @apply btn bg-navy-dark text-white hover:bg-navy-light;
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-line;
+  }
+  .section-label {
+    @apply text-gold-700 text-xs font-semibold tracking-[3px] uppercase text-center mb-3;
+  }
+  .section-title {
+    @apply text-3xl font-semibold text-ink sm:text-4xl;
+  }
+}
+
+/**
+ * A focus indicator that can actually be seen.
+ *
+ * Every input already changed its border to gold on focus, but that is 2.29
+ * against the field behind it and 1.85 against the border it replaces — below
+ * what WCAG asks for and, more to the point, hard to spot while tabbing. The
+ * existing border change stays; this adds an outline that does not rely on it.
+ *
+ * outline rather than a ring: it follows the element's shape, is not clipped by
+ * an ancestor's overflow, and outline-offset separates it from the control.
+ *
+ * This sits after the utilities layer deliberately — 120 elements carry
+ * `outline-none`, and a base-layer rule would lose to them.
+ */
+*:focus-visible {
+  outline: 2px solid rgb(var(--focus-ring));
+  outline-offset: 2px;
+  border-radius: inherit;
+}
+
+/* The dark brand surfaces keep their own pairing: the page may be in light
+   mode while the header and footer stay navy. */
+.bg-navy *:focus-visible,
+.bg-navy-900 *:focus-visible,
+nav *:focus-visible,
+footer *:focus-visible {
+  outline-color: rgb(201 168 76);
+}
