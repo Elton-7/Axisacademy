@@ -22,7 +22,7 @@ const programmes = [
     schedule: 'Flexible',
     students: '1-on-1 or Small Groups',
     description: 'World-class Cambridge curriculum delivered with personalized attention and expert guidance.',
-    highlights: ['IGCSE Preparation', 'A-Level Support', 'Exam Registration Assistance', 'University Pathway Guidance'],
+    highlights: ['IGCSE Preparation', 'O Level Support', 'Exam Registration Assistance', 'University Pathway Guidance'],
   },
   {
     id: 'language',
@@ -61,7 +61,7 @@ const programmes = [
     duration: '4-8 Weeks',
     schedule: 'Intensive',
     students: 'Small Groups (5-10)',
-    description: 'Targeted preparation for KCSE, IGCSE, A Levels, Cambridge assessments, and school examinations.',
+    description: 'Targeted preparation for KCSE, IGCSE, O Levels, Cambridge assessments, and school examinations.',
     highlights: ['Mock Exams', 'Past Paper Practice', 'Study Techniques', 'Stress Management'],
   },
 ]

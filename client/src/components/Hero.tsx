@@ -33,7 +33,7 @@ const highlights = [
 const heroServices = [
   {
     title: 'Academic learning & homeschooling',
-    detail: 'CBC, Montessori, Cambridge, IGCSE, A Levels and IB.',
+    detail: 'CBC, Montessori, Cambridge, IGCSE, O Levels and IB.',
   },
   {
     title: 'Special needs & individualised support',

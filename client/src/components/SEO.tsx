@@ -40,7 +40,7 @@ const pages: Record<string, { title: string; description: string }> = {
   },
   '/programmes': {
     title: 'Learning Programmes | Axis Learning Kenya',
-    description: 'Explore flexible learning programmes for CBC, Montessori, Cambridge, IGCSE, A Levels, IB, languages, enrichment, and examination preparation.',
+    description: 'Explore flexible learning programmes for CBC, Montessori, Cambridge, IGCSE, O Levels, IB, languages, enrichment, and examination preparation.',
   },
   '/locations': {
     title: 'Axis Learning Locations & Educator Network | Kenya',

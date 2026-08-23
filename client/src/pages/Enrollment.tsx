@@ -172,7 +172,7 @@ export default function Enrollment() {
               <label htmlFor="curriculum" className="mb-2 block text-sm font-medium text-ink">Current curriculum <span className="font-normal text-ink-muted">(optional)</span></label>
               <select id="curriculum" {...register('curriculum')} className={`${inputClass} bg-surface`}>
                 <option value="">Not sure / prefer to discuss</option>
-                <option value="CBC">CBC</option><option value="Montessori">Montessori</option><option value="Cambridge">Cambridge</option><option value="IGCSE">IGCSE</option><option value="A Levels">A Levels</option><option value="IB">IB</option><option value="Other">Other</option>
+                <option value="CBC">CBC</option><option value="Montessori">Montessori</option><option value="Cambridge">Cambridge</option><option value="IGCSE">IGCSE</option><option value="O Levels">O Levels</option><option value="IB">IB</option><option value="Other">Other</option>
               </select>
             </div>
           </div>

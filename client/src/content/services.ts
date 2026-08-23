@@ -60,7 +60,7 @@ export const services: Service[] = [
     icon: BookOpen,
     accent: 'bg-tint-blue',
     highlights: [
-      'CBC, Montessori, Cambridge, IGCSE, A Levels & IB',
+      'CBC, Montessori, Cambridge, IGCSE, O Levels & IB',
       'Educator comes to you, or learner comes to Axis',
       'Individual learning pathways per learner',
       'Progress tracking and regular family updates',
@@ -83,7 +83,7 @@ export const services: Service[] = [
           {
             term: 'Cambridge',
             definition:
-              'An internationally recognised curriculum with structured academic progression and strong subject-based learning, including pathways leading to IGCSE and A Levels.',
+              'An internationally recognised curriculum with structured academic progression and strong subject-based learning, including pathways leading to IGCSE and O Level examinations.',
           },
           {
             term: 'IGCSE',
@@ -91,9 +91,9 @@ export const services: Service[] = [
               'An internationally recognised secondary qualification offering broad subject choice and strong preparation for further education.',
           },
           {
-            term: 'A Levels',
+            term: 'O Levels',
             definition:
-              'Advanced subject-focused study designed to prepare learners for university and other higher-level education pathways.',
+              'An internationally recognised secondary qualification taken around age sixteen, covering the same stage as IGCSE with more weight on written examinations.',
           },
           {
             term: 'IB',
@@ -130,7 +130,7 @@ export const services: Service[] = [
     seo: {
       title: 'Homeschooling & Academic Learning in Kenya | Axis Learning',
       description:
-        'CBC, Montessori, Cambridge, IGCSE, A Levels and IB support through homeschooling, home-based tuition, centre-based learning and online lessons across Kenya.',
+        'CBC, Montessori, Cambridge, IGCSE, O Levels and IB support through homeschooling, home-based tuition, centre-based learning and online lessons across Kenya.',
     },
   },
 
@@ -490,7 +490,7 @@ export const services: Service[] = [
     sections: [
       {
         heading: 'Curricula covered',
-        items: ['CBC', 'Montessori', 'Cambridge', 'IGCSE', 'A Levels', 'IB', 'Other supported curricula'],
+        items: ['CBC', 'Montessori', 'Cambridge', 'IGCSE', 'O Levels', 'IB', 'Other supported curricula'],
       },
       {
         heading: 'What holiday programmes include',
@@ -541,7 +541,7 @@ export const services: Service[] = [
     icon: ClipboardCheck,
     accent: 'bg-tint-indigo',
     highlights: [
-      'KCSE, IGCSE, Cambridge assessments and A Levels',
+      'KCSE, IGCSE, Cambridge assessments and O Levels',
       'Past papers and mock examinations',
       'Examination technique and time management',
       'Subject-specific tutoring and individual support',
@@ -552,7 +552,7 @@ export const services: Service[] = [
         items: [
           'KCSE',
           'IGCSE',
-          'A Levels',
+          'O Levels',
           'Cambridge assessments',
           'School examinations',
           'Internal assessments',
@@ -588,9 +588,9 @@ export const services: Service[] = [
       body: 'Tell us the examination and the date. We will tell you honestly what is achievable in the time available and what it will take.',
     },
     seo: {
-      title: 'KCSE, IGCSE & A Level Exam Preparation | Axis Learning Kenya',
+      title: 'KCSE, IGCSE & O Level Exam Preparation | Axis Learning Kenya',
       description:
-        'Examination preparation in Kenya for KCSE, IGCSE, Cambridge assessments and A Levels — revision, past papers, mock examinations and examination technique.',
+        'Examination preparation in Kenya for KCSE, IGCSE, Cambridge assessments and O Levels — revision, past papers, mock examinations and examination technique.',
     },
   },
 

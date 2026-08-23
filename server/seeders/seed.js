@@ -25,14 +25,14 @@ const seedData = async () => {
       // wording. The previous seed listed six differently-named services and
       // advertised Coding, Robotics, Entrepreneurship and Financial Literacy,
       // none of which appear anywhere in the brief.
-      { title: 'Academic Learning & Homeschooling', slug: 'academic-learning', icon: 'BookOpen', description: 'Academic learning and homeschooling across the curricula families in Kenya actually use.', items: ['CBC', 'Montessori', 'Cambridge', 'IGCSE', 'A Levels', 'IB', 'British Curriculum', 'American Curriculum'], order: 1 },
+      { title: 'Academic Learning & Homeschooling', slug: 'academic-learning', icon: 'BookOpen', description: 'Academic learning and homeschooling across the curricula families in Kenya actually use.', items: ['CBC', 'Montessori', 'Cambridge', 'IGCSE', 'O Levels', 'IB', 'British Curriculum', 'American Curriculum'], order: 1 },
       { title: 'Academic Support & Tuition', slug: 'tuition', icon: 'GraduationCap', description: 'Focused subject support for learners who need to catch up, keep up, or get ahead.', items: ['Mathematics', 'Sciences', 'Languages', 'Humanities', 'Reading and writing', 'Examination technique'], order: 2 },
       { title: 'Special Needs Education & Individualised Learning Support', slug: 'special-needs', icon: 'HeartHandshake', description: 'Individualised educational support, adapted to the learner rather than one-size-fits-all.', items: ['Autism', 'ADHD', 'Dyslexia', 'Dysgraphia', 'Dyscalculia', 'Dyspraxia', 'Speech and language delays', 'Other additional learning needs'], order: 3 },
       { title: 'African & Foreign Language Learning', slug: 'languages', icon: 'Languages', description: 'Global languages and African languages, given equal weight.', items: ['French', 'Spanish', 'German', 'Mandarin', 'Japanese', 'Korean', 'Arabic', 'Kiswahili', 'Dholuo', 'Kikuyu', 'Luhya', 'Kamba'], order: 4 },
       { title: 'Games & Sports', slug: 'games-and-sports', icon: 'Trophy', description: 'Physical activity treated as part of a learner’s education rather than a break from it.', items: ['Football', 'Basketball', 'Swimming', 'Skating', 'Athletics', 'Volleyball', 'Tennis'], order: 5 },
       { title: 'Board Games, Talent & Creative Development', slug: 'talent-development', icon: 'Star', description: 'Confidence, creativity, communication and leadership alongside academic work.', items: ['Chess', 'Scrabble', 'Draughts', 'Music', 'Drama', 'Theatre', 'Dance', 'Creative writing', 'Public speaking', 'Debate'], order: 6 },
       { title: 'Holiday Tuition', slug: 'holiday-tuition', icon: 'CalendarDays', description: 'Structured programmes for each school holiday.', items: ['Revision', 'Catch-up', 'Concept reinforcement', 'Preparation for the next term', 'Enrichment'], order: 7 },
-      { title: 'Examination Preparation', slug: 'examination-preparation', icon: 'ClipboardCheck', description: 'Preparation for the examinations that count.', items: ['KCSE', 'IGCSE', 'A Levels', 'Cambridge assessments', 'Past papers', 'Mock examinations'], order: 8 },
+      { title: 'Examination Preparation', slug: 'examination-preparation', icon: 'ClipboardCheck', description: 'Preparation for the examinations that count.', items: ['KCSE', 'IGCSE', 'O Levels', 'Cambridge assessments', 'Past papers', 'Mock examinations'], order: 8 },
       { title: 'Educational Consultancy & Learner Discovery', slug: 'learner-discovery', icon: 'Compass', description: 'For families who do not yet know what they need. We understand the learner first.', items: ['Learner discovery', 'Curriculum guidance', 'Pathway recommendation', 'Ongoing review'], order: 9 },
     ])
 
@@ -285,8 +285,8 @@ const seedData = async () => {
         sortOrder: 4,
       },
       {
-        title: 'IGCSE & A Level Revision Workshop',
-        description: 'Intensive revision workshop for students preparing for IGCSE and A Level examinations. Expert tutors cover all major subjects.',
+        title: 'IGCSE & O Level Revision Workshop',
+        description: 'Intensive revision workshop for students preparing for IGCSE and O Level examinations. Expert tutors cover all major subjects.',
         category: 'Workshop',
         startDate: new Date('2026-10-12'),
         endDate: new Date('2026-10-16'),
@@ -407,7 +407,7 @@ const seedData = async () => {
       },
       {
         question: 'Which curricula do you support?',
-        answer: 'We support multiple curricula including:\n- CBC (Competency-Based Curriculum)\n- Montessori\n- Cambridge International\n- IGCSE\n- A Levels\n- IB (International Baccalaureate)\n- British Curriculum\n- American Curriculum\n- And other recognized educational pathways\n\nOur education consultants can help you determine which curriculum is best suited for your learner.',
+        answer: 'We support multiple curricula including:\n- CBC (Competency-Based Curriculum)\n- Montessori\n- Cambridge International\n- IGCSE\n- O Levels\n- IB (International Baccalaureate)\n- British Curriculum\n- American Curriculum\n- And other recognized educational pathways\n\nOur education consultants can help you determine which curriculum is best suited for your learner.',
         category: 'Programmes & Curricula',
         order: 1,
       },
@@ -425,7 +425,7 @@ const seedData = async () => {
       },
       {
         question: 'What is Cambridge?',
-        answer: 'Cambridge is an internationally recognized curriculum with structured academic progression and strong subject-based learning. It includes pathways leading to IGCSE (International General Certificate of Secondary Education) and A Levels, preparing learners for university and higher education.',
+        answer: 'Cambridge is an internationally recognized curriculum with structured academic progression and strong subject-based learning. It includes pathways leading to IGCSE (International General Certificate of Secondary Education) and O Level examinations, preparing learners for the next stage of their education.',
         category: 'Programmes & Curricula',
         order: 4,
       },
@@ -436,8 +436,8 @@ const seedData = async () => {
         order: 5,
       },
       {
-        question: 'What are A Levels?',
-        answer: 'A Levels are advanced subject-focused qualifications designed to prepare learners for university and other higher-level education pathways. They typically follow IGCSE and involve in-depth study of chosen subjects.',
+        question: 'What are O Levels?',
+        answer: 'Cambridge O Level is an internationally recognised secondary qualification, usually taken around age sixteen. It covers the same stage as IGCSE and leads to the same next steps, with more weight on written examinations and less on coursework — which suits some learners and some centres better.',
         category: 'Programmes & Curricula',
         order: 6,
       },
@@ -449,7 +449,7 @@ const seedData = async () => {
       },
       {
         question: 'Do you provide homeschooling?',
-        answer: 'Yes! Axis provides comprehensive homeschooling support across multiple curricula including CBC, Cambridge, IGCSE, A Levels, and International programmes. We support families with flexible scheduling, personalized learning plans, and regular progress monitoring.',
+        answer: 'Yes! Axis provides comprehensive homeschooling support across multiple curricula including CBC, Cambridge, IGCSE, O Levels, and International programmes. We support families with flexible scheduling, personalized learning plans, and regular progress monitoring.',
         category: 'Programmes & Curricula',
         order: 8,
       },
@@ -551,7 +551,7 @@ const seedData = async () => {
       },
       {
         question: 'Do you offer examination preparation?',
-        answer: 'Yes, Axis provides comprehensive examination preparation services for KCSE, IGCSE, A Levels, Cambridge assessments, school examinations, and internal assessments. Services include revision, past papers, concept review, examination technique, and subject-specific tutoring.',
+        answer: 'Yes, Axis provides comprehensive examination preparation services for KCSE, IGCSE, O Levels, Cambridge assessments, school examinations, and internal assessments. Services include revision, past papers, concept review, examination technique, and subject-specific tutoring.',
         category: 'Programmes & Curricula',
         order: 15,
       },
@@ -700,7 +700,7 @@ const seedData = async () => {
 
 **Montessori** is a learner-centred approach encouraging independence, practical learning, exploration and development at an appropriate pace. It is strongest in the early years, and suits learners who thrive with autonomy and hands-on materials.
 
-**Cambridge** offers structured academic progression and strong subject-based learning, leading to IGCSE and then A Levels. It is internationally recognised and portable, which matters for families who may relocate or who are aiming at overseas universities.
+**Cambridge** offers structured academic progression and strong subject-based learning, leading to IGCSE and O Level examinations. It is internationally recognised and portable, which matters for families who may relocate or who are aiming at overseas universities.
 
 **IB (International Baccalaureate)** emphasises inquiry, critical thinking, independent learning and holistic development. It is demanding and writing-intensive, and rewards learners who enjoy connecting ideas across subjects.
 
