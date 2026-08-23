@@ -37,14 +37,24 @@ export function consultationMailto(subject = 'Consultation request') {
 }
 
 /**
- * Placeholders until Axis supplies the real accounts (brief §33). They point at
- * the platforms' home pages rather than at a wrong profile, so nothing links to
- * an account that is not ours.
+ * The accounts Axis actually has, and only those.
+ *
+ * This replaces placeholders that pointed at facebook.com and instagram.com
+ * themselves. A row of icons leading to the platforms' own home pages looks
+ * like a finished site until someone clicks one, and then looks broken — worse
+ * than showing nothing.
+ *
+ * YouTube and LinkedIn are deliberately absent rather than left pointing
+ * nowhere. Add them here when Axis has them and the footer picks them up.
+ *
+ * The Facebook address is the canonical page, not the /share/ link it was given
+ * as: a share URL carries a one-off tracking token and can stop resolving.
+ * Verified by following it — it lands on facebook.com/AxislearningKenya.
  */
-export const socialLinks = {
-  facebook: 'https://www.facebook.com/',
-  instagram: 'https://www.instagram.com/',
-  youtube: 'https://www.youtube.com/',
-  linkedin: 'https://www.linkedin.com/',
-  tiktok: 'https://www.tiktok.com/',
-} as const
+export const socialLinks = [
+  { platform: 'facebook', label: 'Facebook', href: 'https://www.facebook.com/AxislearningKenya' },
+  { platform: 'instagram', label: 'Instagram', href: 'https://www.instagram.com/axislearningkenya' },
+  { platform: 'tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@axislearning' },
+] as const
+
+export type SocialLink = (typeof socialLinks)[number]
