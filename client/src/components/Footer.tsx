@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Phone, Mail, Globe, Facebook, Instagram } from 'lucide-react'
 import NewsletterSignup from './NewsletterSignup'
 import { contact, SITE_URL, socialLinks } from '../content/contact'
-import { portalLinks } from '../content/portals'
 
 const quickLinks = [
   { href: '/about', label: 'About' },
@@ -109,18 +108,6 @@ export default function Footer() {
                 {SITE_URL.replace(/^https?:\/\//, '')}
               </li>
             </ul>
-            <div className="mt-7">
-              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wide text-gold-500">Portal Access</h3>
-              <ul className="space-y-2">
-                {portalLinks.map((link) => (
-                  <li key={link.href}>
-                    <Link to={link.href} className="text-sm text-white/50 transition-colors hover:text-gold-500">
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
 
           <NewsletterSignup />
