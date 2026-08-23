@@ -42,27 +42,14 @@ services:
       - key: DB_SYNC
         value: safe
 
-      # Database connection, supplied by the managed instance below.
-      - key: DB_HOST
-        fromDatabase:
-          name: axis-learning-db
-          property: host
-      - key: DB_PORT
-        fromDatabase:
-          name: axis-learning-db
-          property: port
-      - key: DB_NAME
-        fromDatabase:
-          name: axis-learning-db
-          property: database
-      - key: DB_USER
-        fromDatabase:
-          name: axis-learning-db
-          property: user
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: axis-learning-db
-          property: password
+      # The database lives on Neon, not here, so this service creates none of
+      # its own. One connection string replaces the five separate variables;
+      # the server prefers DATABASE_URL when it is present and turns SSL on
+      # automatically for a remote host.
+      #
+      # Set in the dashboard, because it carries the password.
+      - key: DATABASE_URL
+        sync: false
 
       # Generated once by Render and never printed in a build log.
       - key: JWT_SECRET
@@ -127,9 +114,3 @@ services:
         sync: false
       - key: NOTIFICATION_FROM
         sync: false
-
-databases:
-  - name: axis-learning-db
-    databaseName: axis_learning
-    user: axis
-    plan: basic-256mb
