@@ -68,7 +68,17 @@ export default function FAQPage() {
   const [filteredFaqs, setFilteredFaqs] = useState<FAQ[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedCategory, setSelectedCategory] = useState<string>('General')
+  /**
+   * Every question, not one category.
+   *
+   * This defaulted to 'General', which holds three of the thirty-one entries.
+   * A parent arriving at the FAQ saw three answers under a counter reading
+   * "Showing 3 of 31 questions", with no indication that the other twenty-eight
+   * were behind a filter chip they had not touched. The brief asks for a
+   * comprehensive FAQ; the categories are for narrowing it down, not for
+   * deciding what a first-time visitor is allowed to see.
+   */
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
   const [openIndexes, setOpenIndexes] = useState<number[]>([])
 
@@ -78,7 +88,7 @@ export default function FAQPage() {
         setLoading(true)
         const faqsList = await faqsApi.getAll({ limit: 200 })
         setFaqs(faqsList)
-        setFilteredFaqs(faqsList.filter((f: FAQ) => f.category === 'General'))
+        setFilteredFaqs(faqsList)
         setOpenIndexes([0]) // Open first FAQ by default
       } catch (err) {
         console.error('Failed to load FAQs:', err)
