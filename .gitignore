@@ -43,3 +43,12 @@ Thumbs.db
 client/.vite/
 client/dist-ssr/
 .netlify/
+
+# Credentials. Nothing here is committed today and CI enforces that, but these
+# are the filenames a secret tends to arrive in when someone is debugging.
+*.key
+*.pem
+creds*.json
+*-creds.json
+secrets.json
+.env.local

@@ -6,6 +6,21 @@ on:
   pull_request:
 
 jobs:
+  # Runs first and needs nothing installed, so a committed credential is caught
+  # in seconds rather than after a full build. A secret that reaches the history
+  # has to be rotated even once deleted, so the cheap check is the valuable one.
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Scan tracked files for credentials
+        run: node scripts/scan-secrets.mjs
+
   client:
     runs-on: ubuntu-latest
     defaults:
