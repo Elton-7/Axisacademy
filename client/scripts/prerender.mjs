@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { allRoutes } from './routes.mjs'
+import { allRoutes, fetchArticle } from './routes.mjs'
 
 /**
  * Writes a real HTML file for every public route, so crawlers and social link
@@ -26,17 +26,32 @@ if (!template.includes('<div id="root"></div>')) {
 let written = 0
 const failures = []
 
-for (const { path } of allRoutes()) {
+for (const { path } of await allRoutes()) {
   try {
-    const { html, head } = render(path)
+    // An article page fetches its own data in an effect, and effects do not
+    // run during renderToString — so without this every article was written
+    // out as an empty shell: no title, no description, no structured data and
+    // no text. Handing the article to the renderer produces the real page.
+    const articleSlug = path.startsWith('/resources/') ? path.slice('/resources/'.length) : null
+    const article = articleSlug ? await fetchArticle(articleSlug) : undefined
+
+    const { html, head } = render(path, article)
 
     // The route is stamped on the container so the client can tell whether the
     // markup it finds actually belongs to the page being loaded. A request for a
     // non-prerendered route (admin, portal) falls back to this file too, and
     // hydrating the wrong page's markup would be a mismatch.
+    // The article is written into the page as well as rendered from it: the
+    // browser reads it back on hydration, so what React builds on the client
+    // matches what was served, and the page does not re-request something it
+    // already has.
+    const preload = article
+      ? `<script>window.__PRELOADED_ARTICLE__=${JSON.stringify(article).replace(/</g, '\u003c')}</script>`
+      : ''
+
     let page = template.replace(
       '<div id="root"></div>',
-      `<div id="root" data-prerendered-path="${path}">${html}</div>`
+      `<div id="root" data-prerendered-path="${path}">${html}</div>${preload}`
     )
 
     // The template's own title and description are generic fallbacks for the

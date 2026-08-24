@@ -3,7 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Axis Learning creates personalised educational pathways for learners across Kenya." />
+  <!--
+    No static description here.
+
+    Helmet only replaces tags it created, so a description written into this
+    shell is never overwritten — it is appended to. Every page then shipped two
+    <meta name="description"> tags: this generic one, and the page's own. That
+    is a validation error, and it leaves a search engine choosing between them.
+
+    Every route supplies its own through components/SEO.tsx, and the detail
+    pages for services and articles supply theirs directly. Both are baked into
+    the HTML at build time by the prerender step, so a crawler sees the right
+    one without running any JavaScript.
+  -->
   <title>Axis Learning | Personalised Learning Pathways in Kenya</title>
 
   <!-- SVG first: browsers that support it get a mark that stays sharp on any

@@ -280,6 +280,12 @@ export const resourcesApi = {
     return unwrap(data)
   },
 
+  /** By slug, which is what an article's URL carries. */
+  async getBySlug(slug: string) {
+    const { data } = await api.get<ApiResponse<Resource>>(`/resources/slug/${slug}`)
+    return unwrap(data)
+  },
+
   async create(payload: CreateResourceRequest) {
     const { data } = await api.post<ApiResponse<Resource>>('/resources', payload)
     return unwrap(data)
