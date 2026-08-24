@@ -1,4 +1,5 @@
 const { COORDINATOR_BIOS } = require('../content/coordinatorBios')
+const { galleryRows } = require('../content/galleryItems')
 const seedDemoPortal = require('./demoPortal')
 const { Service, Testimonial, User, Enrollment, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner } = require('../models')
 
@@ -825,6 +826,11 @@ If you are unsure, that is a normal position to be in — and not one you have t
         publishedAt: new Date('2026-07-14'),
       },
     ])
+
+    // Real photographs and video of Axis learners, in the order a parent should
+    // meet them. Consent is recorded on every row; the public endpoint returns
+    // nothing without it.
+    await seedIfEmpty(Gallery, galleryRows())
 
     await seedDemoPortal()
 
