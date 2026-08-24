@@ -611,7 +611,24 @@ export interface UpdateGalleryRequest {
   sortOrder?: number
 }
 
-export type ResourceCategory = 'Learning Tips' | 'Parent Guide' | 'Programme Spotlight' | 'Assessment' | 'Academic Support' | 'General'
+/** Subjects, not article shapes — kept in step with server/content/resourceCategories.js. */
+export const RESOURCE_CATEGORIES = [
+  'Homeschooling',
+  'Cambridge',
+  'Montessori',
+  'CBC',
+  'Special Needs Education',
+  'Foreign Languages',
+  'Games & Sports',
+  'Enrichment',
+  'Technology & Innovation',
+  'Parenting & Learning',
+  'Current Affairs',
+] as const
+
+export type ResourceCategory = (typeof RESOURCE_CATEGORIES)[number]
+
+export type ResourceStatus = 'Draft' | 'Published'
 
 export interface Resource {
   id: string
@@ -620,6 +637,8 @@ export interface Resource {
   excerpt?: string
   content: string
   category: ResourceCategory
+  status: ResourceStatus
+  metaDescription?: string
   author: string
   coverImage?: string
   readTime?: string

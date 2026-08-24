@@ -90,6 +90,21 @@ const SITE_URL = (import.meta.env.VITE_SITE_URL || 'https://www.axislearning.co.
 const isPrivateRoute = (pathname: string) =>
   pathname.startsWith('/admin') || pathname.startsWith('/portal')
 
+/**
+ * Detail pages write their own metadata, so this component stands back.
+ *
+ * A service or an article is not in the `pages` table above, so it fell to the
+ * generic fallback — and every article ended up with two <meta
+ * name="description"> tags: the site's default first, then the article's own.
+ * Two descriptions on one page is a validation error, and it leaves a search
+ * engine to pick between them.
+ *
+ * The robots directive still comes from here, because it is the one thing
+ * every route needs and no detail page should have to remember.
+ */
+const ownsItsMetadata = (pathname: string) =>
+  /^\/(services|resources)\/[^/]+$/.test(pathname)
+
 export default function SEO() {
   const { pathname } = useLocation()
   const page = pages[pathname] || {
@@ -100,6 +115,14 @@ export default function SEO() {
   const canonical = `${SITE_URL}${pathname === '/' ? '' : pathname}`
   // Must be absolute: the crawlers that read this do not resolve relative paths.
   const previewImage = `${SITE_URL}/og-image.png`
+
+  if (ownsItsMetadata(pathname)) {
+    return (
+      <Helmet>
+        <meta name="robots" content={isPrivateRoute(pathname) ? 'noindex, nofollow' : 'index, follow'} />
+      </Helmet>
+    )
+  }
 
   return (
     <Helmet>

@@ -31,7 +31,9 @@ const rules = (partial) => [
 router.get('/', async (req, res) => {
   try {
     const { category, search, limit = 50, offset = 0 } = req.query
-    const where = { isActive: true }
+    // Published only. isActive alone would let a half-written article through,
+    // which is the whole reason the draft state exists.
+    const where = { isActive: true, status: 'Published' }
 
     if (category && category !== 'all') {
       where.category = category
@@ -65,10 +67,30 @@ router.get('/', async (req, res) => {
   }
 })
 
+/**
+ * By slug, because that is what an article's URL contains.
+ *
+ * The only single-article route looked up by primary key, so /resources/:slug
+ * had nothing to call — which is why articles had no page of their own and
+ * nothing for a search engine to index. Declared before '/:id' so a slug is
+ * never mistaken for an identifier.
+ */
+router.get('/slug/:slug', async (req, res) => {
+  try {
+    const resource = await Resource.findOne({ where: { slug: req.params.slug } })
+    if (!resource || !resource.isActive || resource.status !== 'Published') {
+      return res.status(404).json({ success: false, error: 'Article not found' })
+    }
+    res.json({ success: true, data: resource })
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Failed to fetch article' })
+  }
+})
+
 router.get('/:id', async (req, res) => {
   try {
     const resource = await Resource.findByPk(req.params.id)
-    if (!resource || !resource.isActive) {
+    if (!resource || !resource.isActive || resource.status !== 'Published') {
       return res.status(404).json({ success: false, error: 'Resource not found' })
     }
 
@@ -80,18 +102,23 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), handleValidation, async (req, res) => {
   try {
-    const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, publishedAt } = req.body
+    const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, publishedAt, status, metaDescription } = req.body
 
     const resource = await Resource.create({
       title: title.trim(),
       slug: slug || title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''),
       excerpt,
       content,
-      category: category || 'General',
+      // 'General' is no longer a category — see content/resourceCategories.js.
+      category: category || 'Parenting & Learning',
       author: author || 'Axis Learning Team',
       coverImage,
       readTime,
       tags: Array.isArray(tags) ? tags : [],
+      // Drafts by default: an article saved half-written should not appear on
+      // the site because someone forgot to set a flag.
+      status: status === 'Published' ? 'Published' : 'Draft',
+      metaDescription,
       publishedAt: publishedAt || new Date(),
     })
 
@@ -108,11 +135,13 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), ha
       return res.status(404).json({ success: false, error: 'Resource not found' })
     }
 
-    const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, isActive, sortOrder, publishedAt } = req.body
+    const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, isActive, sortOrder, publishedAt, status, metaDescription } = req.body
 
     await resource.update({
       ...(title !== undefined && { title: title.trim() }),
       ...(slug !== undefined && { slug }),
+      ...(status !== undefined && { status }),
+      ...(metaDescription !== undefined && { metaDescription }),
       ...(excerpt !== undefined && { excerpt }),
       ...(content !== undefined && { content }),
       ...(category !== undefined && { category }),

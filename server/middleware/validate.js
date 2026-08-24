@@ -33,7 +33,28 @@ const lengthRule = (Model, field) => {
   }
 }
 
-const enumValues = (Model, field) => Model.rawAttributes?.[field]?.values ?? []
+/**
+ * The permitted values for a field, from wherever the model states them.
+ *
+ * ENUM columns carry them on `.values`. A STRING column constrained by an
+ * `isIn` validator carries them on `.validate.isIn.args[0]` instead — and this
+ * only read the first. When `resources.category` moved from an enum to
+ * validated text, the derived list became empty, so the rule was "must be one
+ * of: " and every category was rejected, including the ones the form offered.
+ *
+ * Reading both keeps the promise this file was written for: the rule follows
+ * the model, and widening a column does not silently invalidate a route.
+ */
+const enumValues = (Model, field) => {
+  const attribute = Model.rawAttributes?.[field]
+  if (!attribute) return []
+  if (Array.isArray(attribute.values) && attribute.values.length) return attribute.values
+
+  const isIn = attribute.validate?.isIn
+  const args = Array.isArray(isIn) ? isIn : isIn?.args
+  const list = Array.isArray(args?.[0]) ? args[0] : args
+  return Array.isArray(list) ? list : []
+}
 
 /** Turns `startDate` into `Start date` for messages aimed at an admin. */
 const labelFor = (field) =>

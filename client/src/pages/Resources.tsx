@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { BookOpen, Clock3, Loader, Search, Sparkles } from 'lucide-react'
-import { Resource, ResourceCategory } from '../types'
+import { Link } from 'react-router-dom'
+import { ArrowRight, BookOpen, Clock3, Loader, Search, Sparkles } from 'lucide-react'
+import { Resource, ResourceCategory, RESOURCE_CATEGORIES } from '../types'
 import { resourcesApi } from '../services/apiClient'
 
-const CATEGORIES: Array<'all' | ResourceCategory> = ['all', 'Learning Tips', 'Parent Guide', 'Programme Spotlight', 'Assessment', 'Academic Support', 'General']
+// Derived from the shared list rather than retyped: a filter chip for a
+// category the database no longer accepts returns nothing, silently.
+const CATEGORIES: Array<'all' | ResourceCategory> = ['all', ...RESOURCE_CATEGORIES]
 
 export default function Resources() {
   const [resources, setResources] = useState<Resource[]>([])
@@ -158,9 +161,20 @@ export default function Resources() {
                   </div>
 
                   <div className="space-y-4 p-5">
-                    <div className="flex items-center justify-between gap-3 text-xs uppercase tracking-[0.2em] text-ink-muted">
+                    {/* Author, date and read time — the byline a reader uses to
+                        judge whether a piece is current and who wrote it. The
+                        date was missing entirely. */}
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs uppercase tracking-[0.2em] text-ink-muted">
                       <span>{resource.author}</span>
-                      <span className="flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" /> {resource.readTime || '4 min read'}</span>
+                      {resource.publishedAt && (
+                        <>
+                          <span aria-hidden="true">·</span>
+                          <time dateTime={resource.publishedAt}>
+                            {new Date(resource.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                          </time>
+                        </>
+                      )}
+                      <span className="ml-auto flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" /> {resource.readTime || '4 min read'}</span>
                     </div>
 
                     <div>
@@ -176,9 +190,16 @@ export default function Resources() {
                       </div>
                     )}
 
-                    <button className="inline-flex items-center rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-navy-surface transition-colors hover:bg-gold/90">
+                    {/* This was a <button> with no handler — it looked like the
+                        way in to the article and did nothing at all, because
+                        there was no article page for it to open. */}
+                    <Link
+                      to={`/resources/${resource.slug}`}
+                      className="inline-flex items-center gap-2 rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-navy-surface transition-colors hover:bg-gold/90"
+                    >
                       Read article
-                    </button>
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </div>
                 </motion.article>
               ))}

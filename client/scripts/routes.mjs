@@ -52,13 +52,61 @@ export function readServiceSlugs() {
   return slugs
 }
 
-export function allRoutes() {
+/**
+ * Article slugs come from the API, not from a source file.
+ *
+ * Services are fixed and live in the repository; articles are written by Axis
+ * in the CMS and go on being added after handover. Reading them at build time
+ * is what puts each new article into the sitemap without a developer touching
+ * anything — which is the whole of what the Resources review asks for in
+ * sections 3 and 4.
+ *
+ * A failure here is not fatal. If the API is asleep or unreachable the build
+ * continues with the static routes: a sitemap missing today's articles is a
+ * far smaller problem than a deploy that cannot run.
+ */
+export async function readArticleSlugs() {
+  const base = (process.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+  try {
+    const response = await fetch(`${base}/resources?limit=500`, {
+      signal: AbortSignal.timeout(20000),
+    })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const body = await response.json()
+    const list = Array.isArray(body) ? body : body.data || []
+    return list.map((article) => article.slug).filter(Boolean)
+  } catch (error) {
+    console.warn(`routes: could not read articles for the sitemap (${error.message}). Continuing without them.`)
+    return []
+  }
+}
+
+/** One article, for the prerenderer. Missing is not fatal — see readArticleSlugs. */
+export async function fetchArticle(slug) {
+  const base = (process.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+  try {
+    const response = await fetch(`${base}/resources/slug/${slug}`, { signal: AbortSignal.timeout(20000) })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const body = await response.json()
+    return body.data || body
+  } catch (error) {
+    console.warn(`prerender: could not load article "${slug}" (${error.message}).`)
+    return undefined
+  }
+}
+
+export async function allRoutes() {
   const serviceRoutes = readServiceSlugs().map((slug) => ({
     path: `/services/${slug}`,
     priority: '0.9',
     changefreq: 'monthly',
   }))
-  return [...staticRoutes, ...serviceRoutes]
+  const articleRoutes = (await readArticleSlugs()).map((slug) => ({
+    path: `/resources/${slug}`,
+    priority: '0.7',
+    changefreq: 'monthly',
+  }))
+  return [...staticRoutes, ...serviceRoutes, ...articleRoutes]
 }
 
 export const SITE_URL = (process.env.VITE_SITE_URL || 'https://www.axislearning.co.ke').replace(

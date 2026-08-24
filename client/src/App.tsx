@@ -17,6 +17,7 @@ import FAQ from './pages/FAQ'
 import Locations from './pages/Locations'
 import Gallery from './pages/Gallery'
 import Resources from './pages/Resources'
+import ResourceDetail from './pages/ResourceDetail'
 import Partners from './pages/Partners'
 import Contact from './pages/Contact'
 import AdminDashboard from './pages/AdminDashboard'
@@ -87,6 +88,9 @@ function App() {
           <Route path="locations" element={<Locations />} />
           <Route path="gallery" element={<Gallery />} />
           <Route path="resources" element={<Resources />} />
+          {/* Each article needs a URL of its own — nothing can be linked,
+              shared or indexed without one. */}
+          <Route path="resources/:slug" element={<ResourceDetail />} />
           <Route path="partners" element={<Partners />} />
           <Route path="contact" element={<Contact />} />
           <Route path="privacy" element={<Privacy />} />

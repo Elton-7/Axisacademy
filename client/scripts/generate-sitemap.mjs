@@ -38,7 +38,7 @@ Disallow: /portal/
 Sitemap: ${SITE_URL}/sitemap.xml
 `
 
-const routes = allRoutes()
+const routes = await allRoutes()
 const publicDir = resolve(clientRoot, 'public')
 
 mkdirSync(publicDir, { recursive: true })

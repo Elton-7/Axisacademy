@@ -9,7 +9,8 @@ import Safeguarding from '../components/Safeguarding'
 import Accounts from '../components/Accounts'
 import DataProtection from '../components/DataProtection'
 import { auditApi, authApi, contactsApi, enrollmentsApi, newsletterApi, statsApi, galleryApi, resourcesApi, partnersApi, educatorsApi, eventsApi, faqsApi, locationsApi } from '../services/apiClient'
-import type { AuditLog, Contact, DashboardStats, Enrollment, Newsletter, GalleryItem, Resource, Partner, Educator, Event, FAQ, Location, GalleryType, GalleryCategory, ResourceCategory, PartnerCategory, EducatorCategory, EventCategory, EventStatus, FAQCategory, LocationType } from '../types'
+import type { AuditLog, Contact, DashboardStats, Enrollment, Newsletter, GalleryItem, Resource, Partner, Educator, Event, FAQ, Location, GalleryType, GalleryCategory, ResourceCategory, ResourceStatus, PartnerCategory, EducatorCategory, EventCategory, EventStatus, FAQCategory, LocationType } from '../types'
+import { RESOURCE_CATEGORIES } from '../types'
 
 const TAB_LABELS: Record<string, string> = {
   faqs: 'FAQs',
@@ -63,8 +64,8 @@ export default function AdminDashboard() {
   // Resources state
   const [resources, setResources] = useState<Resource[]>([])
   const [editingResource, setEditingResource] = useState<Resource | null | undefined>(undefined)
-  const [resourceForm, setResourceForm] = useState<{title: string; slug: string; excerpt: string; content: string; category: ResourceCategory; author: string; coverImage: string; readTime: string; tags: string}>({
-    title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: ''
+  const [resourceForm, setResourceForm] = useState<{title: string; slug: string; excerpt: string; content: string; category: ResourceCategory; author: string; coverImage: string; readTime: string; tags: string; status: ResourceStatus; metaDescription: string}>({
+    title: '', slug: '', excerpt: '', content: '', category: 'Parenting & Learning', author: '', coverImage: '', readTime: '', tags: '', status: 'Draft', metaDescription: ''
   })
 
   // Partners state
@@ -316,7 +317,7 @@ export default function AdminDashboard() {
         toast.success('Resource created')
       }
       setEditingResource(undefined)
-      setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })
+      setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'Parenting & Learning', author: '', coverImage: '', readTime: '', tags: '', status: 'Draft', metaDescription: '' })
     } catch (error) {
       console.error('Failed to save resource:', error)
       toast.error(apiErrorMessage(error, 'Failed to save resource'))
@@ -953,7 +954,7 @@ export default function AdminDashboard() {
             <button
               onClick={() => {
                 setEditingResource(null)
-                setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })
+                setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'Parenting & Learning', author: '', coverImage: '', readTime: '', tags: '', status: 'Draft', metaDescription: '' })
               }}
               className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"
             >
@@ -969,21 +970,30 @@ export default function AdminDashboard() {
                   <input type="text" placeholder="Slug" value={resourceForm.slug} onChange={(e) => setResourceForm({...resourceForm, slug: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <input type="text" placeholder="Excerpt" value={resourceForm.excerpt} onChange={(e) => setResourceForm({...resourceForm, excerpt: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <select value={resourceForm.category} onChange={(e) => setResourceForm({...resourceForm, category: e.target.value as ResourceCategory})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
-                    <option value="General">General</option>
-                    <option value="Learning Tips">Learning Tips</option>
-                    <option value="Parent Guide">Parent Guide</option>
-                    <option value="Programme Spotlight">Programme Spotlight</option>
-                    <option value="Assessment">Assessment</option>
-                    <option value="Academic Support">Academic Support</option>
+                    {RESOURCE_CATEGORIES.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
                   </select>
                   <textarea placeholder="Content" value={resourceForm.content} onChange={(e) => setResourceForm({...resourceForm, content: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={5} />
                   <input type="text" placeholder="Author" value={resourceForm.author} onChange={(e) => setResourceForm({...resourceForm, author: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <input type="url" placeholder="Cover Image URL" value={resourceForm.coverImage} onChange={(e) => setResourceForm({...resourceForm, coverImage: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <input type="text" placeholder="Read Time (e.g., '5 min')" value={resourceForm.readTime} onChange={(e) => setResourceForm({...resourceForm, readTime: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {/* Draft or Published, so an unfinished article can be saved
+                      without reaching a reader, and a published one can be
+                      pulled back without being deleted. */}
+                  <select value={resourceForm.status} onChange={(e) => setResourceForm({...resourceForm, status: e.target.value as ResourceStatus})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
+                    <option value="Draft">Draft — not visible on the site</option>
+                    <option value="Published">Published — live on the site</option>
+                  </select>
+                  {/* Separate from the excerpt: this is what Google shows under
+                      the title, and it wants different phrasing and length. */}
+                  <input type="text" maxLength={320} placeholder="Search description (optional — falls back to the excerpt)" value={resourceForm.metaDescription} onChange={(e) => setResourceForm({...resourceForm, metaDescription: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <input type="text" placeholder="Tags (comma-separated)" value={resourceForm.tags} onChange={(e) => setResourceForm({...resourceForm, tags: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
                   <div className="flex gap-2">
                     <button onClick={saveResource} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
-                    <button onClick={() => {setEditingResource(undefined); setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'General', author: '', coverImage: '', readTime: '', tags: '' })}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button>
+                    <button onClick={() => {setEditingResource(undefined); setResourceForm({ title: '', slug: '', excerpt: '', content: '', category: 'Parenting & Learning', author: '', coverImage: '', readTime: '', tags: '', status: 'Draft', metaDescription: '' })}} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -1014,7 +1024,7 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-6 py-4">
                           <div className="flex gap-2">
-                            <button onClick={() => {setEditingResource(resource); setResourceForm({title: resource.title, slug: resource.slug, excerpt: resource.excerpt || '', content: resource.content, category: resource.category, author: resource.author, coverImage: resource.coverImage || '', readTime: resource.readTime || '', tags: resource.tags?.join(', ') || ''})}} className="text-ink-muted hover:text-ink">
+                            <button onClick={() => {setEditingResource(resource); setResourceForm({title: resource.title, slug: resource.slug, excerpt: resource.excerpt || '', content: resource.content, category: resource.category, author: resource.author, coverImage: resource.coverImage || '', readTime: resource.readTime || '', status: resource.status || 'Draft', metaDescription: resource.metaDescription || '', tags: resource.tags?.join(', ') || ''})}} className="text-ink-muted hover:text-ink">
                               <Edit className="w-4 h-4" />
                             </button>
                             <button onClick={() => deleteResource(resource.id)} className="text-critical hover:text-critical">
