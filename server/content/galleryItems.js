@@ -135,12 +135,6 @@ const GALLERY_ITEMS = [
     description: 'Learners together at the end of a day out.',
   },
   {
-    slug: 'smiles-beyond-the-classroom',
-    title: 'Smiles Beyond The Classroom',
-    category: 'Event',
-    description: 'A day out, and the friendships that come with it.',
-  },
-  {
     slug: 'smiles-around-the-table',
     title: 'Smiles Around The Table',
     category: 'General',
