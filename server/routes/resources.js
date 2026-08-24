@@ -3,6 +3,7 @@ const { Resource } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
 const { body } = require('express-validator')
+const { requestSiteRebuild } = require('../lib/siteRebuild')
 const {
   text, enumField, urlField, emailField, intField, dateField, boolField, arrayField,
   handleValidation,
@@ -122,6 +123,12 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), han
       publishedAt: publishedAt || new Date(),
     })
 
+    // Only a published article changes the public site; a draft changes
+    // nothing a crawler would ever see, so it must not cost a build.
+    if (resource.status === 'Published' && resource.isActive) {
+      requestSiteRebuild(`new article "${resource.title}"`)
+    }
+
     res.status(201).json({ success: true, data: resource })
   } catch (error) {
     res.status(400).json({ success: false, error: error.message })
@@ -136,6 +143,11 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), ha
     }
 
     const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, isActive, sortOrder, publishedAt, status, metaDescription } = req.body
+
+    // Taken before the update: an article being unpublished changes the public
+    // site just as much as one being published, and afterwards there is no way
+    // to tell which happened.
+    const wasPublic = resource.status === 'Published' && resource.isActive
 
     await resource.update({
       ...(title !== undefined && { title: title.trim() }),
@@ -154,6 +166,11 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), ha
       ...(publishedAt !== undefined && { publishedAt }),
     })
 
+    const isPublic = resource.status === 'Published' && resource.isActive
+    if (wasPublic || isPublic) {
+      requestSiteRebuild(`article "${resource.title}" ${isPublic ? 'updated' : 'unpublished'}`)
+    }
+
     res.json({ success: true, data: resource })
   } catch (error) {
     res.status(400).json({ success: false, error: error.message })
@@ -167,7 +184,11 @@ router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, 
       return res.status(404).json({ success: false, error: 'Resource not found' })
     }
 
+    const wasPublic = resource.status === 'Published' && resource.isActive
     await resource.update({ isActive: false })
+    // Otherwise the sitemap keeps advertising a page that now 404s.
+    if (wasPublic) requestSiteRebuild(`article "${resource.title}" removed`)
+
     res.json({ success: true, message: 'Resource deleted successfully' })
   } catch (error) {
     res.status(500).json({ success: false, error: error.message })

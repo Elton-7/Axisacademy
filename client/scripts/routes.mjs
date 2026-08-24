@@ -67,9 +67,10 @@ export function readServiceSlugs() {
  */
 export async function readArticleSlugs() {
   const base = (process.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+  await warmApi()
   try {
     const response = await fetch(`${base}/resources?limit=500`, {
-      signal: AbortSignal.timeout(20000),
+      signal: AbortSignal.timeout(45000),
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const body = await response.json()
@@ -81,11 +82,50 @@ export async function readArticleSlugs() {
   }
 }
 
+/**
+ * Wakes the API before the build reads from it.
+ *
+ * The API sleeps after fifteen minutes idle on its current plan, and a cold
+ * start takes the better part of a minute. A build that ran straight into that
+ * would time out, quietly get back an empty article list, and publish a sitemap
+ * with every article missing — worst of all right after someone published one,
+ * which is exactly when this build runs.
+ *
+ * So the first request is allowed to be slow, and only that one. Resolves
+ * either way: an unreachable API is reported by the callers, not here.
+ */
+let warmed = null
+export function warmApi() {
+  if (warmed) return warmed
+  const base = (process.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+  warmed = (async () => {
+    const deadline = Date.now() + 120000
+    let attempt = 0
+    while (Date.now() < deadline) {
+      attempt += 1
+      try {
+        const response = await fetch(`${base}/health`, { signal: AbortSignal.timeout(30000) })
+        if (response.ok) {
+          if (attempt > 1) console.log(`routes: API awake after ${attempt} attempts.`)
+          return true
+        }
+      } catch {
+        // Cold start in progress; wait and try again.
+      }
+      await new Promise((resolve) => setTimeout(resolve, 5000))
+    }
+    console.warn('routes: API did not respond in time. Articles may be missing from this build.')
+    return false
+  })()
+  return warmed
+}
+
 /** One article, for the prerenderer. Missing is not fatal — see readArticleSlugs. */
 export async function fetchArticle(slug) {
   const base = (process.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '')
   try {
-    const response = await fetch(`${base}/resources/slug/${slug}`, { signal: AbortSignal.timeout(20000) })
+    await warmApi()
+    const response = await fetch(`${base}/resources/slug/${slug}`, { signal: AbortSignal.timeout(45000) })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const body = await response.json()
     return body.data || body
