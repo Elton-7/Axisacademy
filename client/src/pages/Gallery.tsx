@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
-import { Image as ImageIcon, Loader, Search, Video, Sparkles } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Image as ImageIcon, Loader, Search, Video, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { GalleryItem, GalleryCategory, GalleryType } from '../types'
 import { galleryApi } from '../services/apiClient'
 
@@ -12,6 +12,28 @@ export default function Gallery() {
   const [filteredItems, setFilteredItems] = useState<GalleryItem[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [activeIndex, setActiveIndex] = useState<number | null>(null)
+
+  // Escape closes, arrows move between items. Bound only while the overlay is
+  // open, so the page's own keyboard behaviour is untouched the rest of the
+  // time, and the background is locked because a page scrolling behind an open
+  // overlay loses the reader their place.
+  useEffect(() => {
+    if (activeIndex === null) return
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setActiveIndex(null)
+      if (event.key === 'ArrowRight') setActiveIndex((i) => (i === null ? i : (i + 1) % filteredItems.length))
+      if (event.key === 'ArrowLeft') setActiveIndex((i) => (i === null ? i : (i - 1 + filteredItems.length) % filteredItems.length))
+    }
+    document.addEventListener('keydown', onKey)
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = previous
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIndex])
   const [selectedType, setSelectedType] = useState<'all' | GalleryType>('all')
   const [selectedCategory, setSelectedCategory] = useState<'all' | GalleryCategory>('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -146,46 +168,139 @@ export default function Gallery() {
               )}
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            /**
+             * A masonry of columns, not a grid of boxes.
+             *
+             * The previous layout forced every item into aspect-video and
+             * cropped to fill, which cut the portrait photographs straight
+             * through the faces — a third of these are 3:4 or 2:3. CSS columns
+             * let each photograph keep its own shape, so nothing is cropped and
+             * the varied heights read as an edit rather than a contact sheet.
+             */
+            <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 [&>*]:mb-5">
               {filteredItems.map((item, index) => (
-                <motion.article key={item.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: index * 0.04 }} className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
-                  <div className="relative aspect-video overflow-hidden bg-line">
-                    <img src={item.thumbnail || item.url} alt={item.title} className="h-full w-full object-cover transition-transform duration-300 hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent" />
-                    <div className="absolute left-4 top-4 flex items-center gap-2 rounded-full bg-surface/90 px-3 py-1 text-xs font-medium text-ink">
-                      {item.type === 'Video' ? <Video className="h-3.5 w-3.5" /> : <ImageIcon className="h-3.5 w-3.5" />}
-                      {item.type}
-                    </div>
-                  </div>
+                <motion.button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setActiveIndex(index)}
+                  initial={{ opacity: 0, y: 12 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{ duration: 0.4, delay: Math.min(index, 6) * 0.05 }}
+                  className="group relative block w-full break-inside-avoid overflow-hidden rounded-2xl border border-line bg-surface text-left shadow-sm transition-all duration-500 hover:-translate-y-0.5 hover:border-gold/40 hover:shadow-xl"
+                  aria-label={`Open ${item.title}`}
+                >
+                  <img
+                    src={item.thumbnail || item.url}
+                    alt={item.title}
+                    loading="lazy"
+                    className="w-full transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  />
 
-                  <div className="space-y-4 p-5">
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="rounded-full bg-gold/15 px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-ink">{item.category}</span>
-                    </div>
-
-                    <div>
-                      <h3 className="text-xl font-semibold text-ink">{item.title}</h3>
-                      {item.description && <p className="mt-2 text-sm leading-relaxed text-ink-muted">{item.description}</p>}
-                    </div>
-
-                    {item.tags && item.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {item.tags.slice(0, 4).map((tag) => (
-                          <span key={tag} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted">{tag}</span>
-                        ))}
-                      </div>
+                  {/* The caption sits over the foot of the image and lifts into
+                      view on hover, so the grid reads as photographs first. On a
+                      touch screen there is no hover, so it is always visible
+                      below the fold of the tile. */}
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-navy-900 via-navy-900/80 to-transparent p-4 pt-10">
+                    <p className="text-sm font-semibold leading-snug text-white">{item.title}</p>
+                    {item.description && (
+                      <p className="mt-1 text-xs leading-relaxed text-white/70 line-clamp-2">{item.description}</p>
                     )}
-
-                    <a href={item.url} target="_blank" rel="noreferrer" className="inline-flex items-center rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy/90">
-                      {item.type === 'Video' ? 'Watch video' : 'View image'}
-                    </a>
                   </div>
-                </motion.article>
+
+                  {item.type === 'Video' && (
+                    <span className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-navy-900/80 backdrop-blur-sm">
+                      <Video className="h-4 w-4 text-gold-500" aria-hidden="true" />
+                    </span>
+                  )}
+                </motion.button>
               ))}
             </div>
           )}
         </div>
       </section>
+
+      {/*
+        * Opening a photograph should not send a parent to a bare image file on
+        * a blank tab, which is where the previous "View image" link led — and
+        * back is then the only way home. This keeps them on the page, moves
+        * between items with the arrow keys, and closes on Escape.
+        */}
+      <AnimatePresence>
+        {activeIndex !== null && filteredItems[activeIndex] && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-900/95 p-4 backdrop-blur-sm sm:p-8"
+            role="dialog"
+            aria-modal="true"
+            aria-label={filteredItems[activeIndex].title}
+            onClick={() => setActiveIndex(null)}
+          >
+            <button
+              type="button"
+              onClick={() => setActiveIndex(null)}
+              className="absolute right-4 top-4 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20"
+              aria-label="Close"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            {filteredItems.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setActiveIndex((i) => (i === null ? i : (i - 1 + filteredItems.length) % filteredItems.length)) }}
+                  className="absolute left-2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:left-6"
+                  aria-label="Previous"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setActiveIndex((i) => (i === null ? i : (i + 1) % filteredItems.length)) }}
+                  className="absolute right-2 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition-colors hover:bg-white/20 sm:right-6"
+                  aria-label="Next"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </>
+            )}
+
+            <figure
+              className="max-h-full w-full max-w-4xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {filteredItems[activeIndex].type === 'Video' ? (
+                <video
+                  src={filteredItems[activeIndex].url}
+                  poster={filteredItems[activeIndex].thumbnail || undefined}
+                  controls
+                  autoPlay
+                  className="mx-auto max-h-[70vh] w-auto rounded-xl"
+                />
+              ) : (
+                <img
+                  src={filteredItems[activeIndex].url}
+                  alt={filteredItems[activeIndex].title}
+                  className="mx-auto max-h-[70vh] w-auto rounded-xl object-contain"
+                />
+              )}
+              <figcaption className="mx-auto mt-4 max-w-2xl text-center">
+                <p className="text-base font-semibold text-white">{filteredItems[activeIndex].title}</p>
+                {filteredItems[activeIndex].description && (
+                  <p className="mt-1.5 text-sm leading-relaxed text-white/70">{filteredItems[activeIndex].description}</p>
+                )}
+                <p className="mt-3 text-xs text-white/40">
+                  {activeIndex + 1} of {filteredItems.length}
+                </p>
+              </figcaption>
+            </figure>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   )
 }
