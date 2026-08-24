@@ -2,9 +2,9 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Calendar, MapPin, Users, Tag, ExternalLink, ArrowRight } from 'lucide-react'
 import { Event, EventStatus } from '../types'
+import { classifyLink } from '../utils/safeUrl'
 
-/** A link Axis pastes in from elsewhere; anything else is a route on this site. */
-const isExternal = (href: string) => /^https?:\/\//i.test(href)
+
 
 interface EventCardProps {
   event: Event
@@ -162,27 +162,38 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
           * application to get there. Only genuinely external links get a new
           * tab, and only those get the icon that promises one.
           */}
-        {event.registrationLink && event.status !== 'Cancelled' && (
-          isExternal(event.registrationLink) ? (
-            <a
-              href={event.registrationLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
-            >
-              Register Now
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          ) : (
-            <Link
-              to={event.registrationLink}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
-            >
-              Register Now
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          )
-        )}
+        {/*
+          * The link is classified before it is rendered, never trusted.
+          *
+          * This value is typed into the CMS. A naive "starts with http" test
+          * treated "//evil.example" and "\evil.example" as internal paths and
+          * handed them to <Link>, which navigates off-site while looking like
+          * an internal route — the backslash case being GHSA-wrjc-x8rr-h8h6,
+          * which has no fix on the router's 6.x line. A "javascript:" URL in an
+          * href runs on click. Anything that is not plainly a path here or an
+          * http(s) URL now renders as no link at all.
+          */}
+        {(() => {
+          if (!event.registrationLink || event.status === 'Cancelled') return null
+          const link = classifyLink(event.registrationLink)
+          if (link.kind === 'internal') {
+            return (
+              <Link to={link.href} className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors">
+                Register Now
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            )
+          }
+          if (link.kind === 'external') {
+            return (
+              <a href={link.href} target="_blank" rel="noopener noreferrer" className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors">
+                Register Now
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )
+          }
+          return null
+        })()}
 
         {/* Results/Recap */}
         {event.status === 'Completed' && event.recap && (

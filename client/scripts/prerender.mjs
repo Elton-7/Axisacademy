@@ -45,8 +45,27 @@ for (const { path } of await allRoutes()) {
     // browser reads it back on hydration, so what React builds on the client
     // matches what was served, and the page does not re-request something it
     // already has.
+    // Emitted as application/json, not as a script.
+    //
+    // This was an executable <script> assigning window.__PRELOADED_ARTICLE__,
+    // which the Content-Security-Policy refuses: its content differs per
+    // article, so it cannot be hashed at build time from index.html, and
+    // allowing it would have meant 'unsafe-inline' for every script on the
+    // site. A JSON block is never executed, so CSP permits it and there is no
+    // code path to abuse — the page reads it with JSON.parse instead.
+    // "<" is escaped so the payload can never close this element early and
+    // start a real one; U+2028 and U+2029 are stripped because they terminate
+    // a line in JavaScript but are legal inside a JSON string.
+    const LINE_SEP = String.fromCharCode(0x2028)
+    const PARA_SEP = String.fromCharCode(0x2029)
     const preload = article
-      ? `<script>window.__PRELOADED_ARTICLE__=${JSON.stringify(article).replace(/</g, '\u003c')}</script>`
+      ? `<script id="preloaded-article" type="application/json">${JSON.stringify(article)
+          .split('<')
+          .join('\\u003c')
+          .split(LINE_SEP)
+          .join('')
+          .split(PARA_SEP)
+          .join('')}</script>`
       : ''
 
     let page = template.replace(

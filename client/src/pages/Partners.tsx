@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Users, Loader, Search, Sparkles } from 'lucide-react'
 import { Partner, PartnerCategory } from '../types'
+import { safeExternalUrl } from '../utils/safeUrl'
 import { partnersApi } from '../services/apiClient'
 
 const CATEGORIES: Array<'all' | PartnerCategory> = ['all', 'Corporate', 'Educational Institution', 'Tech Partner', 'Content Provider', 'Community Partner']
@@ -190,8 +191,11 @@ export default function Partners() {
 
                     {(partner.website || partner.email || partner.phone) && (
                       <div className="space-y-2 border-t border-line pt-4">
-                        {partner.website && (
-                          <a href={partner.website} target="_blank" rel="noreferrer" className="text-sm text-gold hover:underline">
+                        {/* Validated before it becomes an href: this value is
+                            typed into the CMS, and a javascript: URL in an href
+                            executes when a visitor clicks it. */}
+                        {safeExternalUrl(partner.website) && (
+                          <a href={safeExternalUrl(partner.website) ?? undefined} target="_blank" rel="noopener noreferrer" className="text-sm text-gold hover:underline">
                             Visit website →
                           </a>
                         )}

@@ -9,6 +9,13 @@ const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
 
 /**
+ * Matches the cost used for the seeded accounts and the deployment hashes.
+ * These were 10 while everything else was 12, so a password changed through
+ * the app was hashed more weakly than the one it replaced.
+ */
+const BCRYPT_COST = 12
+
+/**
  * Account administration (brief §28, §29, §30).
  *
  * Without this the portals cannot be used at all: a parent account has to exist
@@ -73,7 +80,7 @@ router.post(
         name: name.trim(),
         email,
         role,
-        passwordHash: await bcrypt.hash(password, 10),
+        passwordHash: await bcrypt.hash(password, BCRYPT_COST),
         mustChangePassword: true,
       })
 
@@ -148,7 +155,7 @@ router.post('/:id/reset-password', requireAuth, requireRole('admin'), async (req
     if (!user) return res.status(404).json({ success: false, error: 'Account not found' })
 
     const password = temporaryPassword()
-    await user.update({ passwordHash: await bcrypt.hash(password, 10), mustChangePassword: true })
+    await user.update({ passwordHash: await bcrypt.hash(password, BCRYPT_COST), mustChangePassword: true })
     await recordAudit(req, 'password_reset', 'user', user.id, {})
 
     res.json({ success: true, data: { temporaryPassword: password } })

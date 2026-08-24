@@ -15,21 +15,35 @@ import type { Resource } from '../types'
  * client matches the markup that was served — no mismatch, no re-render, and
  * no second request for something the page already has.
  */
-declare global {
-  interface Window {
-    __PRELOADED_ARTICLE__?: Resource
-  }
-}
-
 let seeded: Resource | undefined
 
 export const seedArticle = (article?: Resource) => {
   seeded = article
 }
 
+/**
+ * Read out of a JSON block rather than a global set by an inline script.
+ *
+ * The script form was refused by the Content-Security-Policy: its content
+ * differs per article, so it cannot be hashed at build time, and permitting it
+ * would have meant allowing every inline script on the site. A JSON block is
+ * data — never executed — so the policy allows it and there is nothing here for
+ * an injected payload to run.
+ */
+const fromDocument = (): Resource | undefined => {
+  if (typeof document === 'undefined') return undefined
+  const node = document.getElementById('preloaded-article')
+  if (!node?.textContent) return undefined
+  try {
+    return JSON.parse(node.textContent) as Resource
+  } catch {
+    // Malformed data is simply ignored; the page fetches as it would anyway.
+    return undefined
+  }
+}
+
 /** The preloaded article, if it is the one this page is for. */
 export const preloadedArticle = (slug?: string): Resource | undefined => {
-  const candidate =
-    seeded ?? (typeof window !== 'undefined' ? window.__PRELOADED_ARTICLE__ : undefined)
+  const candidate = seeded ?? fromDocument()
   return candidate && candidate.slug === slug ? candidate : undefined
 }

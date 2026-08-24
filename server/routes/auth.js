@@ -9,6 +9,13 @@ const User = require('../models/User')
 const { requireAuth } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
 
+/**
+ * Matches the cost used for the seeded accounts and the deployment hashes.
+ * These were 10 while everything else was 12, so a password changed through
+ * the app was hashed more weakly than the one it replaced.
+ */
+const BCRYPT_COST = 12
+
 const MAX_EMAIL_ATTEMPTS = 5
 const EMAIL_TRACK_WINDOW_MS = 30 * 60 * 1000 // 30 minutes
 const EMAIL_LOCK_DURATION_MS = 15 * 60 * 1000 // 15 minutes
@@ -191,7 +198,7 @@ router.post('/change-password', requireAuth, async (req, res) => {
     }
 
     await user.update({
-      passwordHash: await bcrypt.hash(newPassword, 10),
+      passwordHash: await bcrypt.hash(newPassword, BCRYPT_COST),
       mustChangePassword: false,
     })
     await recordAudit(req, 'password_changed', 'user', user.id, {})
