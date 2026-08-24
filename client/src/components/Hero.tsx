@@ -34,10 +34,10 @@ const impact = [
  * for a tile, and already on the page's cache path.
  */
 const collage = [
-  { src: '/gallery/books-smiles-and-good-vibes-thumb.jpg', alt: 'Learners choosing books in the reading corner', height: 'h-56' },
-  { src: '/gallery/art-from-our-hearts-thumb.jpg', alt: 'A learner painting from observation', height: 'h-40' },
-  { src: '/gallery/her-dream-thumb.jpg', alt: 'A learner following a story online', height: 'h-40' },
-  { src: '/gallery/incoming-teacher-thumb.jpg', alt: 'A learner writing sight words on the board', height: 'h-56' },
+  { src: '/gallery/books-smiles-and-good-vibes-thumb.jpg', alt: 'Learners choosing books in the reading corner', height: 'h-40 sm:h-48 lg:h-56' },
+  { src: '/gallery/art-from-our-hearts-thumb.jpg', alt: 'A learner painting from observation', height: 'h-28 sm:h-36 lg:h-40' },
+  { src: '/gallery/her-dream-thumb.jpg', alt: 'A learner following a story online', height: 'h-28 sm:h-36 lg:h-40' },
+  { src: '/gallery/incoming-teacher-thumb.jpg', alt: 'A learner writing sight words on the board', height: 'h-40 sm:h-48 lg:h-56' },
 ]
 
 export default function Hero() {
@@ -51,7 +51,7 @@ export default function Hero() {
       </div>
 
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div className="grid items-center gap-6 sm:gap-8 lg:grid-cols-2 lg:gap-12">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={isVisible ? { opacity: 1, x: 0 } : {}}
@@ -96,31 +96,24 @@ export default function Hero() {
               </a>
             </div>
 
-            <div className="mb-4 grid gap-3 grid-cols-2 lg:grid-cols-4">
-              {impact.map((item) => (
-                <div key={item.label} className="rounded-2xl border border-white/10 bg-surface/10 p-4 backdrop-blur-sm">
-                  <p className="text-3xl font-semibold leading-none text-gold-500">{item.value}</p>
-                  <p className="mt-2 text-xs leading-snug text-white/70">{item.label}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* "1:1 or small group" understated what Axis can arrange. The
-                arrows read as a range rather than a pair of options. */}
-            <div className="mb-8 rounded-2xl border border-gold/25 bg-gold/[0.07] p-4 backdrop-blur-sm">
-              <p className="text-lg font-semibold text-gold-500">
-                1:1 <span className="text-white/40">→</span> Small <span className="text-white/40">→</span> Group
-              </p>
-              <p className="mt-1 text-sm text-white/70">Flexible learning formats that fit the learner</p>
-            </div>
-
           </motion.div>
 
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={isVisible ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-            className="relative hidden lg:block"
+            /*
+             * Visible on every screen.
+             *
+             * This carried `hidden lg:block` from the text panel it replaced —
+             * reasonable then, because that panel repeated in words what the
+             * headline beside it already said, so losing it on a phone lost
+             * nothing. A collage of photographs is not redundant text. Hiding
+             * it removed the whole visual from the device most parents will
+             * actually open the site on, which is the opposite of what the
+             * homepage review asked for.
+             */
+            className="relative lg:mt-0"
           >
             {/*
               Brief §19: "I do not want a website that only contains stock
@@ -135,7 +128,9 @@ export default function Hero() {
               sized to take it.
             */}
             <div className="relative mx-auto max-w-xl">
-              <div className="absolute -left-8 -top-8 h-48 w-48 rounded-full border-2 border-gold-500/30" />
+              {/* Outside the container on purpose, so it is clipped rather
+                  than allowed to widen the page on a narrow screen. */}
+              <div className="pointer-events-none absolute -left-8 -top-8 hidden h-48 w-48 rounded-full border-2 border-gold-500/30 lg:block" />
 
               {/* Staggered columns rather than a flat grid: the offset is what
                   stops four photographs reading as a contact sheet. */}
@@ -173,6 +168,38 @@ export default function Hero() {
               </Link>
             </div>
           </motion.div>
+
+          {/*
+            * Its own row, spanning both columns.
+            *
+            * These sat under the buttons inside the left column, which on a
+            * phone pushed the photographs about two screens down — past the
+            * headline, the paragraph, three buttons, four figures and the
+            * format band. The review asks a visitor to understand Axis "within
+            * the first few seconds", and a visual nobody scrolls to does not
+            * do that. Moved below the collage, the numbers also get the full
+            * width, which suits figures meant to be visually dominant.
+            */}
+          <div className="lg:col-span-2">
+            <div className="mb-4 grid gap-3 grid-cols-2 lg:grid-cols-4">
+              {impact.map((item) => (
+                <div key={item.label} className="rounded-2xl border border-white/10 bg-surface/10 p-4 backdrop-blur-sm">
+                  <p className="text-3xl font-semibold leading-none text-gold-500">{item.value}</p>
+                  <p className="mt-2 text-xs leading-snug text-white/70">{item.label}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* "1:1 or small group" understated what Axis can arrange. The
+                arrows read as a range rather than a pair of options. */}
+            <div className="mb-8 rounded-2xl border border-gold/25 bg-gold/[0.07] p-4 backdrop-blur-sm">
+              <p className="text-lg font-semibold text-gold-500">
+                1:1 <span className="text-white/40">→</span> Small <span className="text-white/40">→</span> Group
+              </p>
+              <p className="mt-1 text-sm text-white/70">Flexible learning formats that fit the learner</p>
+            </div>
+
+          </div>
         </div>
       </div>
     </section>
