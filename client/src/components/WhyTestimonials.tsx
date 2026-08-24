@@ -1,21 +1,30 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { User, Clock, Network, Globe, Lightbulb, TrendingUp, Users, Heart, Leaf } from 'lucide-react'
+import { User, Clock, Network, TrendingUp, Users, Heart, Leaf, Trophy } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
 import { testimonialsApi } from '../services/apiClient'
 import type { Testimonial } from '../types'
 import { Link } from 'react-router-dom'
 
+/**
+ * Ordered by what moves a prospective parent, which is Axis's own ordering.
+ *
+ * The previous list opened with "Flexible Scheduling" and left special needs
+ * support and community until last. Personalised learning is the promise the
+ * whole organisation rests on, so it leads; the operational points follow.
+ *
+ * Kept to short labels deliberately — the reasoning behind each one belongs on
+ * the pages that explain it, not stacked on the homepage.
+ */
 const reasons = [
-  { icon: User, label: 'Personalized Learning' },
-  { icon: Clock, label: 'Flexible Scheduling' },
-  { icon: Network, label: 'A National Educator Network' },
-  { icon: Globe, label: 'Local & International Curricula' },
-  { icon: Lightbulb, label: 'Languages & Life Skills' },
-  { icon: TrendingUp, label: 'Academic & Personal Development' },
-  { icon: Users, label: 'Supportive Learning Community' },
-  { icon: Heart, label: 'Special Learner Support' },
-  { icon: Leaf, label: 'Holistic Education Approach' },
+  { icon: User, label: 'Personalised Learning' },
+  { icon: Users, label: 'Vibrant Homeschooling Communities' },
+  { icon: Leaf, label: 'Flexible, Holistic Education' },
+  { icon: Trophy, label: 'Integrated Co-Curricular & Enrichment' },
+  { icon: Heart, label: 'Special Needs & Inclusive Learning' },
+  { icon: Clock, label: 'Flexible Learning Models' },
+  { icon: TrendingUp, label: 'Social & Emotional Development' },
+  { icon: Network, label: 'Educator & Specialist Network' },
 ]
 
 /**

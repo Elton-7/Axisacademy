@@ -16,24 +16,32 @@ import { ArrowRight } from 'lucide-react'
  */
 const steps = [
   {
-    title: 'Initial enquiry',
-    text: 'You tell us about the learner and what you are looking for. Nothing is committed at this point.',
+    title: 'Make an Enquiry',
+    text: 'Tell us about the learner, where you are, and what support you are looking for. Nothing is committed at this point.',
   },
   {
-    title: 'Learner discovery',
-    text: 'We take time to understand the learner’s profile, strengths and requirements before recommending anything.',
+    title: 'Learner Discovery',
+    text: 'A conversation to understand the learner’s current education, strengths, interests, needs, goals and circumstances.',
   },
   {
-    title: 'Pathway recommendation',
-    text: 'We recommend a programme and curriculum that suit that particular learner.',
+    title: 'Learning Pathway Recommendation',
+    text: 'We recommend a programme, curriculum and learning arrangement — subjects, timetable, mode of learning and any enrichment.',
   },
   {
-    title: 'Fee discussion',
-    text: 'We set out what it costs, once we know what is actually being proposed.',
+    title: 'Submit Essential Documents',
+    text: 'Only what is relevant to the learner and programme: usually a photograph, a birth certificate or ID, and previous reports where they exist.',
   },
   {
-    title: 'Enrolment',
-    text: 'The learner joins the programme and begins.',
+    title: 'Programme & Fee Agreement',
+    text: 'The arrangement, timetable, services and fees are set out and agreed with you.',
+  },
+  {
+    title: 'Family Meeting & Matriculation',
+    text: 'The learner and family meet the Axis team or educator, in person or online, to get ready to start.',
+  },
+  {
+    title: 'Enrolment & Learning Begins',
+    text: 'The learner is enrolled and begins — home-based, centre-based, online or blended.',
   },
 ]
 
@@ -42,7 +50,7 @@ export default function HowItWorks() {
     <section className="bg-surface-sunk py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl">
-          <div className="section-label mb-4 text-left">How it works</div>
+          <div className="section-label mb-4 text-left">How it works — Admission &amp; Enrolment</div>
           <h2 className="text-3xl font-semibold text-ink sm:text-4xl">
             What happens after you get in touch
           </h2>
@@ -52,7 +60,7 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        <ol className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-5">
+        <ol className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, index) => (
             <li
               key={step.title}

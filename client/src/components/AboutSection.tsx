@@ -15,8 +15,16 @@ export default function AboutSection() {
           <h2 className="mb-4 text-3xl font-semibold text-ink sm:text-4xl">
             Thoughtful education that meets each learner where they are.
           </h2>
+          {/* Named in full rather than described in the abstract. "Calm,
+              personalized and future-focused learning experiences" reads as
+              homeschooling and tuition and leaves a parent guessing at the
+              rest; Axis Learning is wider than the concept it grew out of, and
+              this is the sentence that says so without becoming a list. */}
           <p className="text-lg leading-relaxed text-ink-muted">
-            Axis Learning offers calm, personalized, and future-focused learning experiences for children, teenagers, and adults.
+            Axis Learning brings homeschooling and academic support together with Cambridge,
+            Montessori and CBC pathways, Special Needs Education, foreign languages, games and
+            sports, performing and creative arts, communication and leadership, and technology
+            and innovation — for children, teenagers and adults.
           </p>
         </div>
 

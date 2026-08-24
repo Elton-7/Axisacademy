@@ -6,6 +6,7 @@ const Enrollment = require('../models/Enrollment')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
 const { notifyNewEnquiry } = require('../services/notifications')
+const { AGE_GROUP_VALUES } = require('../content/ageGroups')
 
 // Get all enrollments
 router.get('/', requireAuth, requireRole('admin', 'staff'), async (req, res) => {
@@ -56,7 +57,7 @@ router.post(
     body('email').isEmail().withMessage('Valid email is required').normalizeEmail(),
     body('phone').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 20 }).withMessage('Phone is too long'),
     body('programme').trim().notEmpty().withMessage('Programme is required').isLength({ max: 100 }).withMessage('Programme is too long'),
-    body('ageGroup').isIn(['child', 'teenager', 'adult']).withMessage('Age group is required'),
+    body('ageGroup').isIn(AGE_GROUP_VALUES).withMessage('Please choose a learner age group'),
     body('learnerAge').optional({ nullable: true, checkFalsy: true }).isInt({ min: 1, max: 100 }).withMessage('Learner age must be between 1 and 100').toInt(),
     body('location').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 120 }).withMessage('Location is too long'),
     body('currentSchool').optional({ nullable: true, checkFalsy: true }).trim().isLength({ max: 160 }).withMessage('Current school is too long'),

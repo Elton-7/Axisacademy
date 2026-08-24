@@ -31,7 +31,9 @@ const Enrollment = sequelize.define('Enrollment', {
     type: DataTypes.STRING(100)
   },
   ageGroup: {
-    type: DataTypes.ENUM('child', 'teenager', 'adult')
+    // Free text, not an enum: the bands are Axis's own classification and will
+    // change as the organisation does. See the 20260824 migration.
+    type: DataTypes.STRING(32)
   },
   learnerAge: {
     type: DataTypes.INTEGER
