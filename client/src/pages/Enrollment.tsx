@@ -4,6 +4,7 @@ import { AlertCircle, CheckCircle, Loader2, Send } from 'lucide-react'
 import toast from 'react-hot-toast'
 import axios from 'axios'
 import { useForm } from 'react-hook-form'
+import { AGE_GROUPS } from '../content/ageGroups'
 import { enrollmentsApi } from '../services/apiClient'
 import { trackConversion } from '../services/analytics'
 import type { CreateEnrollmentRequest } from '../types'
@@ -117,9 +118,11 @@ export default function Enrollment() {
               <label htmlFor="ageGroup" className="mb-2 block text-sm font-medium text-ink">Learner age group *</label>
               <select id="ageGroup" {...register('ageGroup', { required: 'Please select an age group' })} className={`${inputClass} bg-surface`}>
                 <option value="">Select age group...</option>
-                <option value="child">Child</option>
-                <option value="teenager">Teenager</option>
-                <option value="adult">Adult</option>
+                {AGE_GROUPS.map((band) => (
+                  <option key={band.value} value={band.value}>
+                    {band.label}
+                  </option>
+                ))}
               </select>
               {errors.ageGroup && <p className="mt-1 text-xs text-critical">{errors.ageGroup.message}</p>}
             </div>
