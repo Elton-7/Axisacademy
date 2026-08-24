@@ -1,6 +1,10 @@
 import { motion } from 'framer-motion'
-import { Calendar, MapPin, Users, Tag, ExternalLink } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Calendar, MapPin, Users, Tag, ExternalLink, ArrowRight } from 'lucide-react'
 import { Event, EventStatus } from '../types'
+
+/** A link Axis pastes in from elsewhere; anything else is a route on this site. */
+const isExternal = (href: string) => /^https?:\/\//i.test(href)
 
 interface EventCardProps {
   event: Event
@@ -35,12 +39,23 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
       className={`overflow-hidden rounded-2xl border border-line shadow-sm hover:shadow-lg transition-all duration-300 ${colors.bg}`}
     >
       {/* Poster Image */}
+      {/*
+        * Contained, not cropped.
+        *
+        * This was a 192px-tall box with object-cover. These posters are
+        * portrait, so filling that box sliced the middle out of each one —
+        * losing the title off the top and the venue and phone number off the
+        * bottom. A poster is a document a parent reads, not a decorative
+        * photograph, so the whole of it has to survive. Letterboxed against the
+        * brand navy it reads as a pinned poster rather than a mistake.
+        */}
       {event.poster && (
-        <div className="h-48 overflow-hidden bg-surface-muted">
+        <div className="aspect-[4/5] overflow-hidden bg-navy-900">
           <img
             src={event.poster}
-            alt={event.title}
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            alt={`${event.title} poster`}
+            loading="lazy"
+            className="h-full w-full object-contain transition-transform duration-500 hover:scale-[1.03]"
           />
         </div>
       )}
@@ -74,11 +89,23 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
             </span>
           </div>
 
-          {/* Location */}
-          {event.location && (
-            <div className="flex items-center gap-2 text-sm text-ink-muted">
-              <MapPin className="h-4 w-4 text-gold flex-shrink-0" />
-              <span>{event.location}</span>
+          {/*
+            * Venue first, then the wider location.
+            *
+            * Only `location` was rendered, so a card could say "Nairobi" and
+            * nothing else — while "Two Rivers Mall, Limuru Road" sat unused in
+            * the record. The venue is the one line a parent needs in order to
+            * turn up, and two of the three events had no location set at all,
+            * so those cards showed no place whatsoever.
+            */}
+          {(event.venue || event.location) && (
+            <div className="flex items-start gap-2 text-sm text-ink-muted">
+              <MapPin className="mt-0.5 h-4 w-4 flex-shrink-0 text-gold" />
+              <span>
+                {event.venue}
+                {event.venue && event.location ? ', ' : ''}
+                {event.location}
+              </span>
             </div>
           )}
 
@@ -99,9 +126,15 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
           )}
 
           {/* Price */}
-          {event.priceKES && (
+          {/*
+            * Number() first: priceKES is a DECIMAL column, and Sequelize hands
+            * those back as strings to keep the precision. toLocaleString on a
+            * string is a no-op, so the card read "KES 2500.00" — an unseparated
+            * figure with two meaningless decimal places on a whole-shilling fee.
+            */}
+          {event.priceKES != null && Number(event.priceKES) > 0 && (
             <div className="text-sm font-semibold text-gold-700">
-              KES {event.priceKES.toLocaleString()}
+              KES {Number(event.priceKES).toLocaleString('en-KE', { maximumFractionDigits: 0 })}
             </div>
           )}
 
@@ -121,16 +154,34 @@ export default function EventCard({ event, index = 0 }: EventCardProps) {
         )}
 
         {/* CTA Button */}
+        {/*
+          * An internal route goes through the router, not a new tab.
+          *
+          * Every registration link points at /enroll on this site. Forcing it
+          * through target="_blank" opened a second tab and reloaded the whole
+          * application to get there. Only genuinely external links get a new
+          * tab, and only those get the icon that promises one.
+          */}
         {event.registrationLink && event.status !== 'Cancelled' && (
-          <a
-            href={event.registrationLink}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
-          >
-            Register Now
-            <ExternalLink className="h-4 w-4" />
-          </a>
+          isExternal(event.registrationLink) ? (
+            <a
+              href={event.registrationLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
+            >
+              Register Now
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          ) : (
+            <Link
+              to={event.registrationLink}
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 bg-gold text-navy-surface font-semibold rounded-lg hover:bg-gold/90 transition-colors"
+            >
+              Register Now
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          )
         )}
 
         {/* Results/Recap */}
