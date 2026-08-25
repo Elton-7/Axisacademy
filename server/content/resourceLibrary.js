@@ -96,7 +96,9 @@ const RESOURCE_LIBRARY = [
   {
     title: 'The Montessori Pedagogy: A Multi-Sensory Approach to Childhood Education',
     sourceUrl: 'https://journal.gmpionline.com/index.php/jpak/article/view/505',
-    author: 'The University of the South Pacific, Suva, Fiji',
+    // Axis credited the institution; these are the paper's named authors, with
+    // the university kept because that is Alasa's affiliation on the paper.
+    author: 'Ifeoma M. Ogbemudia, Victor Mafone Alasa & Joseph C. Ikenyiri — University of the South Pacific, Suva, Fiji',
     category: 'Montessori',
   },
   {

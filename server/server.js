@@ -13,6 +13,7 @@ const {
 const { preflight } = require('./lib/preflight')
 const sequelize = require('./config/database')
 const seedData = require('./seeders/seed')
+const { publicCache } = require('./middleware/publicCache')
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -74,17 +75,20 @@ app.get('/api/health', async (req, res) => {
 })
 
 // Routes
-app.use('/api/services', require('./routes/services'))
-app.use('/api/testimonials', require('./routes/testimonials'))
+// publicCache is attached only to the routers below, which serve content any
+// visitor may read. Auth, portal, learners, users, data-protection and audit
+// are deliberately absent: a shared cache must never hold a learner's record.
+app.use('/api/services', publicCache, require('./routes/services'))
+app.use('/api/testimonials', publicCache, require('./routes/testimonials'))
 app.use('/api/contacts', require('./routes/contact'))
 app.use('/api/enrollments', require('./routes/enrollments'))
-app.use('/api/educators', require('./routes/educators'))
-app.use('/api/events', require('./routes/events'))
-app.use('/api/faqs', require('./routes/faqs'))
-app.use('/api/locations', require('./routes/locations'))
-app.use('/api/gallery', require('./routes/gallery'))
-app.use('/api/resources', require('./routes/resources'))
-app.use('/api/partners', require('./routes/partners'))
+app.use('/api/educators', publicCache, require('./routes/educators'))
+app.use('/api/events', publicCache, require('./routes/events'))
+app.use('/api/faqs', publicCache, require('./routes/faqs'))
+app.use('/api/locations', publicCache, require('./routes/locations'))
+app.use('/api/gallery', publicCache, require('./routes/gallery'))
+app.use('/api/resources', publicCache, require('./routes/resources'))
+app.use('/api/partners', publicCache, require('./routes/partners'))
 app.use('/api/stats', require('./routes/stats'))
 app.use('/api/newsletter', require('./routes/newsletter'))
 app.use('/api/auth', require('./routes/auth'))
