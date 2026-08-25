@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { Phone, GraduationCap, MessageCircle, Sparkles, ArrowRight } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
 import { contact, telHref } from '../content/contact'
@@ -42,6 +42,7 @@ const collage = [
 
 export default function Hero() {
   const { ref, isVisible } = useScrollAnimation()
+  const reduceMotion = useReducedMotion()
 
   return (
     <section ref={ref} className="relative flex min-h-[760px] items-center overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(212,175,55,0.16),_transparent_32%),linear-gradient(135deg,_#06101f_0%,_#13223f_100%)] pt-24">
@@ -134,29 +135,60 @@ export default function Hero() {
 
               {/* Staggered columns rather than a flat grid: the offset is what
                   stops four photographs reading as a contact sheet. */}
+              {/*
+                * The photographs arrive one after another and then drift.
+                *
+                * Four stills sitting perfectly still read as a placeholder
+                * graphic. Each tile now fades up in turn, then breathes on a
+                * long, slow loop — six to nine seconds, a few pixels, and every
+                * tile on its own phase so they never move together and never
+                * pulse. It should read as depth rather than as animation; a
+                * visitor who looks straight at it should struggle to say what
+                * is moving.
+                *
+                * Silent for anyone who has asked their system for less motion:
+                * the entrance is skipped and the drift never starts.
+                */}
               <div className="relative grid grid-cols-2 gap-3">
-                <div className="space-y-3">
-                  {collage.slice(0, 2).map((shot) => (
-                    <img
-                      key={shot.src}
-                      src={shot.src}
-                      alt={shot.alt}
-                      loading="eager"
-                      className={`w-full ${shot.height} rounded-2xl border border-white/10 object-cover shadow-2xl`}
-                    />
-                  ))}
-                </div>
-                <div className="space-y-3 pt-10">
-                  {collage.slice(2).map((shot) => (
-                    <img
-                      key={shot.src}
-                      src={shot.src}
-                      alt={shot.alt}
-                      loading="eager"
-                      className={`w-full ${shot.height} rounded-2xl border border-white/10 object-cover shadow-2xl`}
-                    />
-                  ))}
-                </div>
+                {[collage.slice(0, 2), collage.slice(2)].map((column, columnIndex) => (
+                  <div key={columnIndex} className={columnIndex === 1 ? 'space-y-3 pt-10' : 'space-y-3'}>
+                    {column.map((shot, rowIndex) => {
+                      const order = columnIndex * 2 + rowIndex
+                      return (
+                        <motion.img
+                          key={shot.src}
+                          src={shot.src}
+                          alt={shot.alt}
+                          loading="eager"
+                          initial={reduceMotion ? false : { opacity: 0, y: 24, scale: 0.96 }}
+                          animate={
+                            isVisible
+                              ? reduceMotion
+                                ? { opacity: 1 }
+                                : { opacity: 1, y: [0, -7, 0], scale: 1 }
+                              : {}
+                          }
+                          transition={
+                            reduceMotion
+                              ? { duration: 0 }
+                              : {
+                                  opacity: { duration: 0.6, delay: 0.3 + order * 0.12 },
+                                  scale: { duration: 0.6, delay: 0.3 + order * 0.12 },
+                                  y: {
+                                    duration: 6.5 + order * 0.8,
+                                    delay: 0.3 + order * 0.12,
+                                    repeat: Infinity,
+                                    ease: 'easeInOut',
+                                  },
+                                }
+                          }
+                          whileHover={reduceMotion ? {} : { scale: 1.04, transition: { duration: 0.35 } }}
+                          className={`w-full ${shot.height} cursor-default rounded-2xl border border-white/10 object-cover shadow-2xl`}
+                        />
+                      )
+                    })}
+                  </div>
+                ))}
               </div>
 
               <Link

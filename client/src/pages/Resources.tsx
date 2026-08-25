@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { BookOpen, ExternalLink, Loader, Search, Sparkles } from 'lucide-react'
 import { Resource, ResourceCategory, RESOURCE_CATEGORIES } from '../types'
 import { resourcesApi } from '../services/apiClient'
@@ -13,6 +13,7 @@ export default function Resources() {
   const [filteredResources, setFilteredResources] = useState<Resource[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const reduceMotion = useReducedMotion()
   const [selectedCategory, setSelectedCategory] = useState<'all' | ResourceCategory>('all')
   const [searchQuery, setSearchQuery] = useState('')
 
@@ -163,14 +164,32 @@ export default function Resources() {
                     {category}
                   </h2>
                   <ul className="divide-y divide-line border-y border-line">
-                    {items.map((resource) => {
+                    {items.map((resource, index) => {
                       // A resource is only a link once someone has established
                       // that Axis may point at a copy. Until then the title is
                       // listed plainly — honest, where a dead link is not.
                       const href = resource.sourceUrl || resource.fileUrl
                       const external = Boolean(resource.sourceUrl)
                       return (
-                        <li key={resource.id} className="flex gap-4 py-5 sm:gap-5">
+                        /*
+                         * Each row arrives as the reader reaches it, and the
+                         * cover lifts under the cursor like a sheet of paper
+                         * being picked up. The point is to show these are
+                         * things you can open — a static thumbnail reads as
+                         * decoration, and eight of these covers are the only
+                         * clue that a title leads to a document.
+                         *
+                         * Held to a small tilt and a short distance: this is a
+                         * reading list, and anything livelier would fight the
+                         * "simple and clean" it was asked to be.
+                         */
+                        <motion.li
+                          key={resource.id}
+                          initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          viewport={{ once: true, margin: '-40px' }}
+                          transition={{ duration: 0.4, delay: Math.min(index, 5) * 0.05 }}
+                          className="group flex gap-4 py-5 sm:gap-5">
                           {/* The paper's own first page. Small, and beside the
                               title rather than above it, so the list still
                               reads as a list — Axis asked for simple and clean,
@@ -181,7 +200,7 @@ export default function Resources() {
                               alt=""
                               aria-hidden="true"
                               loading="lazy"
-                              className="hidden h-24 w-[4.5rem] shrink-0 rounded-md border border-line object-cover object-top shadow-sm sm:block"
+                              className="hidden h-24 w-[4.5rem] shrink-0 rounded-md border border-line object-cover object-top shadow-sm transition-all duration-500 ease-out group-hover:-translate-y-1 group-hover:-rotate-1 group-hover:shadow-lg motion-reduce:transition-none motion-reduce:group-hover:translate-y-0 motion-reduce:group-hover:rotate-0 sm:block"
                             />
                           )}
                           <div className="min-w-0">
@@ -207,7 +226,7 @@ export default function Resources() {
                           )}
                           <p className="mt-1 text-sm italic leading-relaxed text-ink-muted">{resource.author}</p>
                           </div>
-                        </li>
+                        </motion.li>
                       )
                     })}
                   </ul>
