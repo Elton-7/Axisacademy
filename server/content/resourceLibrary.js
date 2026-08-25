@@ -26,6 +26,7 @@ const RESOURCE_LIBRARY = [
   { title: 'Autism', author: 'Melissa H. Black & Sven Bölte', category: 'Special Needs Education' },
   {
     title: 'Cambridge International Education — Overview Brochure',
+    sourceUrl: 'https://www.cambridgeinternational.org/Images/417448-overview-brochure.pdf',
     author: 'Cambridge International Education',
     category: 'Cambridge',
   },
@@ -47,6 +48,7 @@ const RESOURCE_LIBRARY = [
   {
     title:
       'Curriculum Adaptations for Students with Diverse Learning Needs in Special Education Centers: An Analysis of Teachers’ Practices',
+    sourceUrl: 'https://contemporaryjournal.com/index.php/14/article/view/2085',
     author: 'Dr. Hina Hadayat Ali, Dr. Muhammad Nazir & Mashal Zahra',
     category: 'Special Needs Education',
   },
@@ -57,22 +59,26 @@ const RESOURCE_LIBRARY = [
   },
   {
     title: 'Education for Children with Special Needs in Kenya: A Review of Related Literature',
+    sourceUrl: 'https://www.iiste.org/Journals/index.php/JEP/article/view/39246/0',
     author: 'Teresa Mwoma',
     category: 'Special Needs Education',
   },
   {
     title:
       'Homeschooling in Kenya: Policy Implications for Educational Stakeholders — A Qualitative Study of Alternative Education Provision and Education Policy Reform',
+    sourceUrl: 'https://www.journalijar.com/uploads/2026/02/6996a46fa9095_IJAR-56163.pdf',
     author: 'Cecilia Osyanju Namuyemba',
     category: 'Homeschooling',
   },
   {
     title: 'Household Characteristics of Homeschoolers in Kenya',
+    sourceUrl: 'https://journals.eanso.org/index.php/eajes/article/view/2568',
     author: 'Charles Munene Gachoki',
     category: 'Homeschooling',
   },
   {
     title: 'Mapping the Montessori Mathematics Curriculum to Dehaene’s Four Pillars of Learning',
+    sourceUrl: 'https://www.nature.com/articles/s41539-026-00436-4',
     author: 'Chloë Marshall, Louise Livingston & Jo Van Herwegen',
     category: 'Montessori',
   },
@@ -89,11 +95,13 @@ const RESOURCE_LIBRARY = [
   },
   {
     title: 'The Montessori Pedagogy: A Multi-Sensory Approach to Childhood Education',
+    sourceUrl: 'https://journal.gmpionline.com/index.php/jpak/article/view/505',
     author: 'The University of the South Pacific, Suva, Fiji',
     category: 'Montessori',
   },
   {
     title: 'The Whole-Brain Child',
+    sourceUrl: 'https://www.penguinrandomhouse.com/books/200276/the-whole-brain-child-by-daniel-j-siegel-md-and-tina-payne-bryson-phd/',
     author: 'Daniel J. Siegel & Tina Payne Bryson',
     category: 'Parenting & Learning',
   },
@@ -125,8 +133,11 @@ const resourceRows = () =>
     isActive: true,
     publishedAt: new Date(),
     sortOrder: index + 1,
-    sourceUrl: null,
-    fileUrl: null,
+    // Null unless an authorised source has actually been established for this
+    // work. A missing link leaves the title listed but not clickable, which is
+    // the honest state — not a placeholder to be filled with a guess.
+    sourceUrl: item.sourceUrl ?? null,
+    fileUrl: item.fileUrl ?? null,
   }))
 
 module.exports = { RESOURCE_LIBRARY, resourceRows, slugify }
