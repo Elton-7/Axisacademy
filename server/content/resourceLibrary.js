@@ -133,11 +133,19 @@ const resourceRows = () =>
     isActive: true,
     publishedAt: new Date(),
     sortOrder: index + 1,
-    // Null unless an authorised source has actually been established for this
-    // work. A missing link leaves the title listed but not clickable, which is
-    // the honest state — not a placeholder to be filled with a guess.
     sourceUrl: item.sourceUrl ?? null,
-    fileUrl: item.fileUrl ?? null,
+    /*
+     * Where no publisher link was established, the copy Axis supplied is
+     * served from the site, so every title opens something. Axis provided
+     * these for publication, and most are open-access papers whose CC-BY
+     * terms permit redistribution with attribution — which the author line
+     * beneath each title gives.
+     *
+     * A publisher link is still preferred where one exists: the reader gets
+     * the citation, the DOI and any later corrections, and Axis serves
+     * nothing. Hosting is the fallback, not the default.
+     */
+    fileUrl: item.fileUrl ?? (item.sourceUrl ? null : `/resources/${slugify(item.title)}.pdf`),
   }))
 
 module.exports = { RESOURCE_LIBRARY, resourceRows, slugify }
