@@ -29,7 +29,15 @@ const steps = [
   },
   {
     title: 'Submit Essential Documents',
-    text: 'Only what is relevant to the learner and programme: usually a photograph, a birth certificate or ID, and previous reports where they exist.',
+    /*
+     * The Special Needs requirement is stated plainly because it is a
+     * requirement, and a parent who learns of it only at step four of an
+     * enrolment has been misled by everything before it. The reason is given
+     * alongside it so that it reads as part of planning the right support
+     * rather than as a hurdle — the review asks that this step not feel like a
+     * frightening checklist.
+     */
+    text: 'Only what is relevant to the learner and programme: usually a photograph, a birth certificate or ID, and previous school reports where they exist. For Special Needs Education, hospital and assessment documents are required, so that the support we plan is built on what has already been established about the learner.',
   },
   {
     title: 'Programme & Fee Agreement',
