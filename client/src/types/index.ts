@@ -641,6 +641,8 @@ export interface Resource {
   metaDescription?: string
   author: string
   coverImage?: string
+  sourceUrl?: string | null
+  fileUrl?: string | null
   readTime?: string
   tags?: string[]
   isActive: boolean
@@ -658,6 +660,8 @@ export interface CreateResourceRequest {
   category?: ResourceCategory
   author?: string
   coverImage?: string
+  sourceUrl?: string | null
+  fileUrl?: string | null
   readTime?: string
   tags?: string[]
   publishedAt?: string
@@ -671,6 +675,8 @@ export interface UpdateResourceRequest {
   category?: ResourceCategory
   author?: string
   coverImage?: string
+  sourceUrl?: string | null
+  fileUrl?: string | null
   readTime?: string
   tags?: string[]
   isActive?: boolean

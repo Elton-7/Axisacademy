@@ -1,5 +1,6 @@
 const { COORDINATOR_BIOS } = require('../content/coordinatorBios')
 const { galleryRows } = require('../content/galleryItems')
+const { resourceRows } = require('../content/resourceLibrary')
 const { EVENTS } = require('../content/events')
 const seedDemoPortal = require('./demoPortal')
 const { Service, Testimonial, User, Enrollment, PortalSchedule, PortalMessage, Educator, Event, FAQ, Location, Gallery, Resource, Partner } = require('../models')
@@ -566,140 +567,9 @@ const seedData = async () => {
 
     // Brief §24 — the resources section doubles as the SEO surface, so these are
     // written as genuinely useful parent guidance rather than filler.
-    await seedIfEmpty(Resource, [
-      {
-        title: 'Choosing a curriculum in Kenya: CBC, Cambridge, IB or Montessori?',
-        slug: 'choosing-a-curriculum-in-kenya',
-        category: 'Parent Guide',
-        author: 'Axis Learning',
-        excerpt: 'A plain-language comparison of the main curricula available to Kenyan families, and how to think about which one suits your learner.',
-        readTime: '8 min read',
-        tags: ['CBC', 'Cambridge', 'IB', 'Montessori', 'Curriculum'],
-        content: `Most parents are asked to choose a curriculum long before anyone explains what the choice actually means. This guide sets out the practical differences.
-
-**CBC (Competency-Based Curriculum)** places emphasis on skills, competencies, practical learning, creativity and holistic development rather than examinations alone. It is the national curriculum, so transfers between Kenyan schools are straightforward, and it suits learners who do better demonstrating what they can do than sitting written papers.
-
-**Montessori** is a learner-centred approach encouraging independence, practical learning, exploration and development at an appropriate pace. It is strongest in the early years, and suits learners who thrive with autonomy and hands-on materials.
-
-**Cambridge** offers structured academic progression and strong subject-based learning, leading to IGCSE and O Level examinations. It is internationally recognised and portable, which matters for families who may relocate or who are aiming at overseas universities.
-
-**IB (International Baccalaureate)** emphasises inquiry, critical thinking, independent learning and holistic development. It is demanding and writing-intensive, and rewards learners who enjoy connecting ideas across subjects.
-
-**How to actually decide.** Curriculum should follow the learner, not the other way round. Consider how your learner demonstrates understanding, whether they need breadth or depth, how they respond to examinations, whether the family expects to move, and what they might want to do afterwards.
-
-If you are unsure, that is a normal position to be in — and not one you have to resolve alone. Axis can assess a learner's needs, strengths and aspirations and recommend a pathway.`,
-        sortOrder: 1,
-        publishedAt: new Date('2026-02-10'),
-      },
-      {
-        title: 'Homeschooling in Kenya: how it actually works',
-        slug: 'homeschooling-in-kenya-how-it-works',
-        category: 'Parent Guide',
-        author: 'Axis Learning',
-        excerpt: 'What homeschooling involves in practice — structure, curriculum, assessment, socialisation and the questions parents ask most.',
-        readTime: '7 min read',
-        tags: ['Homeschooling', 'CBC', 'Parents'],
-        content: `Homeschooling is often imagined as either total freedom or a parent teaching alone at a kitchen table. In practice, a well-run homeschooling programme looks much more like school — just built around one learner.
-
-**It still needs structure.** A curriculum is agreed, goals are set, a timetable is built, and progress is assessed. What changes is that the timetable fits the household, and the pace fits the learner.
-
-**You do not have to teach it yourself.** Many families work with an educator who delivers the programme — either travelling to the home or meeting the learner at a centre. Parents stay involved without becoming full-time teachers.
-
-**Assessment still matters.** Learners are assessed regularly so that gaps are caught early, and so there is a documented record if the learner later returns to a school or sits formal examinations.
-
-**Socialisation is a design question, not an accident.** Group programmes, sports, holiday tuition, clubs and shared activities need to be built into the plan deliberately.
-
-**Who it suits.** Learners who are ahead and under-stimulated, learners who have fallen behind and need to rebuild, learners with additional needs, families who travel, and learners for whom a conventional classroom has stopped working.`,
-        sortOrder: 2,
-        publishedAt: new Date('2026-03-04'),
-      },
-      {
-        title: 'Signs your learner needs academic support — and what to do next',
-        slug: 'signs-your-learner-needs-academic-support',
-        category: 'Learning Tips',
-        author: 'Axis Learning',
-        excerpt: 'Falling grades are usually the last signal, not the first. What to watch for earlier, and how to respond without escalating the pressure.',
-        readTime: '5 min read',
-        tags: ['Tuition', 'Academic Support', 'Parents'],
-        content: `By the time grades drop, the difficulty has usually been building for a while. These earlier signals are more useful.
-
-**Avoidance.** Homework starts later and later, or a specific subject's books never come out of the bag. Avoidance is usually about difficulty, not laziness.
-
-**Effort without progress.** A learner who is genuinely working but not improving is often missing an earlier concept. More practice on the current topic will not fix it.
-
-**Answers without understanding.** They can complete the procedure but cannot explain why it works, or cannot apply it when the question is phrased differently.
-
-**A change in how they talk about themselves.** "I'm just bad at maths" is a warning sign. Learners generalise a specific gap into a permanent trait very quickly.
-
-**What to do next.** Identify where understanding actually broke down rather than adding hours to the current topic. Good tuition is diagnostic before it is remedial — it works backwards to the foundation, repairs it, then moves forward. Rebuilding confidence usually matters as much as rebuilding content.`,
-        sortOrder: 3,
-        publishedAt: new Date('2026-04-18'),
-      },
-      {
-        title: 'Supporting a learner with additional learning needs',
-        slug: 'supporting-a-learner-with-additional-needs',
-        category: 'Academic Support',
-        author: 'Axis Learning',
-        excerpt: 'How individualised educational support works, what to expect, and where educational support ends and clinical assessment begins.',
-        readTime: '6 min read',
-        tags: ['Special Needs', 'Inclusion', 'Individualised Learning'],
-        content: `Every learner is different. For learners with additional educational or developmental needs, that principle simply carries more weight.
-
-**Start with the learner, not the label.** A diagnosis describes a category; it does not tell an educator how this learner best takes in information, how long they can sustain attention, what motivates them, or what environment settles them. Those things have to be observed.
-
-**Adaptation is specific.** Useful adaptation is concrete: shorter working blocks, materials presented differently, alternative ways of demonstrating understanding, a quieter environment, predictable routines, or assessment adjusted in form rather than lowered in expectation.
-
-**Independence is the goal.** Support that a learner cannot eventually work without has not fully succeeded. Good programmes build strategies the learner can carry themselves.
-
-**Where educational support ends.** Axis provides educational support. We do not diagnose or assess medical or developmental conditions. Where a formal diagnosis or therapy is appropriate, that is the work of qualified clinical professionals — and we work alongside those already supporting your family.
-
-**What parents can expect.** A discovery conversation, an educator matched to your learner, an individualised plan, regular communication, and honest review — including telling you when something is not working.`,
-        sortOrder: 4,
-        publishedAt: new Date('2026-05-22'),
-      },
-      {
-        title: 'Making school holidays count without exhausting your learner',
-        slug: 'making-school-holidays-count',
-        category: 'Learning Tips',
-        author: 'Axis Learning',
-        excerpt: 'Holidays are the best window for catching up or getting ahead — provided the programme is built for a learner who also needs to rest.',
-        readTime: '5 min read',
-        tags: ['Holiday Tuition', 'Revision', 'Enrichment'],
-        content: `School holidays are the only stretch of the year where a learner can work on a weakness without simultaneously keeping up with new material. That makes them valuable — and easy to overload.
-
-**Pick one or two priorities.** A holiday is not long enough to fix everything. Choose the subject where a gap is doing the most damage, and the one where a little momentum will build the most confidence.
-
-**Short, frequent sessions beat long ones.** Three focused hours a week over a whole break achieves more than an intensive final fortnight.
-
-**Leave the holiday intact.** Learners return to school in worse shape if they have had no rest. A good holiday programme is built around the break, not instead of it.
-
-**Use the time for things term-time squeezes out.** Reading for pleasure, a language, chess, music, drama, sport. These build the confidence, communication and persistence that feed straight back into academic work.
-
-**Prepare, do not just repair.** Previewing the next term's opening topics is one of the highest-return uses of holiday time — learners start the term ahead rather than behind.`,
-        sortOrder: 5,
-        publishedAt: new Date('2026-06-30'),
-      },
-      {
-        title: 'Why we teach African languages alongside French, German and Mandarin',
-        slug: 'why-we-teach-african-languages',
-        category: 'Programme Spotlight',
-        author: 'Axis Learning',
-        excerpt: 'Language carries identity as well as opportunity. Why Axis promotes Kiswahili, Dholuo, Kikuyu and other African languages as seriously as global ones.',
-        readTime: '4 min read',
-        tags: ['Languages', 'Kiswahili', 'Culture'],
-        content: `Language programmes in the region tend to treat foreign languages as an investment and African languages as an afterthought. We think that is the wrong way round — or rather, that it is a false choice.
-
-**Global languages open doors.** French, Spanish, German, Mandarin, Japanese, Korean and Arabic open study, work and travel opportunities, and are increasingly requested by families with international plans.
-
-**African languages open something else.** A learner who cannot speak with their grandparents in the language those conversations belong in has lost something no examination measures. Kiswahili, Dholuo, Kikuyu, Luhya, Kamba, Kalenjin, Maasai, Kisii, Somali and others carry family, culture and belonging.
-
-**The skills transfer in both directions.** Learners who study any second language seriously become better at all of them — and at English. The habits are the same: listening closely, tolerating not understanding everything at once, and being willing to sound imperfect while learning.
-
-**How we teach them.** One-to-one or in groups, online, at a centre or at home, with conversation practice and cultural activities rather than vocabulary lists alone. We want African identity, culture and linguistic diversity promoted alongside global languages — not beneath them.`,
-        sortOrder: 6,
-        publishedAt: new Date('2026-07-14'),
-      },
-    ])
+    // The collection Axis supplied. Titles and attributions are theirs; the
+    // links are deliberately empty until each work's licensing is settled.
+    await seedIfEmpty(Resource, resourceRows())
 
     // Real photographs and video of Axis learners, in the order a parent should
     // meet them. Consent is recorded on every row; the public endpoint returns

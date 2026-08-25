@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Link } from 'react-router-dom'
-import { ArrowRight, BookOpen, Clock3, Loader, Search, Sparkles } from 'lucide-react'
+import { BookOpen, ExternalLink, Loader, Search, Sparkles } from 'lucide-react'
 import { Resource, ResourceCategory, RESOURCE_CATEGORIES } from '../types'
 import { resourcesApi } from '../services/apiClient'
 
@@ -140,68 +139,64 @@ export default function Resources() {
               No resources match your current filters.
             </div>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {filteredResources.map((resource, index) => (
-                <motion.article key={resource.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, delay: index * 0.04 }} className="overflow-hidden rounded-2xl border border-line bg-surface shadow-sm">
-                  {/* Brief §19 rules out a stock-photo site, so an article
-                      without its own cover gets a branded panel rather than a
-                      generic photograph standing in for one. */}
-                  <div className="relative aspect-[16/9] overflow-hidden bg-navy-900">
-                    {resource.coverImage ? (
-                      <img src={resource.coverImage} alt={resource.title} className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-[linear-gradient(135deg,#0a1628_0%,#24334f_100%)] px-6 text-center">
-                        <span className="font-mono text-xs uppercase tracking-[0.2em] text-gold-500">
-                          {resource.category}
-                        </span>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-navy/70 to-transparent" />
-                    <div className="absolute left-4 top-4 rounded-full bg-surface/90 px-3 py-1 text-xs font-medium text-ink">{resource.category}</div>
-                  </div>
-
-                  <div className="space-y-4 p-5">
-                    {/* Author, date and read time — the byline a reader uses to
-                        judge whether a piece is current and who wrote it. The
-                        date was missing entirely. */}
-                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs uppercase tracking-[0.2em] text-ink-muted">
-                      <span>{resource.author}</span>
-                      {resource.publishedAt && (
-                        <>
-                          <span aria-hidden="true">·</span>
-                          <time dateTime={resource.publishedAt}>
-                            {new Date(resource.publishedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                          </time>
-                        </>
-                      )}
-                      <span className="ml-auto flex items-center gap-1"><Clock3 className="h-3.5 w-3.5" /> {resource.readTime || '4 min read'}</span>
-                    </div>
-
-                    <div>
-                      <h3 className="text-xl font-semibold text-ink">{resource.title}</h3>
-                      {resource.excerpt && <p className="mt-2 text-sm leading-relaxed text-ink-muted">{resource.excerpt}</p>}
-                    </div>
-
-                    {resource.tags && resource.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {resource.tags.slice(0, 3).map((tag) => (
-                          <span key={tag} className="rounded-full bg-surface-muted px-2.5 py-1 text-xs text-ink-muted">{tag}</span>
-                        ))}
-                      </div>
-                    )}
-
-                    {/* This was a <button> with no handler — it looked like the
-                        way in to the article and did nothing at all, because
-                        there was no article page for it to open. */}
-                    <Link
-                      to={`/resources/${resource.slug}`}
-                      className="inline-flex items-center gap-2 rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-navy-surface transition-colors hover:bg-gold/90"
-                    >
-                      Read article
-                      <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </motion.article>
+            /**
+             * A reading list, not a blog.
+             *
+             * This was a grid of article cards — cover panel, date, read time,
+             * excerpt, tags, and a "Read article" button. That shape suits
+             * writing Axis publishes itself. This collection is mostly other
+             * people's scholarship, where the useful facts are the title and
+             * who wrote it, and everything else is furniture around a link.
+             *
+             * Grouped by subject so the list stays navigable as it grows, which
+             * Axis expects it to.
+             */
+            <div className="space-y-12">
+              {Object.entries(
+                filteredResources.reduce<Record<string, typeof filteredResources>>((groups, item) => {
+                  ;(groups[item.category] ||= []).push(item)
+                  return groups
+                }, {})
+              ).map(([category, items]) => (
+                <section key={category}>
+                  <h2 className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-gold-700">
+                    {category}
+                  </h2>
+                  <ul className="divide-y divide-line border-y border-line">
+                    {items.map((resource) => {
+                      // A resource is only a link once someone has established
+                      // that Axis may point at a copy. Until then the title is
+                      // listed plainly — honest, where a dead link is not.
+                      const href = resource.sourceUrl || resource.fileUrl
+                      const external = Boolean(resource.sourceUrl)
+                      return (
+                        <li key={resource.id} className="py-5">
+                          {href ? (
+                            <a
+                              href={href}
+                              target={external ? '_blank' : undefined}
+                              rel={external ? 'noopener noreferrer' : undefined}
+                              className="group inline-flex items-start gap-2 text-lg font-semibold leading-snug text-ink transition-colors hover:text-gold-700"
+                            >
+                              <span className="underline decoration-gold/40 underline-offset-4 group-hover:decoration-gold">
+                                {resource.title}
+                              </span>
+                              {external && (
+                                <ExternalLink
+                                  className="mt-1.5 h-4 w-4 shrink-0 text-ink-muted"
+                                  aria-label="opens on the publisher's site"
+                                />
+                              )}
+                            </a>
+                          ) : (
+                            <p className="text-lg font-semibold leading-snug text-ink">{resource.title}</p>
+                          )}
+                          <p className="mt-1 text-sm italic leading-relaxed text-ink-muted">{resource.author}</p>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </section>
               ))}
             </div>
           )}

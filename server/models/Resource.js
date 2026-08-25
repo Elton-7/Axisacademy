@@ -25,8 +25,10 @@ const Resource = sequelize.define(
       allowNull: true,
     },
     content: {
+      // Optional: a resource Axis links to rather than wrote has no body, and
+      // pasting someone else's paper in here would be republishing it.
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
     category: {
       // Subjects, not article shapes. Nobody searches for "a parent guide";
@@ -67,6 +69,24 @@ const Resource = sequelize.define(
     },
     coverImage: {
       type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+    /**
+     * Where the work is published by whoever owns it. Linking here is always
+     * safe, and is the default for anything Axis did not write.
+     */
+    sourceUrl: {
+      type: DataTypes.STRING(2048),
+      allowNull: true,
+    },
+    /**
+     * A copy Axis serves itself. Set this only for something Axis has the
+     * right to redistribute — its own writing, an open-licence paper, or a
+     * brochure supplied for the purpose. Never on the assumption that it is
+     * probably fine.
+     */
+    fileUrl: {
+      type: DataTypes.STRING(2048),
       allowNull: true,
     },
     readTime: {
