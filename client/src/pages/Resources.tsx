@@ -170,7 +170,21 @@ export default function Resources() {
                       const href = resource.sourceUrl || resource.fileUrl
                       const external = Boolean(resource.sourceUrl)
                       return (
-                        <li key={resource.id} className="py-5">
+                        <li key={resource.id} className="flex gap-4 py-5 sm:gap-5">
+                          {/* The paper's own first page. Small, and beside the
+                              title rather than above it, so the list still
+                              reads as a list — Axis asked for simple and clean,
+                              and a wall of thumbnails is neither. */}
+                          {resource.coverImage && (
+                            <img
+                              src={resource.coverImage}
+                              alt=""
+                              aria-hidden="true"
+                              loading="lazy"
+                              className="hidden h-24 w-[4.5rem] shrink-0 rounded-md border border-line object-cover object-top shadow-sm sm:block"
+                            />
+                          )}
+                          <div className="min-w-0">
                           {href ? (
                             <a
                               href={href}
@@ -192,6 +206,7 @@ export default function Resources() {
                             <p className="text-lg font-semibold leading-snug text-ink">{resource.title}</p>
                           )}
                           <p className="mt-1 text-sm italic leading-relaxed text-ink-muted">{resource.author}</p>
+                          </div>
                         </li>
                       )
                     })}

@@ -133,6 +133,10 @@ const resourceRows = () =>
     isActive: true,
     publishedAt: new Date(),
     sortOrder: index + 1,
+    // The first page of the work itself, rendered by scripts/resource-covers.mjs.
+    // A genuine picture of the paper rather than stock imagery standing in for
+    // one, which section 19 of the brief rules out.
+    coverImage: `/resources/${slugify(item.title)}-cover.jpg`,
     sourceUrl: item.sourceUrl ?? null,
     /*
      * Where no publisher link was established, the copy Axis supplied is
