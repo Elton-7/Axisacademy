@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const crypto = require('crypto')
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 const { body } = require('express-validator')
 const { handleValidation } = require('../middleware/validate')
 const { User, LearnerEducator, Learner } = require('../models')
@@ -13,7 +13,14 @@ const { recordAudit } = require('../middleware/audit')
  * These were 10 while everything else was 12, so a password changed through
  * the app was hashed more weakly than the one it replaced.
  */
-const BCRYPT_COST = 12
+/*
+ * Twelve in production, and only lowered where a suite creates dozens of
+ * accounts. Each cost-12 hash is deliberate work — that is the point of it —
+ * so a test run that stands up sixty users pays real seconds for security it
+ * is not testing, and the suite times out on its own thoroughness rather than
+ * on a defect. The default is what ships; nothing but the tests sets this.
+ */
+const BCRYPT_COST = Number(process.env.BCRYPT_COST) || 12
 
 /**
  * Account administration (brief §28, §29, §30).

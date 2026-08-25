@@ -39,7 +39,15 @@ const authLimiter = rateLimit({
 
 const generalApiLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
-  max: 60, // limit each IP to 60 requests per minute
+  /*
+   * Sixty a minute per IP in production. Overridable only so the test suite is
+   * not throttled by its own thoroughness: every request in a run comes from
+   * one address, so adding a test used to push the whole suite past the limit
+   * and fail unrelated cases with a 429 — a failure that looks like a bug in
+   * whatever was tested last. AUTH_RATE_LIMIT_MAX already existed for the same
+   * reason on sign-in. The production default must stay where it is.
+   */
+  max: Number(process.env.GENERAL_RATE_LIMIT_MAX) || 60,
   standardHeaders: true,
   legacyHeaders: false,
   message: {

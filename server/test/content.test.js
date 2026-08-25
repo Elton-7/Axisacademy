@@ -12,7 +12,7 @@
 const assert = require('node:assert/strict')
 const { after, before, describe, test } = require('node:test')
 const { spawn } = require('node:child_process')
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 
 const PORT = process.env.CONTENT_TEST_PORT || 5072
 const baseUrl = `http://127.0.0.1:${PORT}/api`
@@ -42,7 +42,7 @@ const api = async (path, { method = 'GET', token, body } = {}) => {
 }
 
 async function waitForHealth() {
-  const deadline = Date.now() + (Number(process.env.TEST_HEALTH_TIMEOUT_MS) || 60_000)
+  const deadline = Date.now() + (Number(process.env.TEST_HEALTH_TIMEOUT_MS) || 180_000)
   while (Date.now() < deadline) {
     try {
       const response = await fetch(`${baseUrl}/health`)
@@ -78,7 +78,7 @@ const validPayload = {
   partners: () => ({ name: `${MARKER}Partner`, category: 'Corporate' }),
   resources: () => ({
     title: `${MARKER}Resource`, slug: `cms-suite-resource-${Date.now()}`,
-    content: 'Body text', category: 'General', author: 'Suite',
+    content: 'Body text', category: 'Homeschooling', author: 'Suite',
   }),
 }
 const RESOURCES = Object.keys(validPayload)
@@ -86,7 +86,7 @@ const RESOURCES = Object.keys(validPayload)
 before(async () => {
   serverProcess = spawn(process.execPath, ['server.js'], {
     cwd: `${__dirname}/..`,
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: 'test', AUTH_RATE_LIMIT_MAX: '100' },
+    env: { ...process.env, PORT: String(PORT), NODE_ENV: 'test', AUTH_RATE_LIMIT_MAX: '100', GENERAL_RATE_LIMIT_MAX: '100000', BCRYPT_COST: '4' },
     stdio: 'ignore',
   })
   await waitForHealth()
@@ -266,8 +266,11 @@ describe('a record can be created, changed and removed', () => {
       const id = create.body.data.id
       created[name].push(id)
 
-      const read = await api(`/${name}/${id}`)
-      assert.equal(read.status, 200)
+      // Read back as staff. A resource is created as a draft, and a draft is
+      // deliberately invisible to the public — the CMS still has to be able to
+      // reopen it, which is what this asserts.
+      const read = await api(`/${name}/${id}`, { token: tokens.admin })
+      assert.equal(read.status, 200, `${name} could not be read back after creation`)
       assert.equal(read.body.success, true)
       assert.equal(read.body.data.id, id)
 
@@ -305,6 +308,39 @@ describe('a record can be created, changed and removed', () => {
     })
     assert.equal(update.status, 400)
     assert.match(update.body.error, /name/i)
+  })
+})
+
+describe('a draft article is not readable by the public', () => {
+  /*
+   * Staff can read drafts so the CMS can reopen one after saving. This is the
+   * other half of that rule: an unpublished article stays invisible to everyone
+   * else, including through a direct link to its id. Without this, widening the
+   * read rule again would go unnoticed.
+   */
+  test('returns 404 to an anonymous reader and 200 to staff', async () => {
+    const created = await api('/resources', {
+      method: 'POST',
+      token: tokens.admin,
+      body: {
+        title: `${MARKER}Draft article`,
+        slug: `cms-draft-${Date.now()}`,
+        content: 'Body text',
+        category: 'Homeschooling',
+        author: 'Suite',
+      },
+    })
+    assert.equal(created.status, 201, `draft create failed: ${JSON.stringify(created.body)}`)
+    const id = created.body.data.id
+    assert.equal(created.body.data.status, 'Draft', 'a new article should start as a draft')
+
+    const anonymous = await api(`/resources/${id}`)
+    assert.equal(anonymous.status, 404, 'a draft must not be readable without a token')
+
+    const staff = await api(`/resources/${id}`, { token: tokens.admin })
+    assert.equal(staff.status, 200, 'staff must be able to reopen their own draft')
+
+    await api(`/resources/${id}`, { method: 'DELETE', token: tokens.admin })
   })
 })
 
@@ -354,7 +390,7 @@ describe('a parent can send an enquiry', () => {
     studentName: `${MARKER}Enquiry`,
     email: 'enquiry-suite@axis.local',
     programme: 'Academic Learning & Homeschooling',
-    ageGroup: 'child',
+    ageGroup: '6-8',
     contactConsent: true,
   })
 

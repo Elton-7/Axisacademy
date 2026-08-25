@@ -474,7 +474,7 @@ const seedData = async () => {
           `No ${configuredUser.role} account created: set ` +
           `${configuredUser.role.toUpperCase()}_EMAIL and ${configuredUser.role.toUpperCase()}_PASSWORD_HASH ` +
           `(admin uses ADMIN_EMAIL / ADMIN_PASSWORD_HASH). ` +
-          `Hash one with: node -e "require('bcryptjs').hash('your-password',12).then(console.log)"`
+          `Hash one with: node -e "require('bcrypt').hash('your-password',12).then(console.log)"`
         )
         continue
       }

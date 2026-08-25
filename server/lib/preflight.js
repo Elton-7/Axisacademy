@@ -47,7 +47,7 @@ const checks = [
     message:
       'ADMIN_PASSWORD_HASH is not set. Seeding fails on a NOT NULL violation that ' +
       'says nothing about the cause. Generate it with:\n' +
-      '       node -e "require(\'bcryptjs\').hash(\'your-password\',12).then(console.log)"',
+      '       node -e "require(\'bcrypt\').hash(\'your-password\',12).then(console.log)"',
   },
   {
     name: 'ADMIN_PASSWORD_HASH',

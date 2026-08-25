@@ -38,4 +38,31 @@ function requireRole(...allowedRoles) {
   }
 }
 
-module.exports = { requireAuth, requireRole }
+/**
+ * Identifies the caller when they present a token, and lets them through when
+ * they do not.
+ *
+ * Written for endpoints that are public but show more to staff — a draft
+ * article is the case in hand. Without it, the article route had one rule for
+ * everybody: anything not published returned 404, so an editor could save a
+ * draft and then not open it again, because the CMS reads a record back
+ * through the same endpoint the public uses.
+ *
+ * A bad token is ignored rather than rejected, because on a public endpoint an
+ * expired token should mean "you are the public", not "go away".
+ */
+const attachUserIfPresent = (req, _res, next) => {
+  const secret = process.env.JWT_SECRET
+  const header = req.headers.authorization || ''
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null
+  if (secret && token) {
+    try {
+      req.user = jwt.verify(token, secret)
+    } catch {
+      // Deliberately ignored — see above.
+    }
+  }
+  next()
+}
+
+module.exports = { requireAuth, requireRole, attachUserIfPresent }

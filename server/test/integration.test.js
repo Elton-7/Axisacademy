@@ -10,7 +10,7 @@ async function waitForHealth() {
   // Startup runs sequelize.sync({ alter: true }), and the first run after a
   // model change has to migrate the schema before it can listen. Fifteen
   // seconds was not enough for that and failed as though the API were broken.
-  const timeoutMs = Number(process.env.TEST_HEALTH_TIMEOUT_MS) || 60_000
+  const timeoutMs = Number(process.env.TEST_HEALTH_TIMEOUT_MS) || 180_000
   const intervalMs = 500
   const attempts = Math.ceil(timeoutMs / intervalMs)
 

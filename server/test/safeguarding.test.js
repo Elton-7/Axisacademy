@@ -12,7 +12,7 @@
 const assert = require('node:assert/strict')
 const { after, before, describe, test } = require('node:test')
 const { spawn } = require('node:child_process')
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 
 const PORT = process.env.SAFEGUARDING_TEST_PORT || 5071
 const baseUrl = `http://127.0.0.1:${PORT}/api`
@@ -39,7 +39,7 @@ const api = async (path, { method = 'GET', token, body } = {}) => {
 }
 
 async function waitForHealth() {
-  const deadline = Date.now() + (Number(process.env.TEST_HEALTH_TIMEOUT_MS) || 60_000)
+  const deadline = Date.now() + (Number(process.env.TEST_HEALTH_TIMEOUT_MS) || 180_000)
   while (Date.now() < deadline) {
     try {
       const response = await fetch(`${baseUrl}/health`)
@@ -70,7 +70,7 @@ const clearanceFor = (offsetDays = 300) =>
 before(async () => {
   serverProcess = spawn(process.execPath, ['server.js'], {
     cwd: `${__dirname}/..`,
-    env: { ...process.env, PORT: String(PORT), NODE_ENV: 'test', AUTH_RATE_LIMIT_MAX: '100' },
+    env: { ...process.env, PORT: String(PORT), NODE_ENV: 'test', AUTH_RATE_LIMIT_MAX: '100', GENERAL_RATE_LIMIT_MAX: '100000', BCRYPT_COST: '4' },
     stdio: 'ignore',
   })
   await waitForHealth()

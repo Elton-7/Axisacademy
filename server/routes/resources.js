@@ -1,6 +1,6 @@
 const express = require('express')
 const { Resource } = require('../models')
-const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { requireAuth, requireRole, attachUserIfPresent } = require('../middleware/requireAuth')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
 const { body } = require('express-validator')
 const { requestSiteRebuild } = require('../lib/siteRebuild')
@@ -88,10 +88,15 @@ router.get('/slug/:slug', async (req, res) => {
   }
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', attachUserIfPresent, async (req, res) => {
   try {
     const resource = await Resource.findByPk(req.params.id)
-    if (!resource || !resource.isActive || resource.status !== 'Published') {
+    // Staff may read a draft; everyone else is told it does not exist. The CMS
+    // reads a record back through this endpoint after saving, so without this
+    // an editor could save a draft and never open it again.
+    const isStaff = req.user && ['admin', 'staff'].includes(req.user.role)
+    const visible = resource && resource.isActive && (resource.status === 'Published' || isStaff)
+    if (!visible) {
       return res.status(404).json({ success: false, error: 'Resource not found' })
     }
 
