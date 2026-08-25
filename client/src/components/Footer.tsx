@@ -70,7 +70,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-gold-500/30 text-gold-500 transition-all duration-300 hover:bg-gold-500 hover:text-navy-surface"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-gold-500/30 text-gold-500 transition-all duration-300 hover:bg-gold-500 hover:text-navy-surface"
                 >
                   <Icon className="h-4 w-4" />
                 </a>
@@ -81,10 +81,21 @@ export default function Footer() {
 
           <div>
             <h2 className="mb-6 text-sm font-semibold uppercase tracking-wide text-white">Quick Links</h2>
-            <ul className="space-y-3">
+            {/*
+              * Each link is its own 44px row.
+              *
+              * These were 17px of text with a 12px gap, so on a phone two
+              * destinations sat within a single fingertip of each other and the
+              * wrong one opened. The text is unchanged; the target around it is
+              * now the size a thumb can actually land on.
+              */}
+            <ul>
               {quickLinks.map((link) => (
                 <li key={link.href}>
-                  <Link to={link.href} className="text-sm text-white/50 transition-colors hover:text-gold-500">
+                  <Link
+                    to={link.href}
+                    className="block py-3 text-sm text-white/50 transition-colors hover:text-gold-500"
+                  >
                     {link.label}
                   </Link>
                 </li>

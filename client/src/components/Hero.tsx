@@ -46,7 +46,17 @@ export default function Hero() {
 
   return (
     <section ref={ref} className="relative flex min-h-[760px] items-center overflow-hidden bg-[radial-gradient(circle_at_top_left,_rgba(212,175,55,0.16),_transparent_32%),linear-gradient(135deg,_#06101f_0%,_#13223f_100%)] pt-24">
-      <div className="absolute inset-0 opacity-10">
+      {/*
+        * pointer-events-none, or this swallows every click in the hero.
+        *
+        * Two decorative rings inside a div stretched across the whole section.
+        * It is invisible at 10% opacity and paints above the content, so it was
+        * intercepting taps on the buttons beneath it — "Make an Enquiry",
+        * "Book a Consultation" and the phone number all did nothing, on every
+        * screen size. The primary route into an enquiry was dead, and nothing
+        * about the page looked wrong.
+        */}
+      <div className="pointer-events-none absolute inset-0 opacity-10" aria-hidden="true">
         <div className="absolute left-10 top-20 h-96 w-96 rounded-full border border-gold-500" />
         <div className="absolute bottom-18 right-20 h-64 w-64 rounded-full border border-gold-500" />
       </div>

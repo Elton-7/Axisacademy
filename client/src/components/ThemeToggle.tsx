@@ -19,7 +19,9 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
 
   if (theme === null) {
     // Reserve the space so the navbar does not shift when it appears.
-    return <span className={`inline-block h-9 w-9 ${className}`} aria-hidden="true" />
+    // Matches the button it stands in for, so the header does not shift when
+    // the toggle mounts.
+    return <span className={`inline-block h-11 w-11 ${className}`} aria-hidden="true" />
   }
 
   const next = theme === 'dark' ? 'light' : 'dark'
@@ -33,7 +35,7 @@ export default function ThemeToggle({ className = '' }: { className?: string }) 
       }}
       aria-label={`Switch to ${next} mode`}
       title={`Switch to ${next} mode`}
-      className={`inline-flex h-9 w-9 items-center justify-center rounded-full border border-gold-500/40 text-gold-500 transition-colors hover:bg-gold-500 hover:text-navy-surface ${className}`}
+      className={`inline-flex h-11 w-11 items-center justify-center rounded-full border border-gold-500/40 text-gold-500 transition-colors hover:bg-gold-500 hover:text-navy-surface ${className}`}
     >
       {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
     </button>

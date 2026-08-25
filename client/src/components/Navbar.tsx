@@ -248,7 +248,7 @@ export default function Navbar() {
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileOpen}
-            className="p-2 text-gold-500 xl:hidden"
+            className="flex h-11 w-11 items-center justify-center text-gold-500 xl:hidden"
           >
             {isMobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>

@@ -118,7 +118,7 @@ export default function Gallery() {
                     <button
                       key={type}
                       onClick={() => setSelectedType(type)}
-                      className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${selectedType === type ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-line'}`}
+                      className={`rounded-full px-4 py-3 text-sm font-medium transition-colors ${selectedType === type ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-line'}`}
                     >
                       {type === 'all' ? 'All' : type}
                     </button>
@@ -133,7 +133,7 @@ export default function Gallery() {
                     <button
                       key={category}
                       onClick={() => setSelectedCategory(category)}
-                      className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${selectedCategory === category ? 'bg-gold text-navy-surface' : 'bg-surface text-ink hover:bg-line'}`}
+                      className={`rounded-full px-4 py-3 text-sm font-medium transition-colors ${selectedCategory === category ? 'bg-gold text-navy-surface' : 'bg-surface text-ink hover:bg-line'}`}
                     >
                       {category === 'all' ? 'All' : category}
                     </button>

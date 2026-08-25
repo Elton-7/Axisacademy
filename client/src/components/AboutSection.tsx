@@ -8,7 +8,7 @@ export default function AboutSection() {
 
   return (
     <section ref={ref} id="about" className="relative overflow-hidden bg-surface py-24">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(201,168,76,0.14),_transparent_38%)]" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(201,168,76,0.14),_transparent_38%)]" />
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="section-label mb-5">About Axis</div>
         <div className="mb-10 max-w-3xl">

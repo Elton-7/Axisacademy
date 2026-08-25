@@ -169,7 +169,7 @@ export default function Locations() {
                     <button
                       key={type}
                       onClick={() => setSelectedType(type)}
-                      className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${
+                      className={`rounded-full px-4 py-3 text-sm font-medium transition-colors ${
                         selectedType === type ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-line'
                       }`}
                     >

@@ -30,7 +30,9 @@ export default function LearningOptions() {
 
   return (
     <section ref={ref} className="relative overflow-hidden bg-[linear-gradient(135deg,_#07111f_0%,_#162742_100%)] py-24">
-      <div className="absolute inset-0 opacity-10">
+      {/* Decorative. pointer-events-none so it can never intercept a click, the
+          way the hero's identical overlay was doing. */}
+      <div className="pointer-events-none absolute inset-0 opacity-10" aria-hidden="true">
         <div className="absolute left-1/4 top-0 h-96 w-96 rounded-full bg-gold blur-3xl" />
         <div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-gold blur-3xl" />
       </div>

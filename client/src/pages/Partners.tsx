@@ -119,7 +119,7 @@ export default function Partners() {
                   <button
                     key={category}
                     onClick={() => setSelectedCategory(category)}
-                    className={`rounded-full px-4 py-2 text-sm font-medium transition-colors ${selectedCategory === category ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-line'}`}
+                    className={`rounded-full px-4 py-3 text-sm font-medium transition-colors ${selectedCategory === category ? 'bg-navy text-white' : 'bg-surface text-ink hover:bg-line'}`}
                   >
                     {category === 'all' ? 'All' : category}
                   </button>

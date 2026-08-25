@@ -100,7 +100,17 @@ export default function Team() {
       </section>
 
       {/* Filters Section */}
-      <section className="bg-surface border-b border-line py-8 sticky top-0 z-40">
+      {/*
+        * Sticky only from lg up.
+        *
+        * On a phone the category chips wrap into five or six rows, so this bar
+        * stood 471px tall on Events — 56% of an 844px screen — and stayed
+        * pinned there while the reader scrolled. More than half the viewport
+        * was permanently filters, and it sat on top of the buttons underneath:
+        * a tap on "Register Now" landed on the bar instead. It only behaves
+        * like a filter bar on a wide screen, so it is only sticky there.
+        */}
+      <section className="bg-surface border-b border-line py-8 lg:sticky lg:top-0 lg:z-40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-4">
             {/* Search */}
@@ -119,7 +129,7 @@ export default function Team() {
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setSelectedCategory('all')}
-                className={`px-4 py-2 rounded-full font-medium text-sm transition-colors ${
+                className={`px-4 py-3 rounded-full font-medium text-sm transition-colors ${
                   selectedCategory === 'all'
                     ? 'bg-navy text-white'
                     : 'bg-surface-muted text-ink hover:bg-line'
@@ -132,7 +142,7 @@ export default function Team() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full font-medium text-sm transition-colors whitespace-nowrap ${
+                  className={`px-4 py-3 rounded-full font-medium text-sm transition-colors whitespace-nowrap ${
                     selectedCategory === category
                       ? 'bg-navy text-white'
                       : 'bg-surface-muted text-ink hover:bg-line'
