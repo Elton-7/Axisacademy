@@ -41,15 +41,14 @@
 [[headers]]
   for = "/*"
   [headers.values]
-    # REMOVE THIS LINE AT LAUNCH.
+    # The site-wide noindex that lived here has been removed: Axis is ready for
+    # the site to be found. Individual private routes still carry their own
+    # noindex from SEO.tsx — the portals, the admin panel and anything behind a
+    # sign-in — because those never belong in a search result.
     #
-    # While the site is being reviewed it lives on a public netlify.app address
-    # and the real domain does not exist yet. Without this, Google is free to
-    # index the review copy, and axislearning.co.ke would later launch competing
-    # against an established duplicate of itself. robots.txt still says Allow,
-    # but a header cannot be ignored the way a robots directive can be, and it
-    # covers every asset rather than only crawlable pages.
-    X-Robots-Tag = "noindex, nofollow"
+    # The netlify.app address is now a duplicate of the real domain. The
+    # canonical tags on every page name axislearning.co.ke, which is what tells
+    # Google which of the two to keep.
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
