@@ -128,10 +128,10 @@ const startServer = async () => {
   try {
     // Order matters. sync creates tables that do not exist; migrations then
     // apply the changes it cannot make to tables that already do.
-    await syncDatabase()
+    const { createdFromScratch } = (await syncDatabase()) || {}
 
     if (process.env.SKIP_MIGRATIONS !== 'true') {
-      await runMigrations()
+      await runMigrations({ freshDatabase: createdFromScratch })
     }
 
     // Seeding is idempotent — it only fills empty tables — but it can be turned

@@ -45,10 +45,27 @@ const migrator = new Umzug({
   },
 })
 
-async function runMigrations() {
+async function runMigrations({ freshDatabase = false } = {}) {
   const pending = await migrator.pending()
   if (pending.length === 0) {
     console.log('Migrations up to date')
+    return []
+  }
+
+  /**
+   * A database sync just built from the current models is already in the state
+   * these migrations produce, so they are recorded as done rather than run.
+   *
+   * Applying them would fail immediately: the first one adds a column that
+   * sync has already created. None of them carry data that a new database
+   * needs either — the backfills operate on rows that do not exist yet, and
+   * the seeder writes those values at insert time instead.
+   */
+  if (freshDatabase) {
+    for (const migration of pending) {
+      await migrator.storage.logMigration({ name: migration.name, context: sequelize.getQueryInterface() })
+    }
+    console.log(`Recorded ${pending.length} migration(s) as applied on a new database`)
     return []
   }
 

@@ -82,12 +82,33 @@ const syncDatabase = async () => {
 
   if (mode === 'none') {
     console.log('Database sync skipped (DB_SYNC=none)')
-    return
+    return { createdFromScratch: false }
+  }
+
+  /**
+   * Whether this database had anything in it before sync ran.
+   *
+   * It decides how migrations are treated. sync builds tables from the current
+   * models, so on an empty database it produces the schema every migration is
+   * working towards — and running them afterwards fails on the first
+   * ALTER TABLE ... ADD COLUMN, because the column is already there. That is
+   * invisible on a long-lived database, where the tables predate the
+   * migrations, and it only bites when someone deploys somewhere new.
+   */
+  let createdFromScratch = false
+  try {
+    const existing = await sequelize.getQueryInterface().showAllTables()
+    createdFromScratch = existing.length === 0
+  } catch {
+    // If the check itself fails, assume an existing database and let the
+    // migrations run normally — the cautious direction.
+    createdFromScratch = false
   }
 
   try {
     await sequelize.sync(mode === 'alter' ? { alter: true } : {})
     console.log(`Database synchronized successfully (mode: ${mode})`)
+    return { createdFromScratch }
   } catch (error) {
     console.error('Database sync failed:', error.message)
     throw error
