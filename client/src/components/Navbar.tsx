@@ -52,8 +52,22 @@ function useDismissOnOutside(
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const [isServicesOpen, setIsServicesOpen] = useState(false)
-  const [isPortalOpen, setIsPortalOpen] = useState(false)
+  /**
+   * Which panel is open — one value rather than two booleans.
+   *
+   * Two independent flags let both panels be open at once, and they are wide
+   * enough to sit on top of each other. The background is translucent, so the
+   * two menus' text bled together and neither could be read.
+   *
+   * A mouse never showed it. The outside-click handler listens for mousedown,
+   * which closes the first panel before the second one opens. A keyboard fires
+   * no mousedown, so activating both with Enter left both on screen. Holding a
+   * single value makes that state impossible to represent, instead of relying
+   * on a listener to undo it after the fact.
+   */
+  const [openMenu, setOpenMenu] = useState<'services' | 'portal' | null>(null)
+  const isServicesOpen = openMenu === 'services'
+  const isPortalOpen = openMenu === 'portal'
   const servicesRef = useRef<HTMLDivElement>(null)
   const portalRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
@@ -66,14 +80,13 @@ export default function Navbar() {
 
   useEffect(() => {
     setIsMobileOpen(false)
-    setIsServicesOpen(false)
-    setIsPortalOpen(false)
+    setOpenMenu(null)
   }, [location])
 
   // Both dropdowns close on an outside click or Escape, through the same hook
   // rather than two copies of the same listeners.
-  useDismissOnOutside(isServicesOpen, servicesRef, () => setIsServicesOpen(false))
-  useDismissOnOutside(isPortalOpen, portalRef, () => setIsPortalOpen(false))
+  useDismissOnOutside(isServicesOpen, servicesRef, () => setOpenMenu(null))
+  useDismissOnOutside(isPortalOpen, portalRef, () => setOpenMenu(null))
 
   const isServicesActive = location.pathname.startsWith('/services')
   const isPortalActive = location.pathname.startsWith('/portal') || location.pathname.startsWith('/admin')
@@ -123,7 +136,7 @@ export default function Navbar() {
             {/* Services dropdown — the brief requires each service to be reachable in its own right */}
             <div ref={servicesRef} className="relative">
               <button
-                onClick={() => setIsServicesOpen((open) => !open)}
+                onClick={() => setOpenMenu((open) => (open === 'services' ? null : 'services'))}
                 aria-expanded={isServicesOpen}
                 aria-haspopup="true"
                 className={`flex items-center gap-1 whitespace-nowrap text-[0.8125rem] font-medium uppercase tracking-tight transition-colors ${
@@ -143,7 +156,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute left-1/2 top-full z-50 mt-4 w-[26rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-navy-900/98 p-2 shadow-2xl backdrop-blur-xl"
+                    className="absolute left-1/2 top-full z-50 mt-4 w-[26rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-navy-900/[0.98] p-2 shadow-2xl backdrop-blur-xl"
                   >
                     {services.map((service) => {
                       const Icon = service.icon
@@ -186,7 +199,7 @@ export default function Navbar() {
               */}
             <div ref={portalRef} className="relative">
               <button
-                onClick={() => setIsPortalOpen((open) => !open)}
+                onClick={() => setOpenMenu((open) => (open === 'portal' ? null : 'portal'))}
                 aria-expanded={isPortalOpen}
                 aria-haspopup="true"
                 className={`flex items-center gap-1 whitespace-nowrap text-[0.8125rem] font-medium uppercase tracking-tight transition-colors ${
@@ -204,7 +217,7 @@ export default function Navbar() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute left-1/2 top-full z-50 mt-4 w-[22rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-navy-900/98 p-2 shadow-2xl backdrop-blur-xl"
+                    className="absolute left-1/2 top-full z-50 mt-4 w-[22rem] -translate-x-1/2 overflow-hidden rounded-2xl border border-white/10 bg-navy-900/[0.98] p-2 shadow-2xl backdrop-blur-xl"
                   >
                     {portalLinks.map((portal) => (
                       <Link
