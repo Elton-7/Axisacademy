@@ -22,6 +22,7 @@
  * deploy.
  */
 const { reportError } = require('./reportError')
+const { postJson } = require('./postJson')
 
 /** Long enough to absorb a run of edits, short enough that nobody waits. */
 const COALESCE_MS = Number(process.env.REBUILD_COALESCE_MS || 3 * 60 * 1000)
@@ -39,15 +40,14 @@ const trigger = async () => {
   if (!hook) return
 
   try {
-    const response = await fetch(hook, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      // Netlify shows this against the deploy, so whoever looks at the build
-      // list can see why it ran.
-      body: JSON.stringify({ trigger_title: `Content published: ${reasons.join(', ')}` }),
-      signal: AbortSignal.timeout(20000),
-    })
-    if (!response.ok) throw new Error(`Netlify returned ${response.status}`)
+    // The title is shown against the deploy, so whoever looks at the build
+    // list can see why it ran.
+    const response = await postJson(
+      hook,
+      { trigger_title: `Content published: ${reasons.join(', ')}` },
+      { timeoutMs: 20000 }
+    )
+    if (response.status >= 400) throw new Error(`the build hook returned ${response.status}`)
     lastTriggeredAt = Date.now()
     console.log(`Site rebuild requested (${reasons.join(', ')})`)
   } catch (error) {

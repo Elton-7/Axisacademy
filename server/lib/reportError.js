@@ -1,4 +1,5 @@
 const { randomUUID } = require('node:crypto')
+const { postJson } = require('./postJson')
 
 /**
  * Where a production failure gets noticed.
@@ -40,15 +41,11 @@ const shouldAlert = (signature) => {
 const postToWebhook = async (payload) => {
   if (!WEBHOOK_URL) return
   try {
-    await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        text: `Axis API ${payload.kind}: ${payload.message}`,
-        ...payload,
-      }),
-      signal: AbortSignal.timeout(WEBHOOK_TIMEOUT_MS),
-    })
+    await postJson(
+      WEBHOOK_URL,
+      { text: `Axis API ${payload.kind}: ${payload.message}`, ...payload },
+      { timeoutMs: WEBHOOK_TIMEOUT_MS }
+    )
   } catch (e) {
     console.error(JSON.stringify({ level: 'warn', event: 'alert_delivery_failed', reason: e.message }))
   }
