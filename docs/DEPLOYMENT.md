@@ -160,6 +160,49 @@ but nothing works.
 
 Then submit a real enquiry and confirm it appears in the admin pipeline.
 
+## Working on this host
+
+Things about this particular server that cost hours to discover. None are
+faults in the application; all of them change how you deploy to it.
+
+**Restarting the API is a click in cPanel, not a file you touch.** Passenger is
+supposed to restart when `tmp/restart.txt` changes, and here it does not. New
+files sit on disk and the running process keeps serving the old ones — which
+looks exactly like a failed upload, so you go and check the upload again. None
+of these worked: rewriting `restart.txt`, disabling and re-enabling the
+application through the API, rewriting the document root's `.htaccess`, forcing
+a new `PassengerAppGroupName`, running `npm install`, waiting out the idle
+timeout, or touching the startup file. **cPanel → Setup Node.js App → Restart**
+does work. Deploy the files, then click it, then verify — and verify by
+behaviour, because the file being correct on disk proves nothing about what is
+running.
+
+**The interpreter predates `fetch`.** `/usr/bin/node` is what Passenger runs the
+app with, and it is older than Node 18. Anything using global `fetch`,
+`AbortSignal.timeout` or similar will throw at runtime. `lib/postJson.js` exists
+for this reason; use it rather than reaching for `fetch`. The danger is not a
+crash — both callers catch — it is that the feature silently never works.
+
+**Outbound database ports are refused.** Port 5432 is blocked in both
+directions: nothing outside can reach the site's PostgreSQL, and the server
+cannot reach a database elsewhere. Port 443 is open, which is why
+`scripts/import-from-database.js` can read another host's API but not its
+database.
+
+**The file API is unusually limited.** On this account cPanel's `Fileman` offers
+`list_files`, `get_file_content`, `save_file_content` and `upload_files` — and
+no delete, move, copy, or mkdir. Two consequences worth knowing: `upload_files`
+creates a missing directory, which is the only way to make one; and it silently
+keeps whatever file is already at the destination unless `overwrite` is sent,
+while still reporting success. `scripts/deploy-cpanel.mjs` sends it and then
+compares every file against the build, because a success count from that API is
+not evidence that the bytes changed.
+
+**Cron is only on the older API.** The `Cron` UAPI module is not installed; the
+API2 endpoint (`/json-api/cpanel?cpanel_jsonapi_module=Cron`) works. That is the
+route to running a one-off script on the server, since there is no shell access
+through these credentials.
+
 ## Things that behave differently in production
 
 **Schema changes** are handled by two mechanisms that do different jobs.
@@ -284,10 +327,17 @@ navigates to a value from the API or the URL.
 
 ## Still outstanding
 
-- **The mailboxes do not exist yet.** Until `info@`, `enquiries@` and
-  `no-reply@axislearning.co.ke` are created and their SMTP details set, every
-  enquiry notification is written to the log and nobody is emailed.
+- **Publishing content no longer regenerates the site.** An article is live on
+  the Resources page the moment it is published, because that page reads the
+  API. What it does not get is its own prerendered HTML page or its line in the
+  sitemap, which is what a search engine reads. A build hook used to do this;
+  there is no build system on this host, so it now takes a rebuild and a deploy.
+  Until someone runs those, new articles are invisible to search.
 - **Retention periods are still defaults.** The schedule in the Data protection
   tab uses two years for an unconverted enquiry and one year for a contact
   message. Those are placeholders for Axis to confirm, and applying the
   schedule is deliberately manual until they are.
+- **Notifications are sent from the mailbox that receives them.** `info@` is
+  live and enquiry notifications arrive, but they are sent from the same
+  account. A separate `no-reply@` sender would keep automated mail out of the
+  thread a parent replies to.
