@@ -21,4 +21,19 @@ const validateUuidParam = (req, res, next, value) => {
   next()
 }
 
-module.exports = { validateUuidParam, UUID_PATTERN }
+/**
+ * The same guard for the models keyed by an auto-increment integer.
+ *
+ * findByPk('abc') against an integer column fails in Postgres exactly as it
+ * does against a uuid one, and the route reports the same misleading 500. Kept
+ * beside its sibling so the two are found together rather than one being
+ * rediscovered later.
+ */
+const validateIntegerParam = (req, res, next, value) => {
+  if (!/^[0-9]+$/.test(String(value))) {
+    return res.status(400).json({ success: false, error: 'Invalid identifier' })
+  }
+  next()
+}
+
+module.exports = { validateUuidParam, validateIntegerParam, UUID_PATTERN }

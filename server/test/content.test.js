@@ -104,6 +104,7 @@ after(async () => {
   await Partner.destroy({ where: { name: like }, force: true })
   await Resource.destroy({ where: { title: like }, force: true })
   await Gallery.destroy({ where: { title: like }, force: true })
+  await models.Testimonial.destroy({ where: { author: like }, force: true })
   await models.Enrollment.destroy({ where: { studentName: like }, force: true })
   await models.Enrollment.destroy({ where: { parentName: like }, force: true })
   await User.destroy({ where: { id: Object.values(ids) } })
@@ -374,6 +375,122 @@ describe('gallery will not publish media without recorded consent', () => {
     })
     assert.equal(status, 201, JSON.stringify(body))
     assert.equal(body.success, true)
+  })
+})
+
+/**
+ * Testimonials, which quote parents and children by name.
+ *
+ * They were publishable but not removable: create was the only write route, so
+ * a withdrawn consent could not be honoured without editing the database. The
+ * point of these tests is the whole lifecycle, not just the guard on create —
+ * a quote that cannot be taken down is the failure that matters.
+ */
+describe('a testimonial can be published, corrected and withdrawn', () => {
+  const quote = () => ({
+    text: `${MARKER}Our daughter looks forward to every session.`,
+    author: `${MARKER}Parent`,
+    role: 'Parent',
+    rating: 5,
+  })
+  let id
+
+  test('consent must be confirmed', async () => {
+    const { status, body } = await api('/testimonials', {
+      method: 'POST', token: tokens.admin, body: quote(),
+    })
+    assert.equal(status, 400)
+    assert.match(body.error, /consent/i)
+  })
+
+  test('confirming consent without naming the signed record is not enough', async () => {
+    const { status, body } = await api('/testimonials', {
+      method: 'POST', token: tokens.admin, body: { ...quote(), consentConfirmed: true },
+    })
+    assert.equal(status, 400)
+    assert.match(body.error, /consent/i)
+  })
+
+  test('consent plus a reference is accepted, and records who confirmed it', async () => {
+    const { status, body } = await api('/testimonials', {
+      method: 'POST',
+      token: tokens.admin,
+      body: { ...quote(), consentConfirmed: true, consentReference: 'Signed consent 2026-02' },
+    })
+    assert.equal(status, 201, JSON.stringify(body))
+    assert.equal(body.data.consentConfirmed, true)
+    assert.ok(body.data.consentConfirmedAt, 'the time consent was confirmed is recorded')
+    assert.equal(body.data.consentConfirmedBy, ids.admin, 'the person who confirmed it is recorded')
+    id = body.data.id
+  })
+
+  test('a request cannot forge the provenance of its own consent', async () => {
+    const { body } = await api('/testimonials', {
+      method: 'POST',
+      token: tokens.admin,
+      body: {
+        ...quote(),
+        consentConfirmed: true,
+        consentReference: 'Signed consent 2026-03',
+        consentConfirmedBy: 999999,
+        consentConfirmedAt: '2000-01-01T00:00:00.000Z',
+      },
+    })
+    assert.equal(body.data.consentConfirmedBy, ids.admin, 'the supplied confirmer is ignored')
+    assert.notEqual(new Date(body.data.consentConfirmedAt).getFullYear(), 2000)
+  })
+
+  test('a published quote is visible to the public', async () => {
+    const { body } = await api('/testimonials')
+    assert.ok(body.data.some((t) => t.id === id), 'the consented quote is served')
+  })
+
+  test('consent cannot be withdrawn while the quote stays published', async () => {
+    const { status, body } = await api(`/testimonials/${id}`, {
+      method: 'PUT', token: tokens.admin, body: { consentConfirmed: false },
+    })
+    assert.equal(status, 400)
+    assert.match(body.error, /consent/i)
+  })
+
+  test('withdrawing consent and unpublishing together is accepted', async () => {
+    const { status, body } = await api(`/testimonials/${id}`, {
+      method: 'PUT', token: tokens.admin, body: { consentConfirmed: false, isActive: false },
+    })
+    assert.equal(status, 200, JSON.stringify(body))
+    assert.equal(body.data.consentConfirmed, false)
+    assert.equal(body.data.consentConfirmedBy, null, 'the stale approval is cleared')
+  })
+
+  test('a withdrawn quote is gone from the public list but visible to staff', async () => {
+    const anonymous = await api('/testimonials')
+    assert.ok(!anonymous.body.data.some((t) => t.id === id), 'the public no longer sees it')
+    const staff = await api('/testimonials', { token: tokens.admin })
+    assert.ok(staff.body.data.some((t) => t.id === id), 'staff can still see and restore it')
+  })
+
+  test('delete takes a quote off the site', async () => {
+    const { body } = await api('/testimonials', {
+      method: 'POST',
+      token: tokens.admin,
+      body: { ...quote(), consentConfirmed: true, consentReference: 'Signed consent 2026-04' },
+    })
+    const removed = await api(`/testimonials/${body.data.id}`, { method: 'DELETE', token: tokens.admin })
+    assert.equal(removed.status, 200)
+    const anonymous = await api('/testimonials')
+    assert.ok(!anonymous.body.data.some((t) => t.id === body.data.id))
+  })
+
+  test('a parent account cannot change a testimonial', async () => {
+    const { status } = await api(`/testimonials/${id}`, {
+      method: 'PUT', token: tokens.parent, body: { isActive: true },
+    })
+    assert.equal(status, 403)
+  })
+
+  test('a malformed id is a 400, not a 500', async () => {
+    const { status } = await api('/testimonials/not-a-number', { method: 'DELETE', token: tokens.admin })
+    assert.equal(status, 400)
   })
 })
 

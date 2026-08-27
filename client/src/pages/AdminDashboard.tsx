@@ -8,8 +8,8 @@ import LearnerAdmin from '../components/LearnerAdmin'
 import Safeguarding from '../components/Safeguarding'
 import Accounts from '../components/Accounts'
 import DataProtection from '../components/DataProtection'
-import { auditApi, authApi, contactsApi, enrollmentsApi, newsletterApi, statsApi, galleryApi, resourcesApi, partnersApi, educatorsApi, eventsApi, faqsApi, locationsApi } from '../services/apiClient'
-import type { AuditLog, Contact, DashboardStats, Enrollment, Newsletter, GalleryItem, Resource, Partner, Educator, Event, FAQ, Location, GalleryType, GalleryCategory, ResourceCategory, ResourceStatus, PartnerCategory, EducatorCategory, EventCategory, EventStatus, FAQCategory, LocationType } from '../types'
+import { auditApi, authApi, contactsApi, enrollmentsApi, newsletterApi, statsApi, galleryApi, resourcesApi, partnersApi, educatorsApi, eventsApi, faqsApi, locationsApi, testimonialsApi } from '../services/apiClient'
+import type { AuditLog, Contact, DashboardStats, Enrollment, Newsletter, GalleryItem, Resource, Partner, Educator, Event, FAQ, Location, Testimonial, GalleryType, GalleryCategory, ResourceCategory, ResourceStatus, PartnerCategory, EducatorCategory, EventCategory, EventStatus, FAQCategory, LocationType } from '../types'
 import { RESOURCE_CATEGORIES } from '../types'
 
 const TAB_LABELS: Record<string, string> = {
@@ -18,7 +18,7 @@ const TAB_LABELS: Record<string, string> = {
 }
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'pipeline' | 'learners' | 'accounts' | 'safeguarding' | 'data-protection' | 'gallery' | 'resources' | 'partners' | 'educators' | 'events' | 'faqs' | 'locations'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'pipeline' | 'learners' | 'accounts' | 'safeguarding' | 'data-protection' | 'gallery' | 'resources' | 'partners' | 'educators' | 'events' | 'faqs' | 'locations' | 'testimonials'>('dashboard')
   
   // Dashboard state
   const [contacts, setContacts] = useState<Contact[]>([])
@@ -96,6 +96,14 @@ export default function AdminDashboard() {
     question: '', answer: '', category: 'General', order: ''
   })
 
+  // Testimonials state
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null | undefined>(undefined)
+  const emptyTestimonialForm = { text: '', author: '', role: 'Parent', rating: '5', consentConfirmed: false, consentReference: '' }
+  const [testimonialForm, setTestimonialForm] = useState<{
+    text: string; author: string; role: string; rating: string; consentConfirmed: boolean; consentReference: string
+  }>(emptyTestimonialForm)
+
   // Locations state
   const [locations, setLocations] = useState<Location[]>([])
   const [editingLocation, setEditingLocation] = useState<Location | null | undefined>(undefined)
@@ -124,6 +132,8 @@ export default function AdminDashboard() {
       fetchFAQs()
     } else if (activeTab === 'locations') {
       fetchLocations()
+    } else if (activeTab === 'testimonials') {
+      fetchTestimonials()
     }
   }, [activeTab])
 
@@ -542,6 +552,91 @@ export default function AdminDashboard() {
     }
   }
 
+  // Testimonials functions
+  const fetchTestimonials = async () => {
+    try {
+      setLoading(true)
+      // Staff see every quote, including any awaiting confirmation, which the
+      // public list never returns.
+      const items = await testimonialsApi.getAll()
+      setTestimonials(items)
+    } catch (error) {
+      console.error('Failed to fetch testimonials:', error)
+      toast.error('Failed to load testimonials')
+      setTestimonials([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const saveTestimonial = async () => {
+    if (!testimonialForm.text.trim() || !testimonialForm.author.trim()) {
+      toast.error('Please fill in the quote and who said it')
+      return
+    }
+    // The API refuses both of these. Saying so here means the person filling
+    // the form is told what is missing before they lose the text they typed.
+    if (!testimonialForm.consentConfirmed) {
+      toast.error('Confirm consent before a quote can be published')
+      return
+    }
+    if (!testimonialForm.consentReference.trim()) {
+      toast.error('Record which signed consent this refers to')
+      return
+    }
+    try {
+      const payload = {
+        text: testimonialForm.text.trim(),
+        author: testimonialForm.author.trim(),
+        role: testimonialForm.role,
+        rating: testimonialForm.rating ? parseInt(testimonialForm.rating) : 5,
+        consentConfirmed: true,
+        consentReference: testimonialForm.consentReference.trim(),
+      }
+      if (editingTestimonial) {
+        const updated = await testimonialsApi.update(editingTestimonial.id, payload)
+        setTestimonials(prev => prev.map(item => item.id === editingTestimonial.id ? updated : item))
+        toast.success('Testimonial updated')
+      } else {
+        const created = await testimonialsApi.create(payload)
+        setTestimonials(prev => [created, ...prev])
+        toast.success('Testimonial published')
+      }
+      setEditingTestimonial(undefined)
+      setTestimonialForm(emptyTestimonialForm)
+    } catch (error) {
+      console.error('Failed to save testimonial:', error)
+      toast.error(apiErrorMessage(error, 'Failed to save testimonial'))
+    }
+  }
+
+  /**
+   * Takes a quote off the site. This is the path a withdrawn consent takes, so
+   * the wording says what actually happens rather than asking "are you sure".
+   */
+  const withdrawTestimonial = async (item: Testimonial) => {
+    if (!confirm(`Take this quote from ${item.author} off the website? The record is kept.`)) return
+    try {
+      await testimonialsApi.delete(item.id)
+      setTestimonials(prev => prev.map(t => t.id === item.id ? { ...t, isActive: false } : t))
+      toast.success('Quote removed from the site')
+    } catch (error) {
+      console.error('Failed to withdraw testimonial:', error)
+      toast.error(apiErrorMessage(error, 'Failed to remove the quote'))
+    }
+  }
+
+  const republishTestimonial = async (item: Testimonial) => {
+    try {
+      const updated = await testimonialsApi.update(item.id, { isActive: true })
+      setTestimonials(prev => prev.map(t => t.id === item.id ? updated : t))
+      toast.success('Quote is back on the site')
+    } catch (error) {
+      console.error('Failed to republish testimonial:', error)
+      toast.error(apiErrorMessage(error, 'Failed to publish the quote'))
+    }
+  }
+
   const deleteFAQ = async (id: string) => {
     if (!confirm('Are you sure?')) return
     try {
@@ -755,7 +850,7 @@ export default function AdminDashboard() {
         {/* Tab Navigation */}
         <div className="bg-surface rounded-xl border border-line mb-6 overflow-hidden">
           <div className="flex border-b border-line overflow-x-auto">
-            {(['dashboard', 'pipeline', 'learners', 'accounts', 'safeguarding', 'data-protection', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations'] as const).map((tab) => (
+            {(['dashboard', 'pipeline', 'learners', 'accounts', 'safeguarding', 'data-protection', 'gallery', 'resources', 'partners', 'educators', 'events', 'faqs', 'locations', 'testimonials'] as const).map((tab) => (
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
@@ -1327,6 +1422,136 @@ export default function AdminDashboard() {
                 </table>
               </div>
               {faqs.length === 0 && (<div className="text-center py-12 text-ink-faint text-sm">No FAQs yet.</div>)}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'testimonials' && (
+          <div className="space-y-6">
+            <div className="rounded-xl border border-line bg-surface-sunk p-4 text-sm text-ink-muted">
+              A testimonial names a family, and often quotes a child. Nothing appears on the website
+              until consent is confirmed against a signed record, and withdrawing consent takes it
+              down immediately.
+            </div>
+            <button
+              onClick={() => { setEditingTestimonial(null); setTestimonialForm(emptyTestimonialForm) }}
+              className="inline-flex items-center gap-2 rounded-lg bg-navy-900 px-4 py-2 text-sm text-white transition-colors hover:bg-navy-800"
+            >
+              <Plus className="h-4 w-4" />Add testimonial
+            </button>
+
+            {editingTestimonial !== undefined && (
+              <div className="bg-surface rounded-xl border border-line p-6">
+                <h3 className="text-lg font-semibold text-ink mb-4">{editingTestimonial ? 'Edit' : 'Add'} testimonial</h3>
+                <div className="space-y-4">
+                  <textarea placeholder="What they said" value={testimonialForm.text} onChange={(e) => setTestimonialForm({...testimonialForm, text: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" rows={4} />
+                  <input type="text" placeholder="Who said it" value={testimonialForm.author} onChange={(e) => setTestimonialForm({...testimonialForm, author: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500" />
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <select value={testimonialForm.role} onChange={(e) => setTestimonialForm({...testimonialForm, role: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
+                      <option value="Parent">Parent</option>
+                      <option value="Guardian">Guardian</option>
+                      <option value="Learner">Learner</option>
+                      <option value="Educator">Educator</option>
+                      <option value="Partner">Partner</option>
+                    </select>
+                    <select value={testimonialForm.rating} onChange={(e) => setTestimonialForm({...testimonialForm, rating: e.target.value})} className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500">
+                      {[5, 4, 3, 2, 1].map((n) => (<option key={n} value={String(n)}>{n} out of 5</option>))}
+                    </select>
+                  </div>
+
+                  <div className="rounded-lg border border-gold-500/40 bg-gold-500/5 p-4 space-y-3">
+                    <label className="flex items-start gap-3 text-sm text-ink">
+                      <input
+                        type="checkbox"
+                        checked={testimonialForm.consentConfirmed}
+                        onChange={(e) => setTestimonialForm({...testimonialForm, consentConfirmed: e.target.checked})}
+                        className="mt-0.5 h-4 w-4 flex-shrink-0"
+                      />
+                      <span>I have confirmed that consent to publish this quote has been given.</span>
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Which signed consent does this refer to?"
+                      value={testimonialForm.consentReference}
+                      onChange={(e) => setTestimonialForm({...testimonialForm, consentReference: e.target.value})}
+                      className="w-full px-4 py-2 rounded-lg border border-line outline-none focus:border-gold-500"
+                    />
+                    <p className="text-xs text-ink-muted">
+                      Your name and the date are recorded against this confirmation, so it can be
+                      answered for later.
+                    </p>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button onClick={saveTestimonial} className="flex-1 rounded-lg bg-gold-600 px-4 py-2 text-sm text-white transition-colors hover:bg-gold-700">Save</button>
+                    <button onClick={() => { setEditingTestimonial(undefined); setTestimonialForm(emptyTestimonialForm) }} className="flex-1 rounded-lg bg-line px-4 py-2 text-sm text-ink-muted transition-colors hover:bg-gray-300">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="bg-surface rounded-xl border border-line overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-surface-sunk border-b border-line">
+                    <tr>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Quote</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Who</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Consent</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">On the site</th>
+                      <th className="text-left px-6 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wide">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-line">
+                    {testimonials.map((item) => (
+                      <tr key={item.id} className="hover:bg-surface-sunk/50 transition-colors">
+                        <td className="px-6 py-4 text-sm text-ink max-w-md line-clamp-2">{item.text}</td>
+                        <td className="px-6 py-4 text-sm text-ink-muted whitespace-nowrap">{item.author}<span className="block text-xs text-ink-muted">{item.role}</span></td>
+                        <td className="px-6 py-4 text-sm">
+                          {item.consentConfirmed ? (
+                            <>
+                              <span className="rounded-full bg-tint-positive px-2 py-1 text-xs font-medium text-positive">Confirmed</span>
+                              <span className="mt-1 block text-xs text-ink-muted">
+                                {item.consentConfirmedAt ? new Date(item.consentConfirmedAt).toLocaleDateString() : null}
+                                {item.consentReference ? ' — ' + item.consentReference : null}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="rounded-full bg-tint-critical px-2 py-1 text-xs font-medium text-critical">Not confirmed</span>
+                          )}
+                        </td>
+                        <td className="px-6 py-4"><span className={`rounded-full px-2 py-1 text-xs font-medium ${item.isActive ? 'bg-tint-positive text-positive' : 'bg-surface-muted text-ink-muted'}`}>{item.isActive ? 'Published' : 'Withdrawn'}</span></td>
+                        <td className="px-6 py-4">
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => { setEditingTestimonial(item); setTestimonialForm({ text: item.text, author: item.author, role: item.role, rating: String(item.rating), consentConfirmed: item.consentConfirmed, consentReference: item.consentReference || '' }) }}
+                              className="text-ink-muted hover:text-ink"
+                              aria-label={'Edit the quote from ' + item.author}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </button>
+                            {item.isActive ? (
+                              <button onClick={() => withdrawTestimonial(item)} className="text-critical hover:text-critical" aria-label={'Take the quote from ' + item.author + ' off the site'}>
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => republishTestimonial(item)}
+                                disabled={!item.consentConfirmed}
+                                title={item.consentConfirmed ? 'Put this quote back on the site' : 'Consent must be confirmed first'}
+                                className="text-xs font-medium text-ink-muted hover:text-ink disabled:cursor-not-allowed disabled:opacity-40"
+                              >
+                                Republish
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              {testimonials.length === 0 && (<div className="text-center py-12 text-ink-faint text-sm">No testimonials yet.</div>)}
             </div>
           </div>
         )}

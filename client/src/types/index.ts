@@ -19,6 +19,13 @@ export interface Testimonial {
   author: string
   role: string
   rating: number
+  /** Whether someone has confirmed consent to publish this quote. */
+  consentConfirmed: boolean
+  /** The user who confirmed it, and when — cleared if consent is withdrawn. */
+  consentConfirmedBy: number | null
+  consentConfirmedAt: string | null
+  /** The signed consent this refers to. */
+  consentReference: string | null
   isActive: boolean
   createdAt: string
   updatedAt: string
@@ -391,6 +398,19 @@ export interface CreateTestimonialRequest {
   author: string
   role: string
   rating: number
+  /** Both are required by the API: a quote cannot be published without them. */
+  consentConfirmed: boolean
+  consentReference: string
+}
+
+export interface UpdateTestimonialRequest {
+  text?: string
+  author?: string
+  role?: string
+  rating?: number
+  consentConfirmed?: boolean
+  consentReference?: string
+  isActive?: boolean
 }
 
 export interface LoginRequest {

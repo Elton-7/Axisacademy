@@ -22,6 +22,7 @@ import {
   CreateServiceRequest,
   UpdateServiceRequest,
   CreateTestimonialRequest,
+  UpdateTestimonialRequest,
   CreateEducatorRequest,
   UpdateEducatorRequest,
   CreateEventRequest,
@@ -130,6 +131,23 @@ export const testimonialsApi = {
   async create(payload: CreateTestimonialRequest) {
     const { data } = await api.post<ApiResponse<Testimonial>>('/testimonials', payload)
     return unwrap(data)
+  },
+
+  async update(id: number, payload: UpdateTestimonialRequest) {
+    const { data } = await api.put<ApiResponse<Testimonial>>(`/testimonials/${id}`, payload)
+    return unwrap(data)
+  },
+
+  /**
+   * Takes the quote off the site. The record is kept.
+   *
+   * Not unwrapped: a delete answers with a message and no `data`, and `unwrap`
+   * treats a missing `data` as a failure — so unwrapping turned a successful
+   * removal into "Failed to remove the quote" while the quote had in fact gone.
+   * Every other delete here does the same.
+   */
+  async delete(id: number) {
+    await api.delete(`/testimonials/${id}`)
   },
 }
 
