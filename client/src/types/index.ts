@@ -676,7 +676,8 @@ export interface CreateResourceRequest {
   title: string
   slug?: string
   excerpt?: string
-  content: string
+  /** Optional: a work Axis links to rather than wrote has no body. */
+  content?: string
   category?: ResourceCategory
   author?: string
   coverImage?: string

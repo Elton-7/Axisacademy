@@ -17,11 +17,17 @@ router.param('id', validateUuidParam)
 const rules = (partial) => [
   text(Resource, 'title', { required: true, partial }),
   text(Resource, 'slug', { required: true, partial }),
-  text(Resource, 'content', { required: true, partial }),
+  // Not required. Most of the library is other people's work, listed and
+  // linked rather than reproduced — the column was made nullable for exactly
+  // that reason, but this rule was left behind, so the admin panel could not
+  // create the only kind of resource the library actually contains.
+  text(Resource, 'content', { partial }),
   enumField(Resource, 'category', { required: true, partial }),
   text(Resource, 'author', { required: true, partial }),
   text(Resource, 'excerpt', { partial }),
   urlField(Resource, 'coverImage', { partial }),
+  urlField(Resource, 'sourceUrl', { partial }),
+  urlField(Resource, 'fileUrl', { partial }),
   text(Resource, 'readTime', { partial }),
   arrayField('tags'),
   dateField('publishedAt'),
@@ -29,12 +35,21 @@ const rules = (partial) => [
   intField('sortOrder'),
 ]
 
-router.get('/', async (req, res) => {
+router.get('/', attachUserIfPresent, async (req, res) => {
   try {
     const { category, search, limit = 50, offset = 0 } = req.query
-    // Published only. isActive alone would let a half-written article through,
-    // which is the whole reason the draft state exists.
-    const where = { isActive: true, status: 'Published' }
+    /**
+     * Published only for a visitor: isActive alone would let a half-written
+     * article through, which is the whole reason the draft state exists.
+     *
+     * Staff see drafts too. A new resource is saved as a draft, and while this
+     * list was filtered for everyone the article vanished from the admin panel
+     * the moment its author navigated away — leaving no way to finish or
+     * publish it, and no clue that it had saved at all. The single-resource
+     * route already made this distinction; the list did not.
+     */
+    const isStaff = req.user && ['admin', 'staff'].includes(req.user.role)
+    const where = isStaff ? { isActive: true } : { isActive: true, status: 'Published' }
 
     if (category && category !== 'all') {
       where.category = category
@@ -108,7 +123,16 @@ router.get('/:id', attachUserIfPresent, async (req, res) => {
 
 router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), handleValidation, async (req, res) => {
   try {
-    const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, publishedAt, status, metaDescription } = req.body
+    const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, publishedAt, status, metaDescription, sourceUrl, fileUrl } = req.body
+
+    // A resource is either something Axis wrote or a pointer to where the work
+    // lives. With neither, the entry is a title and nothing a reader can open.
+    if (!String(content || '').trim() && !String(sourceUrl || '').trim() && !String(fileUrl || '').trim()) {
+      return res.status(400).json({
+        success: false,
+        error: 'Add the article text, or a link to where the work is published',
+      })
+    }
 
     const resource = await Resource.create({
       title: title.trim(),
@@ -119,6 +143,8 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), han
       category: category || 'Parenting & Learning',
       author: author || 'Axis Learning Team',
       coverImage,
+      sourceUrl,
+      fileUrl,
       readTime,
       tags: Array.isArray(tags) ? tags : [],
       // Drafts by default: an article saved half-written should not appear on
@@ -147,7 +173,7 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), ha
       return res.status(404).json({ success: false, error: 'Resource not found' })
     }
 
-    const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, isActive, sortOrder, publishedAt, status, metaDescription } = req.body
+    const { title, slug, excerpt, content, category, author, coverImage, readTime, tags, isActive, sortOrder, publishedAt, status, metaDescription, sourceUrl, fileUrl } = req.body
 
     // Taken before the update: an article being unpublished changes the public
     // site just as much as one being published, and afterwards there is no way
@@ -164,6 +190,8 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), ha
       ...(category !== undefined && { category }),
       ...(author !== undefined && { author }),
       ...(coverImage !== undefined && { coverImage }),
+      ...(sourceUrl !== undefined && { sourceUrl }),
+      ...(fileUrl !== undefined && { fileUrl }),
       ...(readTime !== undefined && { readTime }),
       ...(tags !== undefined && { tags: Array.isArray(tags) ? tags : [] }),
       ...(isActive !== undefined && { isActive }),

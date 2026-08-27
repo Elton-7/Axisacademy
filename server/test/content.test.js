@@ -343,6 +343,36 @@ describe('a draft article is not readable by the public', () => {
 
     await api(`/resources/${id}`, { method: 'DELETE', token: tokens.admin })
   })
+
+  /*
+   * The same rule for the list, which is what the admin panel actually reads.
+   * Filtering it for everyone meant a new article disappeared from the panel
+   * the moment its author navigated away: still saved, still a draft, and with
+   * no way left to find it, finish it or publish it.
+   */
+  test('a draft is listed for staff and hidden from everyone else', async () => {
+    const created = await api('/resources', {
+      method: 'POST',
+      token: tokens.admin,
+      body: {
+        title: `${MARKER}Listed draft`,
+        slug: `cms-listdraft-${Date.now()}`,
+        content: 'Body text',
+        category: 'Homeschooling',
+        author: 'Suite',
+      },
+    })
+    assert.equal(created.status, 201, JSON.stringify(created.body))
+    const id = created.body.data.id
+
+    const anonymous = await api('/resources?limit=200')
+    assert.ok(!anonymous.body.data.some((r) => r.id === id), 'a visitor must not see a draft in the list')
+
+    const staff = await api('/resources?limit=200', { token: tokens.admin })
+    assert.ok(staff.body.data.some((r) => r.id === id), 'staff must find their draft in the list they manage')
+
+    await api(`/resources/${id}`, { method: 'DELETE', token: tokens.admin })
+  })
 })
 
 describe('gallery will not publish media without recorded consent', () => {
@@ -375,6 +405,71 @@ describe('gallery will not publish media without recorded consent', () => {
     })
     assert.equal(status, 201, JSON.stringify(body))
     assert.equal(body.success, true)
+  })
+})
+
+/**
+ * Resources that Axis links to rather than wrote.
+ *
+ * Every one of the sixteen works in the library is of this kind: a title, an
+ * author, and a link to where the publisher hosts it. The column was made
+ * nullable for that reason, but the route still demanded a body and never
+ * accepted the link fields, so the admin panel could not create — or safely
+ * edit — the only kind of resource the library contains. Worse, the only way
+ * to add one was to paste the text in, which for someone else's paper is the
+ * republishing the model comments warn against.
+ */
+describe('a resource can be linked instead of reproduced', () => {
+  const linked = () => ({
+    title: `${MARKER}Linked paper`,
+    slug: `cms-linked-${Date.now()}`,
+    category: 'Parenting & Learning',
+    author: 'Someone Else',
+    excerpt: 'A paper published elsewhere and listed here.',
+    sourceUrl: 'https://example.com/the-paper',
+  })
+  let id
+
+  test('a resource with no body but a source link is accepted', async () => {
+    const { status, body } = await api('/resources', {
+      method: 'POST', token: tokens.admin, body: linked(),
+    })
+    assert.equal(status, 201, JSON.stringify(body))
+    assert.equal(body.data.sourceUrl, 'https://example.com/the-paper', 'the link is stored')
+    id = body.data.id
+  })
+
+  test('a resource with neither a body nor a link is refused', async () => {
+    const { slug, ...rest } = linked()
+    const { status, body } = await api('/resources', {
+      method: 'POST',
+      token: tokens.admin,
+      body: { ...rest, slug: `cms-empty-${Date.now()}`, sourceUrl: undefined },
+    })
+    assert.equal(status, 400)
+    assert.match(body.error, /link|text/i)
+  })
+
+  test('editing other fields does not blank the link', async () => {
+    const { status, body } = await api(`/resources/${id}`, {
+      method: 'PUT', token: tokens.admin, body: { author: 'Someone Else, revised' },
+    })
+    assert.equal(status, 200, JSON.stringify(body))
+    assert.equal(body.data.sourceUrl, 'https://example.com/the-paper', 'the link survives an unrelated edit')
+  })
+
+  test('the link can be changed', async () => {
+    const { body } = await api(`/resources/${id}`, {
+      method: 'PUT', token: tokens.admin, body: { sourceUrl: 'https://example.com/moved' },
+    })
+    assert.equal(body.data.sourceUrl, 'https://example.com/moved')
+  })
+
+  test('a malformed link is rejected', async () => {
+    const { status } = await api(`/resources/${id}`, {
+      method: 'PUT', token: tokens.admin, body: { sourceUrl: 'not-a-url' },
+    })
+    assert.equal(status, 400)
   })
 })
 
