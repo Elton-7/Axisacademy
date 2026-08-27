@@ -1,12 +1,21 @@
 const express = require('express')
 const router = express.Router()
+
 const crypto = require('crypto')
 const bcrypt = require('bcrypt')
 const { body } = require('express-validator')
 const { handleValidation } = require('../middleware/validate')
 const { User, LearnerEducator, Learner } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateIntegerParam } = require('../middleware/validateUuidParam')
+
 const { recordAudit } = require('../middleware/audit')
+
+// These identifiers are auto-increment integers. Passing anything else to
+// findByPk sends the value to Postgres, which refuses to compare an integer
+// column with a string and throws — reported as a 500, which says the server
+// failed when the request was simply malformed.
+router.param('id', validateIntegerParam)
 
 /**
  * Matches the cost used for the seeded accounts and the deployment hashes.

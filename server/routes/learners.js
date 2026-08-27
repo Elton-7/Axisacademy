@@ -1,9 +1,20 @@
 const express = require('express')
 const router = express.Router()
+
 const { Op } = require('sequelize')
 const { Learner, LearnerEducator, Session, User, EducatorVetting } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateIntegerParam } = require('../middleware/validateUuidParam')
+
 const { recordAudit } = require('../middleware/audit')
+
+// These identifiers are auto-increment integers. Passing anything else to
+// findByPk sends the value to Postgres, which refuses to compare an integer
+// column with a string and throws — reported as a 500, which says the server
+// failed when the request was simply malformed.
+router.param('id', validateIntegerParam)
+router.param('educatorUserId', validateIntegerParam)
+router.param('assignmentId', validateIntegerParam)
 
 /**
  * Administration of learners, educator assignments and scheduling (brief §30).

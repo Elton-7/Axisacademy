@@ -164,6 +164,42 @@ describe('identifiers are checked before they reach the database', () => {
     assert.equal(status, 404)
     assert.equal(body.success, false)
   })
+
+  /*
+   * The same rule for the routers keyed by an auto-increment integer, which had
+   * no parameter check at all. Passing anything non-numeric reached Postgres,
+   * which refuses to compare an integer column with a string, and the route
+   * reported a 500 — the server saying it had failed when the request was
+   * simply malformed. These are the routes that erase a learner's records and
+   * manage accounts, so a misleading error there is the worst place for one.
+   */
+  const INTEGER_KEYED = [
+    ['DELETE', '/data-protection/learners/abc'],
+    ['GET', '/data-protection/learners/abc/export'],
+    ['PUT', '/learners/abc'],
+    ['POST', '/learners/abc/sessions'],
+    ['PATCH', '/users/abc'],
+    ['POST', '/users/abc/reset-password'],
+    ['GET', '/users/abc/learners'],
+  ]
+
+  for (const [method, path] of INTEGER_KEYED) {
+    test(`${method} ${path} is a 400, not a 500`, async () => {
+      // No body on a GET: fetch refuses one, and the failure would look like a
+      // route problem rather than a test problem.
+      const { status } = await api(path, {
+        method,
+        token: tokens.admin,
+        ...(method === 'GET' ? {} : { body: { confirmName: 'x' } }),
+      })
+      assert.equal(status, 400, `${method} ${path} did not reject a non-numeric id`)
+    })
+  }
+
+  test('a well-formed but absent integer id is a 404, not a 400', async () => {
+    const { status } = await api('/users/999999', { method: 'PATCH', token: tokens.admin, body: { name: 'x' } })
+    assert.equal(status, 404, 'a valid id must still reach the handler')
+  })
 })
 
 describe('writing requires the right account', () => {
