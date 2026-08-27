@@ -1,13 +1,17 @@
 # Deploying Axis Learning
 
-Two systems are deployed separately. Netlify serves static files and cannot run
-the API or the database.
+Two systems are deployed separately: a static site and an API with a database.
 
 | What | Where | Config |
 | --- | --- | --- |
-| React site | Netlify | `netlify.toml` |
-| Express API + PostgreSQL | Render | `render.yaml` |
+| React site | Truehost cPanel, served by Apache from `public_html` | `scripts/deploy-cpanel.mjs`, rules generated into `dist/axis.htaccess` |
+| Express API + PostgreSQL | Truehost cPanel (Passenger + local PostgreSQL) | `server/.env` on the server |
 | Domain, DNS and mailboxes | Truehost | registrar control panel |
+
+The site was previously on Netlify and the API on Render. `netlify.toml` and
+`render.yaml` are kept because they still describe those deployments
+accurately, and because the Apache rules are a translation of `netlify.toml` —
+if you change one, change both or the two hosts stop agreeing.
 
 Local work needs neither: run PostgreSQL on the machine, `npm run dev` in
 `server/`, and `npm run dev` in `client/`. There is no container in the loop
@@ -37,7 +41,7 @@ Set these in the dashboard rather than in the repository:
 
 - `JWT_SECRET` — generated automatically; do not reuse the development value.
 - `ADMIN_EMAIL` and `ADMIN_PASSWORD_HASH` — generate the hash locally:
-  `node -e "require('bcryptjs').hash('your-password',12).then(console.log)"`
+  `node -e "require('bcrypt').hash('your-password',12).then(console.log)"`
 - `SMTP_HOST`, `SMTP_USER`, `SMTP_PASSWORD`, `NOTIFICATION_TO`,
   `NOTIFICATION_FROM` — enquiry notifications log instead of sending until
   these exist, so a missing credential never silently loses an enquiry.
@@ -47,7 +51,25 @@ Confirm `https://api.axislearning.co.ke/api/health` returns
 
 ### 2. The site
 
-In Netlify, set the build environment:
+Build locally, then publish. There is no build step on the server and no
+continuous deployment, so the bytes that get served are the bytes you built:
+
+```
+cd client
+VITE_API_URL=https://api.axislearning.co.ke/api VITE_SITE_URL=https://www.axislearning.co.ke npm run build
+
+cd ..
+CPANEL_HOST=... CPANEL_USER=... CPANEL_PASSWORD=... node scripts/deploy-cpanel.mjs
+```
+
+The deploy script uploads `client/dist`, installs the generated Apache rules
+into `public_html/.htaccess`, and then compares every file against the build.
+That last step is not ceremony: cPanel's upload API keeps whatever file is
+already at the destination and still reports success, which once left the
+host's placeholder homepage in place while the deploy claimed every file had
+uploaded.
+
+The environment variables the build needs:
 
 - `VITE_API_URL` — `https://api.axislearning.co.ke/api`
 - `VITE_SITE_URL` — `https://www.axislearning.co.ke`
@@ -66,35 +88,30 @@ project depends on that — any registrar works, provided you can edit records.
 What follows is written for Truehost's DNS manager because that is where the
 domain is.
 
-**Keep DNS at Truehost. Do not delegate the nameservers to Netlify.** Netlify
-DNS is otherwise a reasonable choice, but the mailboxes are Truehost's, and
-moving the zone without recreating the `MX` records is the usual way `info@`
-stops receiving mail — quietly, and usually noticed when a parent says nobody
-replied.
+**Keep DNS at Truehost, and edit the zone one record at a time.** The
+mailboxes resolve through this same zone, so rewriting it wholesale is the
+usual way `info@` stops receiving mail — quietly, and usually noticed when a
+parent says nobody replied. After any zone edit, check that `MX` and the `SPF`
+record still resolve before moving on.
 
 | Type | Name | Value | Purpose |
 | --- | --- | --- | --- |
-| CNAME | `www` | `<site>.netlify.app` | the website |
-| A | `@` | Netlify's load balancer IP | apex → website |
-| CNAME | `api` | `<service>.onrender.com` | the API |
-| MX | `@` | Truehost's mail servers | email — leave as issued |
-
-Take the exact values from the dashboards rather than from this table: Netlify
-shows both the `.netlify.app` hostname and the apex IP under Domain
-management, and Render shows the service hostname under Settings. The apex IP
-in particular is Netlify's to change, and a copied-out number goes stale
-silently.
+| A | `@` | the cPanel server IP | apex → redirected to `www` |
+| A | `www` | the cPanel server IP | the website |
+| A | `mail` | the cPanel server IP | mailboxes |
+| MX | `@` | `mail.axislearning.co.ke` | email — leave as issued |
 
 The apex needs an `A` record rather than a `CNAME` because DNS does not allow a
-CNAME at a zone apex. `www` is the canonical host — `VITE_SITE_URL` and
-`CORS_ORIGIN` both name it — so the apex only has to reach Netlify and be
-redirected there. Truehost's panel also offers a URL redirect, which is
-equivalent for this purpose.
+CNAME at a zone apex. `www` is the canonical host — `VITE_SITE_URL`,
+`CORS_ORIGIN` and every canonical tag name it — and the apex is redirected
+there by the generated Apache rules. Serving both without that redirect
+publishes the whole site twice under two hostnames.
 
-Certificates are issued automatically by Netlify and Render once the records
-resolve, which can take from minutes to a couple of hours. The site will look
-broken until it completes. You do not need to buy an SSL certificate from the
-registrar, whatever the upsell at checkout suggests.
+Certificates are issued automatically by cPanel's AutoSSL once the records
+resolve, which can take from minutes to a couple of hours. The account already
+carries a wildcard certificate covering the apex and every subdomain. You do
+not need to buy an SSL certificate from the registrar, whatever the upsell at
+checkout suggests.
 
 #### Email
 
@@ -110,19 +127,30 @@ Truehost supplies SMTP credentials with the mailboxes; they go into `SMTP_HOST`,
 notifications are written to the log instead of being sent, so a missing
 credential never silently loses an enquiry — but nobody is told about it either.
 
-#### What not to buy from the registrar
+#### What the cPanel account actually provides
 
-Truehost sells cPanel shared hosting alongside domains. It does not fit this
-application and is not needed:
+An earlier version of this document argued against using Truehost's cPanel
+hosting for the application. That advice was wrong about this account, and it
+is recorded here so the reasoning is not repeated:
 
-- The site is a static build; Netlify builds it from the repository on every
-  push, which shared hosting would not do.
-- The API is Express with **PostgreSQL**. Shared cPanel plans offer MySQL, and
-  running a persistent Node process there means giving up the health checks,
-  automatic TLS and restart behaviour that `render.yaml` already provides.
+- It offers **PostgreSQL**, not only MySQL. The database is local to the
+  server, so the API connects over `localhost` and negotiates no TLS.
+- It runs persistent Node processes through Passenger, with the Node.js
+  selector and Passenger both enabled on the account.
+- AutoSSL issues and renews certificates without being asked.
 
-Domain and mailboxes from Truehost, application on Netlify and Render, is the
-combination this repository is configured for.
+What it genuinely does not provide:
+
+- **A CDN.** Every page and image is served from the one server. That server is
+  in Canada and the audience is in Kenya, which is a real cost paid on every
+  request, and the main argument for putting the site behind a CDN again.
+- **Continuous deployment.** Nothing rebuilds on push. Deploys are the manual
+  step described above, which means the running site can silently drift from
+  `master` if someone forgets.
+- **A shell, on this account's API access.** There is no `mkdir`, no archive
+  extraction and no delete in the file API available here, which is why the
+  deploy script uploads a directory at a time and why `public_html` still holds
+  files from the host's placeholder site that are blocked rather than removed.
 
 ### 4. Close the loop
 
