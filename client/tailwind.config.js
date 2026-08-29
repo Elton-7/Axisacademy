@@ -22,6 +22,37 @@ export default {
   ],
   theme: {
     extend: {
+      /**
+       * The hero's ambient movement.
+       *
+       * Long durations and small distances on purpose. This sits behind the
+       * headline and the enquiry buttons on a page parents read to decide
+       * whether to trust Axis with their child — it should be noticed only
+       * after the words are, if at all. Anything faster reads as a banner ad.
+       *
+       * Transform and opacity only, so the browser can run it on the compositor
+       * and never repaints the hero. That is what keeps it free on the mid-range
+       * Android phones most of this site's visitors are holding.
+       */
+      keyframes: {
+        drift: {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0) scale(1)' },
+          '50%': { transform: 'translate3d(3%, -4%, 0) scale(1.08)' },
+        },
+        'drift-alt': {
+          '0%, 100%': { transform: 'translate3d(0, 0, 0) scale(1.05)' },
+          '50%': { transform: 'translate3d(-4%, 3%, 0) scale(1)' },
+        },
+        'breathe': {
+          '0%, 100%': { opacity: '0.10' },
+          '50%': { opacity: '0.18' },
+        },
+      },
+      animation: {
+        drift: 'drift 26s ease-in-out infinite',
+        'drift-alt': 'drift-alt 34s ease-in-out infinite',
+        breathe: 'breathe 12s ease-in-out infinite',
+      },
       colors: {
         surface: themed('--surface'),
         'surface-sunk': themed('--surface-sunk'),

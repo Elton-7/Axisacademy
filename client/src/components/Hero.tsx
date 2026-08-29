@@ -56,9 +56,27 @@ export default function Hero() {
         * screen size. The primary route into an enquiry was dead, and nothing
         * about the page looked wrong.
         */}
-      <div className="pointer-events-none absolute inset-0 opacity-10" aria-hidden="true">
-        <div className="absolute left-10 top-20 h-96 w-96 rounded-full border border-gold-500" />
-        <div className="absolute bottom-18 right-20 h-64 w-64 rounded-full border border-gold-500" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        {/*
+          * Two pools of gold light, drifting against each other.
+          *
+          * Built from radial gradients rather than a blur filter: the gradient
+          * already fades to nothing at its edge, so it looks the same and costs
+          * a fraction as much to animate. A large blurred surface moving behind
+          * the headline is the kind of thing that turns a mid-range Android
+          * phone's fan on, and most of this site's visitors are on one.
+          *
+          * motion-safe, so a visitor who has asked their device for less
+          * movement simply gets the gradient the section already had.
+          */}
+        <div className="absolute -left-32 -top-24 h-[38rem] w-[38rem] rounded-full bg-[radial-gradient(circle,_rgba(212,175,55,0.18),_transparent_65%)] motion-safe:animate-drift" />
+        <div className="absolute -bottom-40 -right-28 h-[34rem] w-[34rem] rounded-full bg-[radial-gradient(circle,_rgba(212,175,55,0.13),_transparent_68%)] motion-safe:animate-drift-alt" />
+
+        {/* The rings that were already here, now breathing rather than fixed. */}
+        <div className="absolute inset-0 opacity-10 motion-safe:animate-breathe">
+          <div className="absolute left-10 top-20 h-96 w-96 rounded-full border border-gold-500" />
+          <div className="absolute bottom-18 right-20 h-64 w-64 rounded-full border border-gold-500" />
+        </div>
       </div>
 
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
