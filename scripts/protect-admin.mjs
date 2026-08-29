@@ -9,16 +9,16 @@
  * Only /admin is covered. The parent and educator portals stay open, because
  * families use them and cannot be handed a shared password.
  *
- * The password is read from the environment and hashed here. It is never
- * written to this repository, never sent anywhere, and never printed:
+ * The password is hashed here and only the hash is sent. It is never written to
+ * this repository and never printed.
  *
  *   ADMIN_BASIC_USER      the name staff will type, defaults to "axis"
- *   ADMIN_BASIC_PASSWORD  the password itself
+ *   ADMIN_BASIC_PASSWORD  optional — you are asked for it if it is absent
  *   CPANEL_HOST / CPANEL_USER / CPANEL_PASSWORD or CPANEL_API_TOKEN
  *
  * Usage:
- *   ADMIN_BASIC_PASSWORD='...' node scripts/protect-admin.mjs
- *   node scripts/protect-admin.mjs --remove
+ *   node scripts/protect-admin.mjs              asks for the password
+ *   node scripts/protect-admin.mjs --remove     takes the gate off again
  *
  * It verifies the result before finishing: /admin must refuse an anonymous
  * caller and accept the credentials, and the public site and the family
@@ -27,6 +27,7 @@
  */
 import https from 'node:https'
 import { createRequire } from 'node:module'
+import { fileURLToPath } from 'node:url'
 
 /**
  * bcrypt comes from the server's dependencies rather than a second copy here.
@@ -50,16 +51,62 @@ const PORT = Number(process.env.CPANEL_PORT || 2083)
 const SITE = process.env.VITE_SITE_URL || 'https://www.axislearning.co.ke'
 
 const BASIC_USER = process.env.ADMIN_BASIC_USER || 'axis'
-const BASIC_PASSWORD = process.env.ADMIN_BASIC_PASSWORD
 const REMOVE = process.argv.includes('--remove')
+
+/**
+ * Three ways to supply the password, and the order is the safety order.
+ *
+ * Typed when asked is best: it exists only in memory, and never reaches a file
+ * or the shell's history. A .env file at the repository root is next — it is
+ * ignored by git at every level, so it cannot be committed by accident, and it
+ * keeps the password out of the history too. An environment variable set on the
+ * command line works but is the weakest: shells record it, and `history` then
+ * holds a live credential in plain text.
+ *
+ * Note this is the .env in this repository, not the one on the server. Apache
+ * reads the hashed password file; the API's own environment has nothing to do
+ * with this gate, and putting it there would do nothing at all.
+ */
+try {
+  createRequire(new URL('../server/package.json', import.meta.url))('dotenv').config({
+    path: fileURLToPath(new URL('../.env', import.meta.url)),
+  })
+} catch {
+  // No .env, or no dotenv. Both fine — the other two routes still work.
+}
+
+async function askForPassword() {
+  const readline = await import('node:readline')
+  return new Promise((resolve) => {
+    const rl = readline.createInterface({ input: process.stdin, output: process.stdout, terminal: true })
+    // Suppress the echo so the password is not left on screen or in a scrollback.
+    rl._writeToOutput = () => {}
+    process.stdout.write('  Password staff will type: ')
+    rl.question('', (answer) => {
+      rl.close()
+      process.stdout.write('\n')
+      resolve(answer.trim())
+    })
+  })
+}
 
 if (!HOST || !USER || (!PASSWORD && !TOKEN)) {
   console.error('protect-admin: set CPANEL_HOST, CPANEL_USER and CPANEL_PASSWORD (or CPANEL_API_TOKEN).')
   process.exit(1)
 }
+let BASIC_PASSWORD = process.env.ADMIN_BASIC_PASSWORD
+
 if (!REMOVE && !BASIC_PASSWORD) {
-  console.error('protect-admin: set ADMIN_BASIC_PASSWORD to the password staff will type.')
-  process.exit(1)
+  if (process.stdin.isTTY) {
+    BASIC_PASSWORD = await askForPassword()
+  }
+  if (!BASIC_PASSWORD) {
+    console.error('protect-admin: no password given. Any of these works:')
+    console.error('  run it from a terminal and it will ask, which is the safest')
+    console.error('  put ADMIN_BASIC_PASSWORD in a .env at the repository root')
+    console.error('  set ADMIN_BASIC_PASSWORD in the environment')
+    process.exit(1)
+  }
 }
 
 const HOME = `/home/${USER}`
