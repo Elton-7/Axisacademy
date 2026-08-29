@@ -160,6 +160,39 @@ but nothing works.
 
 Then submit a real enquiry and confirm it appears in the admin pipeline.
 
+## The staff panel
+
+**It lives at `/admin`.** It is not linked from anywhere on the public site, so
+this is the only written record of the address — parents were being shown a
+staff entrance on every page that they could never use.
+
+Not being linked is not what protects it. Two things do:
+
+1. **An Apache password**, asked for before the panel's own sign-in, installed
+   by `scripts/protect-admin.mjs`. An attacker needs two secrets and never
+   reaches the login form or learns whether an account exists.
+2. **The API itself**, which refuses every unauthenticated request. That is the
+   control that actually protects the data, and it is the one to keep working.
+
+To install or change the password:
+
+```
+CPANEL_HOST=... CPANEL_USER=... CPANEL_PASSWORD=... ADMIN_BASIC_USER=axis ADMIN_BASIC_PASSWORD='the password staff will type' node scripts/protect-admin.mjs
+```
+
+The password is hashed locally and only the hash is sent. The file of hashes is
+written outside `public_html`, so it is never itself downloadable. To remove the
+gate, run the same script with `--remove`.
+
+The script verifies before it finishes — `/admin` must refuse an anonymous
+caller and accept the credentials, and the homepage and the family portals must
+still be open — and rolls itself back if any of that is wrong. Locking the site
+out is the obvious way for this to go wrong, so it is checked rather than
+assumed.
+
+**Only `/admin` is covered.** The parent and educator portals stay open, because
+families use them and cannot be handed a shared password.
+
 ## Working on this host
 
 Things about this particular server that cost hours to discover. None are
