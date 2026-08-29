@@ -198,17 +198,21 @@ families use them and cannot be handed a shared password.
 Things about this particular server that cost hours to discover. None are
 faults in the application; all of them change how you deploy to it.
 
-**Restarting the API is a click in cPanel, not a file you touch.** Passenger is
-supposed to restart when `tmp/restart.txt` changes, and here it does not. New
-files sit on disk and the running process keeps serving the old ones — which
-looks exactly like a failed upload, so you go and check the upload again. None
-of these worked: rewriting `restart.txt`, disabling and re-enabling the
-application through the API, rewriting the document root's `.htaccess`, forcing
-a new `PassengerAppGroupName`, running `npm install`, waiting out the idle
-timeout, or touching the startup file. **cPanel → Setup Node.js App → Restart**
-does work. Deploy the files, then click it, then verify — and verify by
-behaviour, because the file being correct on disk proves nothing about what is
-running.
+**Restarting the API needs `scripts/restart-cpanel-app.mjs`.** Passenger is
+supposed to reload when `tmp/restart.txt` changes, and here it does not — new
+files sit on disk while the old process keeps serving, which looks exactly like
+a failed upload. None of these work either: disabling and re-enabling the
+application, a fresh `PassengerAppGroupName`, rewriting the document root's
+`.htaccess` or its parent, `npm install`, touching the startup file, or waiting
+out the idle timeout. Neither UAPI nor API2 exposes a restart — both were
+enumerated. The script ends the process so Passenger starts it again, which is
+what cPanel's own Restart button does underneath.
+
+It matches the process on the application **root**, not the startup file.
+Passenger names its process after the directory it was told to run, so matching
+`server.js` finds nothing, kills nothing, and reports success — which is a
+convincing way to believe a restart happened when it did not. Always confirm by
+behaviour: call a route that only exists in the new code.
 
 **The interpreter predates `fetch`.** `/usr/bin/node` is what Passenger runs the
 app with, and it is older than Node 18. Anything using global `fetch`,

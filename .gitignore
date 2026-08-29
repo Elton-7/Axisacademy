@@ -52,3 +52,6 @@ creds*.json
 *-creds.json
 secrets.json
 .env.local
+
+# Personal Claude Code settings — machine-specific, not the team's
+.claude/settings.local.json
