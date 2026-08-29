@@ -161,4 +161,65 @@ function notifyNewContact(contact) {
   })
 }
 
-module.exports = { notifyNewEnquiry, notifyNewContact, isConfigured }
+/**
+ * The one message here addressed to a person rather than to Axis.
+ *
+ * Everything else in this file tells staff that something arrived, and goes
+ * to NOTIFICATION_TO. This goes to whoever asked to reset their password, so
+ * the recipient is passed in — and it is the only mail the site sends that a
+ * stranger can cause to be sent, which is why the caller rate-limits it and
+ * never reveals whether an address matched an account.
+ *
+ * The link is the whole message. No table of details, nothing about the
+ * learner, nothing worth intercepting beyond the link itself, which expires.
+ */
+async function sendPasswordReset({ to, name, resetUrl, minutesValid }) {
+  const mailer = getTransporter()
+
+  if (!mailer) {
+    // Logged without the link. A reset URL in a log file is a live key to
+    // the account, readable by anyone who can read logs.
+    console.info(`[notifications] SMTP not configured — would have emailed a reset link to ${to}`)
+    return { sent: false, reason: 'not-configured' }
+  }
+
+  const safeName = escapeHtml(String(name || '').split(' ')[0] || 'there')
+  const html = `
+    <div style="font-family:system-ui,Segoe UI,Arial,sans-serif;max-width:560px">
+      <h2 style="color:#0a1628;margin:0 0 12px">Reset your Axis Learning password</h2>
+      <p style="color:#55637d;margin:0 0 20px">Hello ${safeName}, someone asked to reset the password for this account. Choose a new one using the button below.</p>
+      <p style="margin:0 0 24px"><a href="${escapeHtml(resetUrl)}" style="background:#0a1628;color:#ffffff;padding:12px 22px;border-radius:8px;text-decoration:none;display:inline-block">Choose a new password</a></p>
+      <p style="color:#55637d;margin:0 0 8px;font-size:14px">This link works once, and stops working in ${Number(minutesValid)} minutes.</p>
+      <p style="color:#55637d;margin:0;font-size:14px">If you did not ask for this, you can ignore this email — your password has not changed.</p>
+    </div>
+  `
+
+  try {
+    await mailer.sendMail({
+      from: NOTIFICATION_FROM || SMTP_USER,
+      to,
+      subject: 'Reset your Axis Learning password',
+      html,
+      text:
+        `Hello ${String(name || '').split(' ')[0] || 'there'},
+
+` +
+        `Someone asked to reset the password for this account. Open this link to choose a new one:
+
+` +
+        `${resetUrl}
+
+` +
+        `It works once, and stops working in ${Number(minutesValid)} minutes.
+
+` +
+        `If you did not ask for this, ignore this email — your password has not changed.`,
+    })
+    return { sent: true }
+  } catch (error) {
+    console.error('[notifications] Failed to send a reset link:', error.message)
+    return { sent: false, reason: 'send-failed' }
+  }
+}
+
+module.exports = { notifyNewEnquiry, notifyNewContact, sendPasswordReset, isConfigured }

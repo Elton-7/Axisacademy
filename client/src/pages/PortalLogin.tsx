@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { apiErrorMessage } from '../utils/apiError'
 import { authApi } from '../services/apiClient'
 import ChangePasswordForm from '../components/ChangePasswordForm'
+import ForgotPasswordForm from '../components/ForgotPasswordForm'
 
 type PortalRole = 'student' | 'tutor'
 
@@ -43,6 +44,8 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
    * person sees instead of the dashboard until the password is their own.
    */
   const [mustChangePassword, setMustChangePassword] = useState(false)
+  // Shown in place of the sign-in form when someone cannot get in.
+  const [forgot, setForgot] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -112,11 +115,20 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
                 navigate(config.dashboard, { replace: true })
               }}
             />
+          ) : forgot ? (
+            <ForgotPasswordForm onCancel={() => setForgot(false)} />
           ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             <div><label htmlFor={`${role}-email`} className="mb-2 block text-sm font-medium text-ink">Email address</label><input id={`${role}-email`} type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-muted focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>
             <div><div className="mb-2 flex items-center justify-between"><label htmlFor={`${role}-password`} className="block text-sm font-medium text-ink">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-gold-700">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div><input id={`${role}-password`} type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-muted focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>
             <button type="submit" disabled={loading} className="btn-primary flex w-full items-center justify-center gap-2 rounded-xl py-3.5 disabled:cursor-not-allowed disabled:opacity-50">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}{loading ? 'Signing in...' : `Sign in to ${role} portal`}</button>
+            <button
+              type="button"
+              onClick={() => setForgot(true)}
+              className="w-full text-center text-sm text-ink-muted transition-colors hover:text-gold-700"
+            >
+              Forgot your password?
+            </button>
           </form>
           )}
 

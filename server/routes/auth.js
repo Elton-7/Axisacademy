@@ -8,6 +8,14 @@ const { authLimiter } = require('../middleware/rateLimiter')
 const User = require('../models/User')
 const { requireAuth } = require('../middleware/requireAuth')
 const { recordAudit } = require('../middleware/audit')
+const crypto = require('node:crypto')
+const { sendPasswordReset } = require('../services/notifications')
+
+/** Long enough to find the email, short enough that a stale link is useless. */
+const RESET_TOKEN_MINUTES = 60
+
+/** Only ever the hash is stored, so this is how a link is recognised again. */
+const hashToken = (token) => crypto.createHash('sha256').update(String(token)).digest('hex')
 
 /**
  * Matches the cost used for the seeded accounts and the deployment hashes.
@@ -235,6 +243,111 @@ router.post('/change-password', requireAuth, async (req, res) => {
     res.status(500).json({ success: false, error: 'Failed to change password' })
   }
 })
+
+/**
+ * Asking for a reset link.
+ *
+ * Always answers the same way, whether or not the address belongs to an
+ * account. Anything else turns this into a way to ask the site which of a
+ * list of email addresses belongs to an Axis family — which is worth more to
+ * someone than it sounds, given who the families are.
+ *
+ * Rate limited with the same limiter as sign-in, because it sends mail on a
+ * stranger's request and is otherwise a way to have Axis send someone
+ * hundreds of emails.
+ */
+router.post(
+  '/forgot-password',
+  authLimiter,
+  body('email').isEmail().withMessage('Enter a valid email address').normalizeEmail(),
+  handleValidation,
+  async (req, res) => {
+    const sameAnswer = {
+      success: true,
+      message: 'If that address has an account, a reset link is on its way.',
+    }
+
+    try {
+      const user = await User.findOne({ where: { email: req.body.email } })
+
+      // A disabled account gets nothing: an educator who has left should not
+      // be able to let themselves back in.
+      if (!user || !user.isActive) return res.json(sameAnswer)
+
+      const token = crypto.randomBytes(32).toString('hex')
+      const expiresAt = new Date(Date.now() + RESET_TOKEN_MINUTES * 60 * 1000)
+
+      await user.update({
+        // The hash, never the token. The emailed link is the only copy.
+        resetTokenHash: hashToken(token),
+        resetTokenExpiresAt: expiresAt,
+      })
+
+      const base = (process.env.SITE_URL || '').replace(/\/$/, '')
+      await sendPasswordReset({
+        to: user.email,
+        name: user.name,
+        resetUrl: `${base}/portal/reset?token=${token}`,
+        minutesValid: RESET_TOKEN_MINUTES,
+      })
+
+      // Recorded without the token, so the audit trail cannot be used to
+      // take over an account.
+      await recordAudit(req, 'password_reset_requested', 'user', user.id, {})
+      res.json(sameAnswer)
+    } catch (error) {
+      console.error('Failed to start a password reset:', error.message)
+      // Still the same answer: an error here must not be distinguishable
+      // from an address that has no account.
+      res.json(sameAnswer)
+    }
+  }
+)
+
+/**
+ * Using the link. Single use, and only while it is still valid.
+ */
+router.post(
+  '/reset-password',
+  authLimiter,
+  body('token').isString().isLength({ min: 32 }).withMessage('That reset link is not valid'),
+  handleValidation,
+  async (req, res) => {
+    try {
+      const { token, newPassword } = req.body
+
+      if (String(newPassword || '').length < 10) {
+        return res.status(400).json({ success: false, error: 'Choose a password of at least 10 characters' })
+      }
+
+      // Looked up by hash, so the token itself never has to be compared.
+      const user = await User.findOne({ where: { resetTokenHash: hashToken(String(token)) } })
+
+      const expired = user && user.resetTokenExpiresAt && user.resetTokenExpiresAt.getTime() < Date.now()
+      if (!user || !user.isActive || expired) {
+        return res.status(400).json({
+          success: false,
+          error: 'That reset link has expired or has already been used. Please ask for a new one.',
+        })
+      }
+
+      await user.update({
+        passwordHash: await bcrypt.hash(newPassword, BCRYPT_COST),
+        // Used once: clearing these is what stops the link working again.
+        resetTokenHash: null,
+        resetTokenExpiresAt: null,
+        // They have just chosen this one themselves.
+        mustChangePassword: false,
+      })
+      await recordAudit(req, 'password_reset_completed', 'user', user.id, {})
+
+      res.json({ success: true, message: 'Your password has been set. You can sign in with it now.' })
+    } catch (error) {
+      console.error('Failed to complete a password reset:', error.message)
+      res.status(500).json({ success: false, error: 'Failed to reset the password' })
+    }
+  }
+)
 
 // Get current user (verify token)
 router.get('/me', async (req, res) => {

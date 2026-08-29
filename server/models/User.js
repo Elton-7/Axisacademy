@@ -49,6 +49,23 @@ const User = sequelize.define('User', {
     defaultValue: false,
     field: 'must_change_password',
   },
+  /**
+   * A pending password reset.
+   *
+   * The hash of the token, never the token — the emailed link is the only copy
+   * that can open the account. Only one reset is outstanding at a time, so
+   * asking for a second link invalidates the first.
+   */
+  resetTokenHash: {
+    type: DataTypes.STRING(64),
+    allowNull: true,
+    field: 'reset_token_hash',
+  },
+  resetTokenExpiresAt: {
+    type: DataTypes.DATE,
+    allowNull: true,
+    field: 'reset_token_expires_at',
+  },
   lastLoginAt: {
     type: DataTypes.DATE,
     allowNull: true,

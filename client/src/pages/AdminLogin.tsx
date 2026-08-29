@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { apiErrorMessage } from '../utils/apiError'
 import { authApi } from '../services/apiClient'
 import ChangePasswordForm from '../components/ChangePasswordForm'
+import ForgotPasswordForm from '../components/ForgotPasswordForm'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -16,6 +17,8 @@ export default function AdminLogin() {
   const [loading, setLoading] = useState(false)
   // Still on the temporary password an administrator issued. See PortalLogin.
   const [mustChangePassword, setMustChangePassword] = useState(false)
+  // Shown in place of the sign-in form when someone cannot get in.
+  const [forgot, setForgot] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -93,6 +96,8 @@ export default function AdminLogin() {
               navigate('/admin', { replace: true })
             }}
           />
+        ) : forgot ? (
+          <ForgotPasswordForm onCancel={() => setForgot(false)} />
         ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -107,6 +112,13 @@ export default function AdminLogin() {
           <button type="submit" disabled={loading} className="btn-primary flex w-full items-center justify-center gap-2 rounded-xl py-3.5 disabled:cursor-not-allowed disabled:opacity-50">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
             {loading ? 'Signing in...' : 'Sign in'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setForgot(true)}
+            className="w-full text-center text-sm text-ink-muted transition-colors hover:text-gold-700"
+          >
+            Forgot your password?
           </button>
         </form>
         )}

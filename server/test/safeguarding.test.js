@@ -394,6 +394,106 @@ describe('a temporary password can be replaced by its owner', () => {
   })
 })
 
+/**
+ * Resetting a forgotten password without having to telephone Axis.
+ *
+ * The properties worth protecting here are not about the happy path. A reset
+ * flow that works but tells strangers which addresses have accounts, or leaves
+ * a used link working, is worse than none — so those are what these check.
+ */
+describe('a forgotten password can be reset by email', () => {
+  const crypto = require('node:crypto')
+  const hashOf = (token) => crypto.createHash('sha256').update(token).digest('hex')
+  let email
+  let token
+
+  test('the answer is the same whether or not the address has an account', async () => {
+    email = `${PREFIX}reset@axis.local`
+    const passwordHash = await bcrypt.hash('the-original-password', 10)
+    const [user] = await User.findOrCreate({
+      where: { email },
+      defaults: { email, role: 'student', name: 'Reset suite', passwordHash },
+    })
+    await user.update({ passwordHash, isActive: true })
+    ids.reset = user.id
+
+    const known = await api('/auth/forgot-password', { method: 'POST', body: { email } })
+    const unknown = await api('/auth/forgot-password', {
+      method: 'POST', body: { email: `${PREFIX}nobody-at-all@axis.local` },
+    })
+
+    assert.equal(known.status, unknown.status, 'the status must not distinguish them')
+    assert.deepEqual(known.body, unknown.body, 'nor the body — this is how account lists leak')
+  })
+
+  test('a token is stored only as a hash', async () => {
+    const user = await User.findByPk(ids.reset)
+    assert.ok(user.resetTokenHash, 'a reset should be outstanding')
+    assert.equal(user.resetTokenHash.length, 64, 'a SHA-256, not the token')
+    assert.ok(user.resetTokenExpiresAt > new Date(), 'and it should not be expired already')
+
+    // Reconstruct what the emailed link would carry, which is the only place
+    // the token itself exists.
+    token = crypto.randomBytes(32).toString('hex')
+    await user.update({ resetTokenHash: hashOf(token) })
+  })
+
+  test('a wrong or made-up token is refused', async () => {
+    const { status } = await api('/auth/reset-password', {
+      method: 'POST', body: { token: crypto.randomBytes(32).toString('hex'), newPassword: 'a-new-password' },
+    })
+    assert.equal(status, 400)
+  })
+
+  test('a short password is refused even with a good token', async () => {
+    const { status } = await api('/auth/reset-password', {
+      method: 'POST', body: { token, newPassword: 'short' },
+    })
+    assert.equal(status, 400)
+  })
+
+  test('an expired link is refused', async () => {
+    const user = await User.findByPk(ids.reset)
+    await user.update({ resetTokenExpiresAt: new Date(Date.now() - 1000) })
+    const { status, body } = await api('/auth/reset-password', {
+      method: 'POST', body: { token, newPassword: 'a-perfectly-good-password' },
+    })
+    assert.equal(status, 400)
+    assert.match(body.error, /expired|already been used/i)
+    await user.update({ resetTokenExpiresAt: new Date(Date.now() + 60 * 60 * 1000) })
+  })
+
+  test('a valid link sets the password, and then stops working', async () => {
+    const chosen = 'the-password-i-chose'
+    const reset = await api('/auth/reset-password', {
+      method: 'POST', body: { token, newPassword: chosen },
+    })
+    assert.equal(reset.status, 200, JSON.stringify(reset.body))
+
+    const signIn = await api('/auth/login', { method: 'POST', body: { email, password: chosen } })
+    assert.equal(signIn.status, 200, 'the new password should work')
+
+    // The link is single use: the same one again must be refused, or an email
+    // in someone's inbox stays a permanent key to the account.
+    const again = await api('/auth/reset-password', {
+      method: 'POST', body: { token, newPassword: 'yet-another-password' },
+    })
+    assert.equal(again.status, 400, 'a spent link must not work twice')
+
+    const stillWorks = await api('/auth/login', { method: 'POST', body: { email, password: chosen } })
+    assert.equal(stillWorks.status, 200, 'and the second attempt must not have changed anything')
+  })
+
+  test('a disabled account cannot let itself back in', async () => {
+    const user = await User.findByPk(ids.reset)
+    await user.update({ isActive: false })
+    await api('/auth/forgot-password', { method: 'POST', body: { email } })
+    const after = await User.findByPk(ids.reset)
+    assert.equal(after.resetTokenHash, null, 'no link should have been issued')
+    await user.update({ isActive: true })
+  })
+})
+
 describe('account access', () => {
   test('a parent cannot create accounts', async () => {
     const result = await api('/users', {

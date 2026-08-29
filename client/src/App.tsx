@@ -26,6 +26,7 @@ import Enrollment from './pages/Enrollment'
 import { authApi } from './services/apiClient'
 import NotFound from './pages/NotFound'
 import PortalLogin from './pages/PortalLogin'
+import ResetPassword from './pages/ResetPassword'
 import PortalDashboard from './pages/PortalDashboard'
 import Privacy from './pages/Privacy'
 import Safeguarding from './pages/Safeguarding'
@@ -100,6 +101,9 @@ function App() {
           <Route path="consultation" element={<Consultation />} />
           <Route path="admin/login" element={<AdminLogin />} />
           <Route path="admin" element={<ProtectedAdminRoute />} />
+          {/* Under /portal so the server answers it as a page. A reset link
+              landing on a 404 would look broken to the person who needs it. */}
+          <Route path="portal/reset" element={<ResetPassword />} />
           <Route path="portal/student" element={<PortalLogin role="student" />} />
           <Route path="portal/student/dashboard" element={<ProtectedPortalRoute role="student" />} />
           <Route path="portal/tutor" element={<PortalLogin role="tutor" />} />

@@ -451,6 +451,22 @@ export const authApi = {
     await api.post('/auth/change-password', payload)
   },
 
+  /**
+   * Asks for a reset link.
+   *
+   * Succeeds whether or not the address has an account — deliberately, so the
+   * site cannot be used to find out which families are Axis families. Callers
+   * must not treat success as confirmation that an account exists.
+   */
+  async requestPasswordReset(email: string) {
+    await api.post('/auth/forgot-password', { email })
+  },
+
+  /** Uses a link from that email. Single use, and only while it is valid. */
+  async resetPassword(payload: { token: string; newPassword: string }) {
+    await api.post('/auth/reset-password', payload)
+  },
+
   async getCurrentUser() {
     const { data } = await api.get<ApiResponse<User>>('/auth/me')
     return unwrap(data)
