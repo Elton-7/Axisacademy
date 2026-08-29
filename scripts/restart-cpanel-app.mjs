@@ -1,24 +1,40 @@
 /**
- * Restarts the API on cPanel, when nothing else will.
+ * Asks the API to restart, and tells you the truth about whether it did.
  *
- * Passenger is supposed to reload when tmp/restart.txt changes. On this host it
- * does not, and neither does anything else reachable through the API: disabling
- * and re-enabling the application, a fresh PassengerAppGroupName, rewriting the
- * document root's .htaccess or its parent, touching the startup file, running
- * npm install, or waiting out the idle timeout. All were tried; the deployed
- * files simply keep sitting on disk while the old process serves.
+ * On this host nothing an account can reach will restart the application. That
+ * is not for want of trying; every one of these was attempted and disproved
+ * against a signal that cannot be faked:
  *
- * cPanel's own Restart button works, and what it does underneath is end the
- * process. There is no restart in either the UAPI or API2 surface — both were
- * enumerated — so this schedules that one command as a cron job, waits for it to
- * fire, and removes the job again.
+ *   tmp/restart.txt in the app root, the document root and above it
+ *   a fresh PassengerAppGroupName
+ *   a trailing slash on PassengerAppRoot, and a different PassengerStartupFile
+ *   unregistering the application and registering it again
+ *   PassengerApps ensure_deps, which does run npm install
+ *   PassengerApps edit_application — permanently broken here, see below
+ *   an idle window with no traffic at all
+ *   killing the process from cron
  *
- * It is deliberately a named script rather than an inline command, so that
- * permitting it in settings permits exactly this and nothing else.
+ * The last one deserves its own note, because an earlier version of this script
+ * did exactly that and reported success every time. The server is LiteSpeed,
+ * not Apache: it reads the Passenger directives but runs the application
+ * itself, and keeps that process where this account cannot see it. A cron job
+ * here gets its own PID namespace — `ps -u <user>` from cron lists three
+ * processes, all of them the cron job — so the pkill matched nothing, killed
+ * nothing, and exited 0. Meanwhile /api/health answered 200 throughout, because
+ * the old process was still serving it. Every signal said restarted.
  *
- *   CPANEL_HOST / CPANEL_USER / CPANEL_API_TOKEN (or CPANEL_PASSWORD)
- *   APP_ENTRY   the application root to match, defaults to the Axis API
- *   PROBE_URL   an endpoint polled to confirm the app came back
+ * edit_application cannot be used at all: cPanel recorded this application's
+ * python interpreter as /usr/bin/python-html2text, which is not a python, and
+ * its own validator now rejects that value on every edit.
+ *
+ * So this script attempts the one harmless thing that ought to work, then
+ * checks /api/health's startedAt — which changes if and only if a new process
+ * began — and if nothing happened, says so and tells you what a human must do.
+ * It will not report a restart it cannot see.
+ *
+ *   CPANEL_HOST / CPANEL_USER / CPANEL_API_TOKEN
+ *   APP_ROOT   application root on the host, defaults to the Axis API
+ *   PROBE_URL  health endpoint, must report startedAt
  *
  * Usage:  node scripts/restart-cpanel-app.mjs
  */
@@ -27,95 +43,81 @@ import https from 'node:https'
 const HOST = process.env.CPANEL_HOST
 const USER = process.env.CPANEL_USER
 const TOKEN = process.env.CPANEL_API_TOKEN
-const PASSWORD = process.env.CPANEL_PASSWORD
 const PORT = Number(process.env.CPANEL_PORT || 2083)
-/**
- * The application ROOT, not the startup file.
- *
- * Passenger names its process after the directory it was told to run, so
- * matching on server.js finds nothing, kills nothing, and reports success —
- * which cost an afternoon of believing the restart had happened.
- */
-const APP_ENTRY = process.env.APP_ENTRY || `/home/${USER}/repos/axis/server`
+const APP_ROOT = process.env.APP_ROOT || `/home/${USER}/repos/axis/server`
 const PROBE_URL = process.env.PROBE_URL || 'https://api.axislearning.co.ke/api/health'
 
-if (!HOST || !USER || (!TOKEN && !PASSWORD)) {
-  console.error('restart-cpanel-app: set CPANEL_HOST, CPANEL_USER and CPANEL_API_TOKEN (or CPANEL_PASSWORD).')
+if (!HOST || !USER || !TOKEN) {
+  console.error('restart-cpanel-app: set CPANEL_HOST, CPANEL_USER and CPANEL_API_TOKEN.')
   process.exit(1)
 }
 
-const authHeader = TOKEN
-  ? `cpanel ${USER}:${TOKEN}`
-  : 'Basic ' + Buffer.from(`${USER}:${PASSWORD}`).toString('base64')
-
-/** cPanel's older interface: the Cron module is not in UAPI on this account. */
-function api2(module, func, params = {}) {
-  const qs = new URLSearchParams({
-    cpanel_jsonapi_user: USER,
-    cpanel_jsonapi_apiversion: '2',
-    cpanel_jsonapi_module: module,
-    cpanel_jsonapi_func: func,
-    ...params,
-  }).toString()
-
-  return new Promise((resolve, reject) => {
-    https
-      .request(
-        { host: HOST, port: PORT, path: `/json-api/cpanel?${qs}`, rejectUnauthorized: false, headers: { Authorization: authHeader } },
-        (res) => {
-          let d = ''
-          res.on('data', (c) => (d += c))
-          res.on('end', () => { try { resolve(JSON.parse(d)) } catch { reject(new Error(String(d).slice(0, 160))) } })
-        }
-      )
-      .on('error', reject)
-      .end()
+const uapi = (module, fn, params = {}, method = 'GET') =>
+  new Promise((resolve, reject) => {
+    const body = method === 'POST' ? new URLSearchParams(params).toString() : ''
+    const qs = method === 'GET' ? `?${new URLSearchParams(params).toString()}` : ''
+    const req = https.request(
+      {
+        host: HOST, port: PORT, method,
+        path: `/execute/${module}/${fn}${qs}`,
+        rejectUnauthorized: false,
+        headers: {
+          Authorization: `cpanel ${USER}:${TOKEN}`,
+          ...(method === 'POST'
+            ? { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(body) }
+            : {}),
+        },
+      },
+      (res) => {
+        let d = ''
+        res.on('data', (c) => (d += c))
+        res.on('end', () => { try { resolve(JSON.parse(d)) } catch { reject(new Error(String(d).slice(0, 200))) } })
+      }
+    )
+    req.on('error', reject)
+    if (method === 'POST') req.write(body)
+    req.end()
   })
-}
 
-const probe = () =>
+const health = () =>
   new Promise((resolve) => {
     https
-      .get(PROBE_URL, (res) => { res.resume(); resolve(res.statusCode) })
-      .on('error', () => resolve(0))
-      .setTimeout(20000, function () { this.destroy(); resolve(0) })
+      .get(PROBE_URL, (res) => {
+        let d = ''
+        res.on('data', (c) => (d += c))
+        res.on('end', () => { try { resolve(JSON.parse(d)) } catch { resolve({}) } })
+      })
+      .on('error', () => resolve({}))
+      .setTimeout(20000, function () { this.destroy(); resolve({}) })
   })
 
-/** Removes the job whatever happens, so a repeating kill can never be left behind. */
-async function removeJob() {
-  const list = await api2('Cron', 'fetchcron')
-  const job = (list.cpanelresult.data || []).find((l) => String(l.command || '').includes(APP_ENTRY))
-  if (!job) return false
-  await api2('Cron', 'remove_line', { linekey: job.linekey, line: job.line })
-  const after = await api2('Cron', 'fetchcron')
-  return !(after.cpanelresult.data || []).some((l) => String(l.command || '').includes(APP_ENTRY))
+const before = await health()
+if (!before.startedAt) {
+  console.log('  the live API does not report startedAt, so it is running code from')
+  console.log('  before that was added. Any restart at all will be visible as a change.')
+} else {
+  console.log(`  running since: ${before.startedAt}`)
 }
 
-let scheduled = false
-try {
-  // Scoped to this account and this application root, so nothing else on the
-  // machine — including other accounts' processes — can be affected.
-  const command = `pkill -u ${USER} -f ${APP_ENTRY}`
-  const added = await api2('Cron', 'add_line', { command, minute: '*', hour: '*', day: '*', month: '*', weekday: '*' })
-  const ok = ((added.cpanelresult.data || [])[0] || {}).status === 1
-  if (!ok) throw new Error(JSON.stringify(added.cpanelresult).slice(0, 160))
-  scheduled = true
-  console.log('  restart scheduled; waiting for it to fire')
+await uapi('Fileman', 'save_file_content', {
+  dir: `${APP_ROOT}/tmp`, file: 'restart.txt', content: `${new Date().toISOString()}\n`,
+}, 'POST')
+console.log('  touched tmp/restart.txt; knocking for two minutes')
 
-  // Cron fires on the minute, so this may wait up to two.
-  for (let i = 1; i <= 6; i += 1) {
-    await new Promise((r) => setTimeout(r, 30000))
-    const status = await probe()
-    console.log(`  ${i * 30}s: ${PROBE_URL.replace(/^https?:\/\//, '')} -> ${status || 'no answer'}`)
-    if (i >= 4 && status === 200) break
-  }
-} finally {
-  if (scheduled) {
-    const removed = await removeJob()
-    console.log(`  restart job removed: ${removed}`)
-    if (!removed) console.error('  WARNING: remove the cron job by hand — it would keep killing the app every minute')
+// LiteSpeed notices a restart file when a request arrives, not on a timer.
+for (let i = 1; i <= 20; i += 1) {
+  await new Promise((r) => setTimeout(r, 6000))
+  const now = await health()
+  if (now.startedAt && now.startedAt !== before.startedAt) {
+    console.log(`\n  RESTARTED — running since ${now.startedAt}`)
+    process.exit(0)
   }
 }
 
-const finalStatus = await probe()
-console.log(`  application answering: HTTP ${finalStatus || 'no answer'}`)
+console.log('\n  NOT RESTARTED. The application is still the process that was already running,')
+console.log('  and any code or .env change you deployed is on disk but not running.')
+console.log('\n  A person has to do it, in cPanel:')
+console.log('    Software > Setup Node.js App > the axis-api application > RESTART')
+console.log('    or, if that page is absent, ask the host to restart the application.')
+console.log(`\n  Confirm afterwards — startedAt at ${PROBE_URL} must change.`)
+process.exit(1)

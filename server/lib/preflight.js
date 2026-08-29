@@ -55,6 +55,38 @@ const checks = [
       process.env.ADMIN_PASSWORD_HASH && !process.env.ADMIN_PASSWORD_HASH.startsWith('$2'),
     message: 'ADMIN_PASSWORD_HASH is not a bcrypt hash — a plaintext password will never match.',
   },
+  {
+    name: 'SITE_URL',
+    fail: () => !process.env.SITE_URL,
+    message:
+      'SITE_URL is not set. Password reset emails would carry a link with no ' +
+      'domain in front of it, which cannot be opened from a mail client.',
+  },
+  {
+    name: 'SITE_URL',
+    /**
+     * Checked against CORS_ORIGIN because that variable cannot be wrong for
+     * long: if it does not name the real site, every page fails visibly on the
+     * first request. SITE_URL has no such alarm — it is read only when an email
+     * is composed, so a stale value survives a move between hosts and is found
+     * by the one person least able to report it, holding a dead reset link.
+     *
+     * This is not hypothetical. After the move off Netlify this still pointed at
+     * the retired address, and reset emails were delivered, correct in every
+     * other respect, and useless.
+     */
+    fail: () => {
+      const site = process.env.SITE_URL
+      const origins = (process.env.CORS_ORIGIN || '').split(',').map((o) => o.trim()).filter(Boolean)
+      if (!site || origins.length === 0) return false
+      const host = (value) => { try { return new URL(value).host } catch { return null } }
+      const siteHost = host(site)
+      return Boolean(siteHost) && !origins.some((o) => host(o) === siteHost)
+    },
+    message:
+      'SITE_URL names a different site from CORS_ORIGIN. Emailed links would ' +
+      'point somewhere the site is not served from.',
+  },
 ]
 
 /** Worth saying out loud, but not worth refusing to start over. */

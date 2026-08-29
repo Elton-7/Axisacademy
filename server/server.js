@@ -64,13 +64,26 @@ app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.use('/api', generalApiLimiter)
 
+/**
+ * Fixed when this process began, so it changes only on a genuine restart.
+ *
+ * The host runs the API under Passenger, which starts and stops it out of
+ * sight: there are no visible processes, no application log, and a 200 from
+ * /api/health is returned just as happily by a process from two deploys ago.
+ * Without this, "did the restart take?" could only be answered by finding some
+ * behaviour that differed between the old code and the new — and when what
+ * changed was an environment variable read at startup, the only visible
+ * difference was the link inside an email.
+ */
+const STARTED_AT = new Date().toISOString()
+
 // Health check
 app.get('/api/health', async (req, res) => {
   try {
     await sequelize.authenticate()
-    res.json({ status: 'OK', database: 'connected', timestamp: new Date().toISOString() })
+    res.json({ status: 'OK', database: 'connected', startedAt: STARTED_AT, timestamp: new Date().toISOString() })
   } catch (error) {
-    res.status(503).json({ status: 'DEGRADED', database: 'unavailable', timestamp: new Date().toISOString() })
+    res.status(503).json({ status: 'DEGRADED', database: 'unavailable', startedAt: STARTED_AT, timestamp: new Date().toISOString() })
   }
 })
 

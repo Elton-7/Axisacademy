@@ -198,21 +198,55 @@ families use them and cannot be handed a shared password.
 Things about this particular server that cost hours to discover. None are
 faults in the application; all of them change how you deploy to it.
 
-**Restarting the API needs `scripts/restart-cpanel-app.mjs`.** Passenger is
-supposed to reload when `tmp/restart.txt` changes, and here it does not — new
-files sit on disk while the old process keeps serving, which looks exactly like
-a failed upload. None of these work either: disabling and re-enabling the
-application, a fresh `PassengerAppGroupName`, rewriting the document root's
-`.htaccess` or its parent, `npm install`, touching the startup file, or waiting
-out the idle timeout. Neither UAPI nor API2 exposes a restart — both were
-enumerated. The script ends the process so Passenger starts it again, which is
-what cPanel's own Restart button does underneath.
+**The API cannot be restarted from this account.** This is the single most
+expensive fact about the host, and it is worth reading before you deploy
+anything to the server.
 
-It matches the process on the application **root**, not the startup file.
-Passenger names its process after the directory it was told to run, so matching
-`server.js` finds nothing, kills nothing, and reports success — which is a
-convincing way to believe a restart happened when it did not. Always confirm by
-behaviour: call a route that only exists in the new code.
+The server is **LiteSpeed**, not Apache. It reads the Passenger directives in
+the document root's `.htaccess` but does not run Passenger: it starts the
+application itself and keeps that process somewhere the account cannot reach.
+All of the following were tried and each left the same process serving:
+
+- `tmp/restart.txt`, in the app root, the document root, and above the app
+- a fresh `PassengerAppGroupName`
+- a trailing slash on `PassengerAppRoot`, and a different `PassengerStartupFile`
+- unregistering the application and registering it again — the API kept
+  answering the whole time it was unregistered
+- `PassengerApps/ensure_deps`, which does run `npm install`
+- an idle window with no traffic
+- killing the process from cron
+
+`PassengerApps/edit_application` cannot be used at all: cPanel recorded this
+application's python interpreter as `/usr/bin/python-html2text`, which is not a
+python, and its own validator now rejects that stored value on every edit.
+There is no `restart_application` in either UAPI or API2 — both were enumerated
+by name.
+
+So a person has to press the button: **cPanel > Software > Setup Node.js App >
+axis-api > RESTART**. Until they do, deployed server code and `.env` changes sit
+on disk and do not run.
+
+**Killing it from cron does not work, and says it did.** An earlier version of
+`scripts/restart-cpanel-app.mjs` scheduled `pkill -u <user> -f <app root>` and
+reported success on every run. Cron jobs here get their own PID namespace:
+`ps -u <user>` from cron lists three processes, all belonging to the cron job
+itself. The application is not among them. So the pkill matched nothing, killed
+nothing, exited 0 — and `/api/health` answered 200 throughout, because the old
+process was still serving it. Hours were spent believing restarts had happened.
+
+**`/api/health` reports `startedAt`, and it is the only trustworthy signal.** It
+is fixed when the process begins, so it changes if and only if a new one
+started. Nothing else on this host survives scrutiny: a 200, cPanel's own report
+of success, and files verified byte-for-byte on disk have all been true at the
+same moment as the old code kept running. Check `startedAt` before and after,
+and believe nothing else.
+
+**A stale `SITE_URL` is invisible until it reaches a parent.** It is read only
+when an email is composed, so after the move off Netlify it kept pointing at the
+retired address and password reset emails arrived correct in every respect
+except that the link was dead. `lib/preflight.js` now refuses to start
+production if `SITE_URL` names a different host from `CORS_ORIGIN` — the second
+variable cannot be wrong for long, because the site fails visibly if it is.
 
 **The interpreter predates `fetch`.** `/usr/bin/node` is what Passenger runs the
 app with, and it is older than Node 18. Anything using global `fetch`,
