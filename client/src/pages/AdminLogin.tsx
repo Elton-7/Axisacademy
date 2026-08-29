@@ -4,6 +4,7 @@ import { LockKeyhole, Loader2, LogIn, AlertCircle, Eye, EyeOff, ShieldCheck, Arr
 import toast from 'react-hot-toast'
 import { apiErrorMessage } from '../utils/apiError'
 import { authApi } from '../services/apiClient'
+import ChangePasswordForm from '../components/ChangePasswordForm'
 
 export default function AdminLogin() {
   const navigate = useNavigate()
@@ -13,6 +14,8 @@ export default function AdminLogin() {
   const [rememberMe, setRememberMe] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  // Still on the temporary password an administrator issued. See PortalLogin.
+  const [mustChangePassword, setMustChangePassword] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -20,7 +23,11 @@ export default function AdminLogin() {
     setLoading(true)
 
     try {
-      await authApi.login({ email: email.trim(), password })
+      const user = await authApi.login({ email: email.trim(), password })
+      if (user.mustChangePassword) {
+        setMustChangePassword(true)
+        return
+      }
       toast.success('Welcome back')
       navigate('/admin', { replace: true })
     } catch (requestError: unknown) {
@@ -78,6 +85,15 @@ export default function AdminLogin() {
           </div>
         )}
 
+        {mustChangePassword ? (
+          <ChangePasswordForm
+            currentPassword={password}
+            onDone={() => {
+              toast.success('Welcome back')
+              navigate('/admin', { replace: true })
+            }}
+          />
+        ) : (
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
             <label htmlFor="admin-email" className="mb-2 block text-sm font-medium text-ink">Work email</label>
@@ -93,6 +109,11 @@ export default function AdminLogin() {
             {loading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
+        )}
+        <p className="mt-8 text-center text-sm text-ink-muted">
+          Staff accounts are created by an administrator. If you need one, or you have
+          forgotten your password, ask them to issue a new one from the Accounts screen.
+        </p>
         <p className="mt-8 text-center text-xs leading-relaxed text-ink-muted/50">Authorized personnel only. Your activity may be monitored for security.</p>
         <Link to="/" className="mt-5 block text-center text-sm text-ink-muted hover:text-gold-700">Return to website</Link>
         </div>

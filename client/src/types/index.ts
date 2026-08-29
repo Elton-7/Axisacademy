@@ -126,6 +126,14 @@ export interface User {
   email: string
   name: string
   role: 'admin' | 'staff' | 'tutor' | 'student' | 'user'
+  /**
+   * The account is still on a temporary password an administrator issued.
+   *
+   * The sign-in response has always carried this; nothing declared it, so
+   * nothing could act on it, and the temporary password stayed valid for as
+   * long as its owner kept using it.
+   */
+  mustChangePassword: boolean
   createdAt: string
 }
 

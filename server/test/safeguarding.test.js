@@ -321,6 +321,79 @@ describe('data protection', () => {
   })
 })
 
+/**
+ * Replacing a temporary password with one only its owner knows.
+ *
+ * An administrator creates an account and the site shows a temporary password
+ * once. It then travels to the person by message or email, and until they can
+ * replace it, that is the password on the account — sitting in a chat thread.
+ * The endpoint existed and nothing called it, so the flag was decoration.
+ */
+describe('a temporary password can be replaced by its owner', () => {
+  const TEMP = 'issued-by-an-admin'
+  const CHOSEN = 'chosen-by-the-owner'
+  let email
+
+  test('an account starts flagged as temporary', async () => {
+    email = `${PREFIX}temp@axis.local`
+    const passwordHash = await bcrypt.hash(TEMP, 10)
+    const [user] = await User.findOrCreate({
+      where: { email },
+      defaults: { email, role: 'student', name: 'Password change suite', passwordHash },
+    })
+    await user.update({ passwordHash, isActive: true, mustChangePassword: true })
+    ids.temp = user.id
+
+    const login = await api('/auth/login', { method: 'POST', body: { email, password: TEMP } })
+    assert.equal(login.status, 200)
+    assert.equal(login.body.user.mustChangePassword, true, 'the sign-in must say so')
+    tokens.temp = login.body.token
+  })
+
+  test('a short password is refused', async () => {
+    const { status, body } = await api('/auth/change-password', {
+      method: 'POST', token: tokens.temp, body: { currentPassword: TEMP, newPassword: 'short' },
+    })
+    assert.equal(status, 400)
+    assert.match(body.error, /10 characters/i)
+  })
+
+  test('reusing the same password is refused', async () => {
+    const { status } = await api('/auth/change-password', {
+      method: 'POST', token: tokens.temp, body: { currentPassword: TEMP, newPassword: TEMP },
+    })
+    assert.equal(status, 400)
+  })
+
+  test('the wrong current password is refused', async () => {
+    const { status } = await api('/auth/change-password', {
+      method: 'POST', token: tokens.temp, body: { currentPassword: 'not-it', newPassword: CHOSEN },
+    })
+    assert.equal(status, 401, 'holding a token is not the same as knowing the password')
+  })
+
+  test('the owner can change it, and the temporary one then stops working', async () => {
+    const changed = await api('/auth/change-password', {
+      method: 'POST', token: tokens.temp, body: { currentPassword: TEMP, newPassword: CHOSEN },
+    })
+    assert.equal(changed.status, 200, JSON.stringify(changed.body))
+
+    const old = await api('/auth/login', { method: 'POST', body: { email, password: TEMP } })
+    assert.equal(old.status, 401, 'the password from the chat thread must be dead')
+
+    const now = await api('/auth/login', { method: 'POST', body: { email, password: CHOSEN } })
+    assert.equal(now.status, 200)
+    assert.equal(now.body.user.mustChangePassword, false, 'and no longer flagged')
+  })
+
+  test('a stranger cannot change it', async () => {
+    const { status } = await api('/auth/change-password', {
+      method: 'POST', body: { currentPassword: CHOSEN, newPassword: 'something-else-entirely' },
+    })
+    assert.equal(status, 401)
+  })
+})
+
 describe('account access', () => {
   test('a parent cannot create accounts', async () => {
     const result = await api('/users', {

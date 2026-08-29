@@ -438,6 +438,19 @@ export const authApi = {
     localStorage.removeItem('axis_token')
   },
 
+  /**
+   * Replaces the caller's own password — how a temporary one issued by an
+   * administrator stops being the permanent one.
+   *
+   * Not unwrapped: this answers with a message and no `data`, and `unwrap`
+   * treats a missing `data` as a failure. Unwrapping it would report a
+   * successful change as an error, which is how the testimonial delete once
+   * claimed to fail while having worked.
+   */
+  async changePassword(payload: { currentPassword: string; newPassword: string }) {
+    await api.post('/auth/change-password', payload)
+  },
+
   async getCurrentUser() {
     const { data } = await api.get<ApiResponse<User>>('/auth/me')
     return unwrap(data)

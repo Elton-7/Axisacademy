@@ -4,6 +4,7 @@ import { AlertCircle, ArrowLeft, Eye, EyeOff, GraduationCap, Loader2, LogIn, Shi
 import toast from 'react-hot-toast'
 import { apiErrorMessage } from '../utils/apiError'
 import { authApi } from '../services/apiClient'
+import ChangePasswordForm from '../components/ChangePasswordForm'
 
 type PortalRole = 'student' | 'tutor'
 
@@ -36,6 +37,12 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  /**
+   * Set when the account is still on the temporary password an administrator
+   * issued. The sign-in has succeeded and the token is real; this is what the
+   * person sees instead of the dashboard until the password is their own.
+   */
+  const [mustChangePassword, setMustChangePassword] = useState(false)
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -46,6 +53,10 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
       if (user.role !== role) {
         await authApi.logout()
         throw new Error(`This account is not a ${role} account.`)
+      }
+      if (user.mustChangePassword) {
+        setMustChangePassword(true)
+        return
       }
       toast.success(`Welcome to your ${role} portal`)
       navigate(config.dashboard, { replace: true })
@@ -93,12 +104,33 @@ export default function PortalLogin({ role }: { role: PortalRole }) {
 
           {error && <div role="alert" className="mb-5 flex items-start gap-2 rounded-xl border border-line-critical bg-tint-critical px-3 py-3 text-sm text-critical"><AlertCircle className="mt-0.5 h-4 w-4 shrink-0" /><span>{error}</span></div>}
 
+          {mustChangePassword ? (
+            <ChangePasswordForm
+              currentPassword={password}
+              onDone={() => {
+                toast.success(`Welcome to your ${role} portal`)
+                navigate(config.dashboard, { replace: true })
+              }}
+            />
+          ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
             <div><label htmlFor={`${role}-email`} className="mb-2 block text-sm font-medium text-ink">Email address</label><input id={`${role}-email`} type="email" required autoComplete="username" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-muted focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>
             <div><div className="mb-2 flex items-center justify-between"><label htmlFor={`${role}-password`} className="block text-sm font-medium text-ink">Password</label><button type="button" onClick={() => setShowPassword(!showPassword)} className="inline-flex items-center gap-1 text-xs text-ink-muted hover:text-gold-700">{showPassword ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}{showPassword ? 'Hide' : 'Show'}</button></div><input id={`${role}-password`} type={showPassword ? 'text' : 'password'} required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Enter your password" className="w-full rounded-xl border border-line px-4 py-3.5 outline-none transition-all placeholder:text-ink-muted focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20" /></div>
             <button type="submit" disabled={loading} className="btn-primary flex w-full items-center justify-center gap-2 rounded-xl py-3.5 disabled:cursor-not-allowed disabled:opacity-50">{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}{loading ? 'Signing in...' : `Sign in to ${role} portal`}</button>
           </form>
+          )}
 
+          <div className="mt-8 rounded-xl border border-line bg-surface-sunk p-4 text-sm text-ink-muted">
+            <p>
+              Accounts are created by Axis when a learner is enrolled — there is no sign-up here,
+              because these pages hold information about children.
+            </p>
+            <p className="mt-2">
+              If you have not been given one yet, or you have forgotten your password,{' '}
+              <Link to="/contact" className="font-semibold text-gold-700 hover:text-gold-700">get in touch</Link>{' '}
+              and we will sort it out.
+            </p>
+          </div>
           <div className="mt-8 border-t border-line pt-6 text-center"><p className="text-sm text-ink-muted">Need the {switchRole} portal?</p><Link to={`/portal/${switchRole}`} state={{ from: location.pathname }} className="mt-1 inline-block text-sm font-semibold text-gold-700 hover:text-gold-700">Go to {switchRole} sign in</Link></div>
         </div>
       </div>
