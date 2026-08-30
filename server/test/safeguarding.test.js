@@ -277,6 +277,135 @@ describe('results reach a family only when released', () => {
     const titles = parentView.body.data.assessments.map((assessment) => assessment.title)
     assert.ok(!titles.includes('Suite draft'), 'an unreleased result must not reach the family')
   })
+
+  test('releasing it is what puts it in front of the family', async () => {
+    const recorded = await api('/portal/assessments', {
+      method: 'POST',
+      token: tokens.tutor1,
+      body: { learnerId: ids.learnerA, subject: 'Reading', title: 'Suite release', score: 8, maxScore: 10 },
+    })
+    assert.equal(recorded.status, 201)
+    const id = recorded.body.data.id
+
+    const hidden = await api(`/portal/learners/${ids.learnerA}`, { token: tokens.parentA })
+    assert.ok(
+      !hidden.body.data.assessments.some((a) => a.title === 'Suite release'),
+      'still a draft, so still hidden'
+    )
+
+    const released = await api(`/portal/assessments/${id}`, {
+      method: 'PATCH', token: tokens.tutor1, body: { isReleased: true },
+    })
+    assert.equal(released.status, 200)
+    assert.equal(released.body.data.isReleased, true)
+
+    const seen = await api(`/portal/learners/${ids.learnerA}`, { token: tokens.parentA })
+    assert.ok(
+      seen.body.data.assessments.some((a) => a.title === 'Suite release'),
+      'once released the family can read it'
+    )
+  })
+
+  test('a draft can be corrected before it is released', async () => {
+    const recorded = await api('/portal/assessments', {
+      method: 'POST',
+      token: tokens.tutor1,
+      body: { learnerId: ids.learnerA, subject: 'Maths', title: 'Typo in the ttile' },
+    })
+    const fixed = await api(`/portal/assessments/${recorded.body.data.id}`, {
+      method: 'PATCH', token: tokens.tutor1, body: { title: 'Typo in the title', comment: 'Steady progress' },
+    })
+    assert.equal(fixed.status, 200)
+    assert.equal(fixed.body.data.title, 'Typo in the title')
+    assert.equal(fixed.body.data.isReleased, false, 'correcting must not release it by accident')
+  })
+
+  test('a released result cannot be quietly rewritten or withdrawn', async () => {
+    const recorded = await api('/portal/assessments', {
+      method: 'POST',
+      token: tokens.tutor1,
+      body: { learnerId: ids.learnerA, subject: 'Maths', title: 'Final word', score: 6, maxScore: 10 },
+    })
+    const id = recorded.body.data.id
+    await api(`/portal/assessments/${id}`, { method: 'PATCH', token: tokens.tutor1, body: { isReleased: true } })
+
+    const rewrite = await api(`/portal/assessments/${id}`, {
+      method: 'PATCH', token: tokens.tutor1, body: { score: 10 },
+    })
+    assert.equal(rewrite.status, 409, 'a result the family has read is not edited in place')
+
+    const withdraw = await api(`/portal/assessments/${id}`, {
+      method: 'PATCH', token: tokens.tutor1, body: { isReleased: false },
+    })
+    assert.equal(withdraw.status, 409)
+  })
+
+  test('an educator cannot release a draft written by a colleague', async () => {
+    const recorded = await api('/portal/assessments', {
+      method: 'POST',
+      token: tokens.tutor1,
+      body: { learnerId: ids.learnerA, subject: 'Maths', title: 'Not yours' },
+    })
+    const attempt = await api(`/portal/assessments/${recorded.body.data.id}`, {
+      method: 'PATCH', token: tokens.tutor2, body: { isReleased: true },
+    })
+    assert.equal(attempt.status, 404, 'and is not told it exists')
+  })
+
+  test('a parent cannot release a result about their own child', async () => {
+    const recorded = await api('/portal/assessments', {
+      method: 'POST',
+      token: tokens.tutor1,
+      body: { learnerId: ids.learnerA, subject: 'Maths', title: 'Parent attempt' },
+    })
+    const attempt = await api(`/portal/assessments/${recorded.body.data.id}`, {
+      method: 'PATCH', token: tokens.parentA, body: { isReleased: true },
+    })
+    assert.equal(attempt.status, 403)
+  })
+
+  test('a score still cannot be left without a maximum', async () => {
+    const recorded = await api('/portal/assessments', {
+      method: 'POST',
+      token: tokens.tutor1,
+      body: { learnerId: ids.learnerA, subject: 'Maths', title: 'Scoring', score: 4, maxScore: 5 },
+    })
+    const cleared = await api(`/portal/assessments/${recorded.body.data.id}`, {
+      method: 'PATCH', token: tokens.tutor1, body: { maxScore: null },
+    })
+    assert.equal(cleared.status, 400, 'clearing the maximum must not leave a bare score')
+  })
+
+  test('the record says who may release each draft, and the parent is told nothing', async () => {
+    const mine = await api('/portal/assessments', {
+      method: 'POST',
+      token: tokens.tutor1,
+      body: { learnerId: ids.learnerA, subject: 'Maths', title: 'Whose draft' },
+    })
+    assert.equal(mine.status, 201)
+
+    const author = await api(`/portal/learners/${ids.learnerA}`, { token: tokens.tutor1 })
+    const asAuthor = author.body.data.assessments.find((a) => a.title === 'Whose draft')
+    assert.equal(asAuthor.canRelease, true, 'the educator who wrote it is offered the control')
+
+    // Released results are finished, so nothing is left to release.
+    const done = author.body.data.assessments.find((a) => a.isReleased)
+    if (done) assert.equal(done.canRelease, false)
+
+    // A parent never sees a draft at all, and is never sent the flag.
+    const family = await api(`/portal/learners/${ids.learnerA}`, { token: tokens.parentA })
+    for (const assessment of family.body.data.assessments) {
+      assert.equal(assessment.isReleased, true, 'a family sees released results only')
+      assert.equal('canRelease' in assessment, false, 'and is not told about a control it cannot use')
+    }
+  })
+
+  test('a malformed id is a 400, not a 500', async () => {
+    const result = await api('/portal/assessments/not-a-number', {
+      method: 'PATCH', token: tokens.tutor1, body: { isReleased: true },
+    })
+    assert.equal(result.status, 400)
+  })
 })
 
 describe('withdrawing clearance removes access immediately', () => {

@@ -15,7 +15,13 @@ const {
   SafeguardingConcern,
 } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { validateIntegerParam } = require('../middleware/validateUuidParam')
 const { recordAudit } = require('../middleware/audit')
+// Every id in this file is an integer primary key. Without this, a request
+// carrying a word instead of a number reaches findByPk, which asks Postgres to
+// compare an integer column with a string and throws — reported as a 500, which
+// says the server failed when the request was merely malformed.
+router.param('id', validateIntegerParam)
 
 /**
  * Portal access (brief §28, §29, §38).
@@ -186,6 +192,9 @@ router.get('/overview', requireAuth, requireRole('student', 'tutor'), async (req
           comment: a.comment,
           assessedOn: a.assessedOn,
           isReleased: a.isReleased,
+          ...(req.user.role === 'tutor' && {
+            canRelease: !a.isReleased && a.educatorUserId === req.user.userId,
+          }),
         })),
         schedule: schedule.map((item) => ({ id: item.id, title: item.title, date: item.date })),
         messages: messages.map((item) => ({
@@ -257,6 +266,13 @@ router.get('/learners/:id', requireAuth, requireRole('student', 'tutor'), async 
           learningObjectives: a.learningObjectives,
           assessedOn: a.assessedOn,
           isReleased: a.isReleased,
+          // Only the educator who wrote a draft may release it. Saying so here
+          // means the portal can offer the control to the right person instead
+          // of offering it to everyone and letting the API refuse — and it
+          // exposes a permission, not who wrote the result.
+          ...(req.user.role === 'tutor' && {
+            canRelease: !a.isReleased && a.educatorUserId === req.user.userId,
+          }),
         })),
       },
     })
@@ -374,6 +390,85 @@ router.post('/assessments', requireAuth, requireRole('tutor'), async (req, res) 
   } catch (error) {
     console.error('Failed to record assessment:', error)
     res.status(500).json({ success: false, error: 'Failed to record assessment' })
+  }
+})
+
+/**
+ * Brief §29 — an educator finishes a draft result and releases it to the family.
+ *
+ * This is the other half of recording one, and it was missing: an assessment is
+ * created with isReleased false, a parent is shown released results only, and
+ * nothing anywhere set the flag to true. Every result an educator recorded was
+ * therefore invisible to the family for ever, with no error to say so.
+ *
+ * The educator who wrote it is the one who releases it, which is what the draft
+ * is for — "an educator sees their own drafts so they can finish what they
+ * started". No one else can touch it, and an educator who has been unassigned
+ * from the learner loses the draft along with everything else about them.
+ *
+ * Releasing is one-way. A result a family has already read is not quietly
+ * rewritten or withdrawn; a correction is a new record, which leaves both
+ * visible and the change honest.
+ */
+router.patch('/assessments/:id', requireAuth, requireRole('tutor'), async (req, res) => {
+  try {
+    const assessment = await Assessment.findByPk(req.params.id)
+    // A 404 rather than a 403: an educator who may not touch this result has no
+    // business learning that it exists.
+    if (
+      !assessment ||
+      assessment.educatorUserId !== req.user.userId ||
+      !(await assertCanReachLearner(req.user, assessment.learnerId))
+    ) {
+      return res.status(404).json({ success: false, error: 'Assessment not found' })
+    }
+
+    if (assessment.isReleased) {
+      return res.status(409).json({
+        success: false,
+        error: 'This result has already been shared with the family. Record a new one rather than changing it.',
+      })
+    }
+
+    const { subject, title, type, score, maxScore, comment, learningObjectives, assessedOn, isReleased } = req.body
+
+    if (isReleased !== undefined && isReleased !== true) {
+      return res.status(400).json({ success: false, error: 'A result can be released, not unreleased' })
+    }
+    if (title !== undefined && !String(title).trim()) {
+      return res.status(400).json({ success: false, error: 'A result needs a title' })
+    }
+
+    // Checked against what the record would become, not against what arrived,
+    // so clearing a maximum while leaving a score cannot slip through.
+    const nextScore = score !== undefined ? score : assessment.score
+    const nextMax = maxScore !== undefined ? maxScore : assessment.maxScore
+    if (nextScore !== null && nextScore !== undefined && (nextMax === null || nextMax === undefined)) {
+      return res.status(400).json({ success: false, error: 'A score needs a maximum to be meaningful' })
+    }
+
+    await assessment.update({
+      ...(subject !== undefined && { subject }),
+      ...(title !== undefined && { title: String(title).trim() }),
+      ...(type !== undefined && { type }),
+      ...(score !== undefined && { score }),
+      ...(maxScore !== undefined && { maxScore }),
+      ...(comment !== undefined && { comment }),
+      ...(learningObjectives !== undefined && { learningObjectives }),
+      ...(assessedOn !== undefined && { assessedOn }),
+      ...(isReleased === true && { isReleased: true }),
+    })
+
+    if (isReleased === true) {
+      await recordAudit(req, 'assessment_released', 'assessment', assessment.id, {
+        learnerId: assessment.learnerId,
+      })
+    }
+
+    res.json({ success: true, data: assessment })
+  } catch (error) {
+    console.error('Failed to update assessment:', error)
+    res.status(500).json({ success: false, error: 'Failed to update assessment' })
   }
 })
 

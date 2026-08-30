@@ -187,6 +187,11 @@ export interface PortalAssessment {
   learningObjectives?: string
   assessedOn: string
   isReleased: boolean
+  /**
+   * Sent to educators only, and only the API can decide it: a draft may be
+   * released by the educator who wrote it and by nobody else.
+   */
+  canRelease?: boolean
 }
 
 export interface PortalOverview {

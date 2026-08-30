@@ -536,6 +536,30 @@ export const portalApi = {
     const { data } = await api.post<ApiResponse<PortalAssessment>>('/portal/assessments', payload)
     return unwrap(data)
   },
+
+  /**
+   * Educator only — finishes a draft, or releases it to the family.
+   *
+   * Releasing is one-way: once a family has read a result it is not rewritten
+   * or withdrawn, and the API answers 409 if you try.
+   */
+  async updateAssessment(
+    id: number,
+    payload: {
+      subject?: string
+      title?: string
+      type?: AssessmentType
+      score?: number | null
+      maxScore?: number | null
+      comment?: string
+      learningObjectives?: string
+      assessedOn?: string
+      isReleased?: true
+    }
+  ) {
+    const { data } = await api.patch<ApiResponse<PortalAssessment>>(`/portal/assessments/${id}`, payload)
+    return unwrap(data)
+  },
 }
 
 /** Learner administration (brief §30). Staff only. */
