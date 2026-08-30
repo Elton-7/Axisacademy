@@ -93,9 +93,20 @@ const get = (url) =>
   })
 
 const docroot = (await uapi('DomainInfo', 'single_domain_data', { domain: DOMAIN })).data.documentroot
+/**
+ * The site is healthy only if it still serves its own pages AND still answers
+ * an unknown path with 404.
+ *
+ * The second half is not pedantry. When Passenger was accidentally given the
+ * site's whole document root, every real page kept returning 200 — prerendered
+ * HTML wins before Passenger sees it — while unknown paths quietly became 503s.
+ * A homepage check would have called that healthy and rolled back nothing.
+ */
 const siteOk = async () => {
-  const r = await get(`https://www.${DOMAIN}/`)
-  return r.status === 200 && /<(!doctype|html)/i.test(r.body)
+  const home = await get(`https://www.${DOMAIN}/`)
+  if (home.status !== 200 || !/<(!doctype|html)/i.test(home.body)) return false
+  const missing = await get(`https://www.${DOMAIN}/there-is-no-such-page-here`)
+  return missing.status === 404
 }
 
 if (UNDO) {
@@ -151,7 +162,10 @@ if (!answer) {
   const doubled = await get(`https://www.${DOMAIN}/api/api/health`)
   if (doubled.status === 200) {
     console.log(`\n  the base URI is stripped before the app sees it: /api/api/health answers`)
-    console.log('  the app needs to be mounted accordingly before this is usable')
+    // Leaving a half-working registration behind would be worse than not
+    // trying: /api would answer on one path and not on the other.
+    await rollback('the application is mounted one path deeper than it expects')
+    console.log('  a mount shim is needed in server.js before this can work')
     process.exit(3)
   }
   await rollback('nothing answered under /api')
