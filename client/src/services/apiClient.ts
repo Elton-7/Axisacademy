@@ -52,6 +52,8 @@ import {
   VettingRow,
   VettingStatus,
   SafeguardingConcern,
+  ConcernCategory,
+  ConcernStatus,
   AssignableUser,
   LearnerAssignment,
   PortalAssessment,
@@ -558,6 +560,27 @@ export const portalApi = {
     }
   ) {
     const { data } = await api.patch<ApiResponse<PortalAssessment>>(`/portal/assessments/${id}`, payload)
+    return unwrap(data)
+  },
+
+  /**
+   * Raises a safeguarding concern (brief §38). Open to parents and educators.
+   *
+   * The reply is deliberately thin — an id, a status and a time. Whoever raised
+   * it cannot read concerns afterwards, not even their own: reading is staff
+   * only, so that an educator can never see a concern, including one raised
+   * about them. Nothing here should suggest otherwise.
+   */
+  async raiseConcern(payload: {
+    detail: string
+    category?: ConcernCategory
+    learnerId?: number | null
+    sessionId?: number | null
+  }) {
+    const { data } = await api.post<ApiResponse<{ id: number; status: ConcernStatus; createdAt: string }>>(
+      '/portal/concerns',
+      payload
+    )
     return unwrap(data)
   },
 }

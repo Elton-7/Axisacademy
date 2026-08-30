@@ -268,6 +268,14 @@ export interface VettingRow {
 
 export type ConcernStatus = 'Open' | 'Acknowledged' | 'Under review' | 'Resolved' | 'Escalated'
 
+/** Exactly the enum on the model; anything else is refused at the database. */
+export type ConcernCategory =
+  | 'Conduct of an educator'
+  | 'Learner wellbeing'
+  | 'Safety of the setting'
+  | 'Communication'
+  | 'Other'
+
 export interface SafeguardingConcern {
   id: number
   learnerId: number | null

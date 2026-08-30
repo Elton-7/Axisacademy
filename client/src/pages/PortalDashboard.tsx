@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { BookOpen, CalendarDays, HelpCircle, LogOut, MessageSquare, ShieldCheck, Users } from 'lucide-react'
 import toast from 'react-hot-toast'
 import LearnerRecord from '../components/LearnerRecord'
+import RaiseConcern from '../components/RaiseConcern'
 import { authApi, portalApi } from '../services/apiClient'
 import type { PortalOverview, User } from '../types'
 
@@ -194,6 +195,12 @@ export default function PortalDashboard({ role }: { role: PortalRole }) {
               </div>
             </div>
           </>
+        )}
+
+        {!loading && !error && (
+          <div className="mt-6">
+            <RaiseConcern learners={overview?.learners.map((l) => ({ id: l.id, name: l.name })) ?? []} />
+          </div>
         )}
 
         <div className="mt-6 flex items-start gap-3 rounded-2xl border border-gold-200 bg-gold-50/60 p-5">
