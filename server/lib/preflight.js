@@ -98,6 +98,14 @@ const warnings = [
       'instead of emailed — no enquiry is lost, but nobody is told about one either.',
   },
   {
+    fail: () => !process.env.SITE_BUILD_HOOK && !process.env.NETLIFY_BUILD_HOOK,
+    message:
+      'No build hook is configured. Publishing an article puts it on the site ' +
+      'immediately, but its prerendered page and its sitemap entry wait for the ' +
+      'next client deploy — which is the current arrangement on cPanel, and fine ' +
+      'as long as somebody knows it.',
+  },
+  {
     fail: () => !process.env.ERROR_WEBHOOK_URL,
     message:
       'ERROR_WEBHOOK_URL is not set. Failures are still logged as structured JSON, ' +

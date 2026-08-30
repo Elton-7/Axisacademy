@@ -5,12 +5,19 @@
  * page reads the API directly. What it does not have until the site is rebuilt
  * is its own prerendered HTML page and its line in the sitemap, which is what a
  * search engine reads. Axis asked for that to happen without a developer, so
- * publishing an article now asks Netlify to rebuild.
+ * publishing an article asks the host to rebuild the site.
+ *
+ * Since the move to cPanel there is nothing to ask. The site is built here and
+ * uploaded by scripts/deploy-cpanel.mjs, and no hook exists to trigger that
+ * from a server. This module therefore does nothing on the live site, and the
+ * one thing it must not do is stay quiet about it: an editor publishing an
+ * article would otherwise have every reason to believe its page and its sitemap
+ * entry now exist, and no way to find out that they do not.
  *
  * Two things this deliberately does not do.
  *
- * It does not rebuild on every save. Netlify build minutes are finite and a
- * build takes minutes, so an editor fixing three typos in a row would otherwise
+ * It does not rebuild on every save. Build minutes are finite and a build takes
+ * minutes, so an editor fixing three typos in a row would otherwise
  * queue three builds and the first two would be wasted. Requests are coalesced:
  * the first one starts a timer, and everything that arrives while that timer
  * runs joins the same build.
@@ -36,8 +43,18 @@ const trigger = async () => {
   pendingReasons = []
   timer = null
 
-  const hook = process.env.NETLIFY_BUILD_HOOK
-  if (!hook) return
+  const hook = process.env.SITE_BUILD_HOOK || process.env.NETLIFY_BUILD_HOOK
+  if (!hook) {
+    // Said plainly, because the alternative is a feature that was asked for,
+    // appears to work, and silently does not.
+    console.warn(
+      `Published (${reasons.join(', ')}), but no build hook is configured. ` +
+        'The article is live on the site immediately; its prerendered page and ' +
+        'its line in the sitemap are not, and will not be until the client is ' +
+        'built and deployed again.'
+    )
+    return
+  }
 
   try {
     // The title is shown against the deploy, so whoever looks at the build
