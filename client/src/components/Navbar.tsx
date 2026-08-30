@@ -128,7 +128,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden items-center gap-x-5 xl:flex">
+          <div className="hidden items-center gap-x-3 lg:flex xl:gap-x-5">
             {navLinks.slice(0, 2).map((link) => (
               <NavItem key={link.href} link={link} pathname={location.pathname} />
             ))}
@@ -243,11 +243,11 @@ export default function Navbar() {
           </div>
 
           {/* Phone CTA */}
-          <div className="hidden items-center gap-3 xl:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             <ThemeToggle />
             <a
               href={telHref}
-              className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-gold-500 px-4 py-2.5 text-sm font-medium text-gold-500 transition-all duration-300 hover:bg-gold-500 hover:text-navy-surface"
+              className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-gold-500 px-4 py-2.5 text-sm font-medium text-gold-500 transition-all duration-300 hover:bg-gold-500 hover:text-navy-surface xl:flex"
             >
               <Phone className="h-4 w-4" />
               {contact.phoneDisplay}
@@ -255,13 +255,13 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Toggle */}
-          <div className="flex items-center gap-2 xl:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <ThemeToggle />
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
             aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={isMobileOpen}
-            className="flex h-11 w-11 items-center justify-center text-gold-500 xl:hidden"
+            className="flex h-11 w-11 items-center justify-center text-gold-500 lg:hidden"
           >
             {isMobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
