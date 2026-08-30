@@ -119,6 +119,9 @@ const apexHost = siteHost.startsWith('www.') ? siteHost.slice(4) : siteHost
 // Dots are matched with a character class so no escaping has to survive the
 // journey from this template into the .htaccess file.
 const apexPattern = apexHost.split('.').join('[.]')
+// Where the API checkout lives on the host. Only used for the /api mount.
+const APP_ROOT = process.env.API_APP_ROOT || '/home/zuamksku/repos/axis/server'
+
 const apexRedirect =
   siteHost === apexHost
     ? '  # The canonical host has no www form, so there is nothing to redirect.'
@@ -186,6 +189,33 @@ ${apexRedirect}
   RewriteCond %{DOCUMENT_ROOT}/$1/index.html -f
   RewriteRule ^(.+?)/?$ /$1/index.html [L]
 </IfModule>
+
+# The API, mounted on this site's own origin at /api.
+#
+# cPanel will not write this. register_application accepts base_uri "/api" and
+# records it, but emits directives only for a base of "/" — so the application
+# is registered, nothing serves it, and it looks like an app that will not
+# start. Three attempts failed on exactly that before the file was read.
+#
+# Mounting it here rather than on api.axislearning.co.ke has two effects. The
+# client calls its own origin, so CORS stops being involved at all. And this
+# vhost had never run a Node application, which is the only thing on this host
+# that reliably starts a *new* process — the one on the api subdomain has
+# survived every restart mechanism the account can reach, including having its
+# routing removed entirely for forty minutes.
+#
+# PassengerBaseURI confines it to /api. If it were ever dropped, the whole site
+# would be handed to the application: real pages would still load, because
+# prerendered HTML wins first, and only unknown paths would give it away by
+# turning from 404 into 503. That is the check worth running after any change
+# to this file.
+PassengerAppRoot "${APP_ROOT}"
+PassengerBaseURI "/api"
+PassengerNodejs "/usr/bin/node"
+PassengerAppType node
+PassengerStartupFile server.js
+PassengerAppEnv production
+PassengerAppGroupName "axis-api-site"
 
 # Anything with no file behind it is genuinely not a page. The shell still
 # boots and renders the app's own not-found view, but the status tells crawlers
