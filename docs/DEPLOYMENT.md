@@ -304,14 +304,57 @@ cannot reach a database elsewhere. Port 443 is open, which is why
 `scripts/import-from-database.js` can read another host's API but not its
 database.
 
-**The file API is unusually limited.** On this account cPanel's `Fileman` offers
-`list_files`, `get_file_content`, `save_file_content` and `upload_files` — and
-no delete, move, copy, or mkdir. Two consequences worth knowing: `upload_files`
+**The file API is unusually limited — but only the newer one.** On this account
+UAPI's `Fileman` offers `list_files`, `get_file_content`, `save_file_content`
+and `upload_files`, and no delete, move, copy, or mkdir. That is not the whole
+story, and an earlier version of this note wrongly concluded that files could
+not be renamed here at all. Two routes do work:
+
+- **API2 `Fileman::fileop`** with `op=move`, `sourcefiles` and `destfiles`.
+- **`mv` through cron**, which is the only way to get shell semantics.
+
+**`fileop` follows symlinks; `mv` does not.** This matters more than it sounds.
+Asked to move a symlink aside, `fileop` moves the directory the link points at
+and leaves the link behind pointing at nothing — so a single "rename this out of
+the way" silently became a dangling `node_modules` and 174 packages under
+another name, twice, while the running application carried on serving because it
+holds its modules open by inode. If you are moving anything that might be a
+link, use cron and `mv`, and check the type with `list_files` first: `types` of
+`file|dir|link` reports it, and the plain `dir` filter hides links entirely,
+which is how a symlink reads as "absent". Two consequences worth knowing: `upload_files`
 creates a missing directory, which is the only way to make one; and it silently
 keeps whatever file is already at the destination unless `overwrite` is sent,
 while still reporting success. `scripts/deploy-cpanel.mjs` sends it and then
 compares every file against the build, because a success count from that API is
 not evidence that the bytes changed.
+
+**"Setup Node.js App" has prerequisites that fail one at a time.** Moving the
+application to the CloudLinux Node.js Selector is the way to get a RESTART
+button, but a first attempt cost forty minutes of API downtime by discovering
+its requirements one error at a time. Before trying again:
+
+- The **Application URL dropdown defaults to the main domain.** Choosing it
+  writes `PassengerBaseURI "/"` into `public_html/.htaccess`, which hands every
+  request that is not a real file to the Node app — the site still looks fine,
+  because prerendered HTML wins, but unknown paths start answering 503 instead
+  of 404. It must be set to `api.axislearning.co.ke`.
+- **`node_modules` must not be a real directory** in the app root. The Selector
+  demands a symlink into its virtualenv and refuses to create the application
+  otherwise.
+- **`npm install` runs out of memory** on this account: "Fatal process out of
+  memory". The limit has to be raised by the host, or the packages staged into
+  the virtualenv by hand.
+- The Selector will also refuse while the **Application Manager registration**
+  or its `.htaccess` block still claims the directory. Removing the registration
+  is not enough; the directives in `public_html/api2/.htaccess` are what it
+  checks, and removing those takes the API offline until the new application
+  exists.
+
+**The process survives being unrouted entirely.** During that attempt the
+Passenger directives were removed for forty minutes — the API answered 404 the
+whole time — and `startedAt` never changed. The old process was still there when
+the directives went back. Whatever restarts this application, it is not the
+absence of a route.
 
 **Cron is only on the older API.** The `Cron` UAPI module is not installed; the
 API2 endpoint (`/json-api/cpanel?cpanel_jsonapi_module=Cron`) works. That is the
