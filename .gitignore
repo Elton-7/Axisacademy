@@ -55,3 +55,7 @@ secrets.json
 
 # Personal Claude Code settings — machine-specific, not the team's
 .claude/settings.local.json
+
+# Backup of the live site's .htaccess, taken by scripts/register-site-api.mjs
+# before it writes to it. A copy of production config; belongs on disk, not in git.
+.htaccess.site.backup

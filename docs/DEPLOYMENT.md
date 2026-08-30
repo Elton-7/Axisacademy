@@ -226,6 +226,24 @@ So a person has to press the button: **cPanel > Software > Setup Node.js App >
 axis-api > RESTART**. Until they do, deployed server code and `.env` changes sit
 on disk and do not run.
 
+The interpreter is worth mentioning to the host if you raise a ticket: cPanel
+has stored this application's python as `/usr/bin/python-html2text`, which is a
+text converter, and its own validator now rejects that value on every
+`edit_application`. Registering with a real `/usr/bin/python3` is accepted and
+then silently overwritten, so it cannot be fixed from the account. `/usr/bin`
+contains a file named `ea-passenger-runtime_python-is-not-installed`, which
+explains why the detection had nothing better to find.
+
+**`scripts/register-site-api.mjs` is the way out that needs nobody.** It
+registers the API a second time on the main site's vhost under `/api`. That
+vhost has never run a Node application, so there is no process to reuse and the
+first request has to start one — which reads the current code and the current
+`.env`. It also removes CORS from the picture, since the client can then call
+its own origin. It backs up the site's `.htaccess` first, checks the site still
+serves its pages immediately afterwards, and rolls everything back if not;
+`--undo` reverses it later. The existing api vhost is untouched and keeps
+serving throughout, so nothing goes down while it is tried.
+
 **Killing it from cron does not work, and says it did.** An earlier version of
 `scripts/restart-cpanel-app.mjs` scheduled `pkill -u <user> -f <app root>` and
 reported success on every run. Cron jobs here get their own PID namespace:
