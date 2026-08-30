@@ -223,10 +223,24 @@ There is no `restart_application` in either UAPI or API2 — both were enumerate
 by name.
 
 The application is registered in cPanel's **Application Manager**, as
-`axis-api` on `api2.axislearning.co.ke`. It is not in "Setup Node.js App" — that
-page belongs to the CloudLinux Node.js Selector, which is not on this account
-despite a leftover `nodevenv` directory suggesting otherwise. Application
-Manager has no restart control, only enable and disable.
+`axis-api` on `api2.axislearning.co.ke`. Application Manager has no restart
+control, only enable and disable — which is the whole problem.
+
+**"Setup Node.js App" does exist on this account**, and registering the
+application there instead is the fix: the CloudLinux Node.js Selector gives
+START, RESTART and STOP. The account's own tile cache
+(`~/.cpanel/datastore/AVAILABLE_APPLICATIONS_CACHE_en_jupiter`) lists it as
+`lvenodejssel`, and `~/.cl.selector/` already exists. An earlier note here said
+the Selector was absent; that was wrong, inferred from a probe whose detection
+was already known to be unreliable.
+
+Two things to get right when moving it there. The **Node version** must be 18 or
+newer — the server uses optional chaining, so the Node 10 the account already
+has a `nodevenv` for would crash on boot; the server offers up to 24. And
+**Run NPM Install must come before the first restart**: bcrypt is a native
+module compiled against whichever Node built it, so starting the app on a
+different version without reinstalling gives you an API that comes up and then
+fails every password check.
 
 **The process does eventually restart, by something outside this account.** One
 did, after eighteen hours of nothing working: the API answered without
