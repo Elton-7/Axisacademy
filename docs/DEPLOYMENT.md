@@ -222,9 +222,21 @@ python, and its own validator now rejects that stored value on every edit.
 There is no `restart_application` in either UAPI or API2 — both were enumerated
 by name.
 
-So a person has to press the button: **cPanel > Software > Setup Node.js App >
-axis-api > RESTART**. Until they do, deployed server code and `.env` changes sit
-on disk and do not run.
+The application is registered in cPanel's **Application Manager**, as
+`axis-api` on `api2.axislearning.co.ke`. It is not in "Setup Node.js App" — that
+page belongs to the CloudLinux Node.js Selector, which is not on this account
+despite a leftover `nodevenv` directory suggesting otherwise. Application
+Manager has no restart control, only enable and disable.
+
+**The process does eventually restart, by something outside this account.** One
+did, after eighteen hours of nothing working: the API answered without
+`startedAt` at 08:39 and with it at 09:29, the timestamp showing the process had
+begun on that very request. What caused it is not known. It was not any of the
+mechanisms above — those had all been tried and disproved by then — so the
+candidates are the host reaping a genuinely idle process, or something done in
+the cPanel interface at the time. Do not plan around it: treat a deploy as not
+live until `startedAt` says otherwise, and if it must be live now, either ask
+the host or use `scripts/register-site-api.mjs` below.
 
 The interpreter is worth mentioning to the host if you raise a ticket: cPanel
 has stored this application's python as `/usr/bin/python-html2text`, which is a
