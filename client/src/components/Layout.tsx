@@ -1,3 +1,4 @@
+import CookieNotice from './CookieNotice'
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import Navbar from './Navbar'
@@ -30,6 +31,7 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <CookieNotice />
       <WhatsAppFloat />
       <ScrollToTop />
     </div>

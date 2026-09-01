@@ -30,6 +30,7 @@ export const staticRoutes = [
   { path: '/enroll', priority: '0.9', changefreq: 'monthly' },
   { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
   { path: '/terms', priority: '0.3', changefreq: 'yearly' },
+  { path: '/cookies', priority: '0.3', changefreq: 'yearly' },
   // Deliberately high: for a service sending educators into homes, this is the
   // page a parent most needs to find.
   { path: '/safeguarding', priority: '0.8', changefreq: 'yearly' },
