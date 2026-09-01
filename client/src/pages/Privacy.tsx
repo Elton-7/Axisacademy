@@ -1,4 +1,5 @@
-import { ShieldCheck, LockKeyhole, UsersRound, Image, BadgeCheck, HomeIcon, Scale, Clock } from 'lucide-react'
+import { ShieldCheck, LockKeyhole, UsersRound, Image, BadgeCheck, HomeIcon, Scale, Clock, Cookie } from 'lucide-react'
+import { Link } from 'react-router-dom'
 
 const sections = [
   {
@@ -37,6 +38,12 @@ const sections = [
     text: 'Guraxis Limited is the data controller for information held about your family. You may ask what we hold about your learner and receive a full copy, ask us to correct it, or ask us to erase it. Contact us and we will action the request. Where you are not satisfied, you may complain to the Office of the Data Protection Commissioner.',
   },
   {
+    icon: Cookie,
+    title: 'What is stored on your device',
+    text:
+      'This website sets no cookies and does not track anyone. Three small items are kept in your browser — your portal sign-in, whether you chose the light or dark theme, and that you have read the notice about this. There is no analytics, no advertising and no profiling. Each item is named on the cookies page.',
+  },
+  {
     icon: Clock,
     title: 'How long we keep information',
     text: 'We do not keep personal data indefinitely. Enquiries that never become an enrolment, and general website messages, are deleted on a set schedule. Records of who accessed or changed a learner’s information are kept longer, because they are how we stay accountable for that access.',
@@ -57,7 +64,7 @@ export default function Privacy() {
       <section className="bg-surface-sunk py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="mb-10 rounded-2xl border border-gold/30 bg-gold/10 p-6 text-sm leading-relaxed text-ink-muted">
-            This page explains the website’s current privacy approach. Before launch, Axis should have its final privacy policy, consent procedures, retention periods, and contact details reviewed and approved by its authorised leadership and legal advisers.
+            This page describes how this website handles families’ information today. It is a plain-language summary rather than Axis’s formal privacy policy — if you need that document, or have a question about your own family’s data, please contact us and we will answer it.
           </div>
           <div className="grid gap-5 md:grid-cols-2">
             {sections.map(({ icon: Icon, title, text }) => (
@@ -70,7 +77,14 @@ export default function Privacy() {
           </div>
           <div className="mt-10 rounded-2xl bg-navy p-7 text-white">
             <h2 className="text-xl font-semibold">Questions about privacy?</h2>
-            <p className="mt-2 text-sm leading-relaxed text-white/75">Please contact Axis Learning through the official contact channels published on this website. Do not send sensitive learner documents through public contact forms.</p>
+            <p className="mt-2 text-sm leading-relaxed text-white/75">
+              Please contact Axis Learning through the official contact channels published on this
+              website. Do not send sensitive learner documents through public contact forms. For
+              exactly what this site keeps on your own device, see the{' '}
+              <Link to="/cookies" className="font-semibold text-gold-500 underline underline-offset-4">
+                cookies page
+              </Link>.
+            </p>
           </div>
         </div>
       </section>
