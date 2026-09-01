@@ -45,7 +45,7 @@ const USER = process.env.CPANEL_USER
 const TOKEN = process.env.CPANEL_API_TOKEN
 const PORT = Number(process.env.CPANEL_PORT || 2083)
 const APP_ROOT = process.env.APP_ROOT || `/home/${USER}/repos/axis/server`
-const PROBE_URL = process.env.PROBE_URL || 'https://api.axislearning.co.ke/api/health'
+const PROBE_URL = process.env.PROBE_URL || 'https://www.axislearning.co.ke/api/health'
 
 if (!HOST || !USER || !TOKEN) {
   console.error('restart-cpanel-app: set CPANEL_HOST, CPANEL_USER and CPANEL_API_TOKEN.')

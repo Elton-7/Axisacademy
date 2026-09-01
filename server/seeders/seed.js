@@ -486,9 +486,32 @@ const seedData = async () => {
           defaults: configuredUser,
         })
 
-        if (!created && user.passwordHash !== configuredUser.passwordHash) {
+        /**
+         * An existing account keeps the password it has.
+         *
+         * This used to overwrite it from the environment on every start, which
+         * made .env the permanent source of truth and meant nobody could
+         * durably change their own password: an administrator would set a new
+         * one, and the next restart would silently put the old one back. There
+         * is no error and no log — you simply cannot sign in with the password
+         * you chose, and the one you replaced works again.
+         *
+         * The environment is still how an account is bootstrapped, and still
+         * how you recover from being locked out — set the hash and start with
+         * RESEED_PASSWORDS=true, which restores exactly the old behaviour for
+         * that one run. Deliberate, rather than every time.
+         *
+         * Name and role are kept in step regardless. They are configuration,
+         * not something the account owner sets.
+         */
+        if (!created) {
+          const resetting = process.env.RESEED_PASSWORDS === 'true'
+          if (resetting && user.passwordHash !== configuredUser.passwordHash) {
+            console.log(`RESEED_PASSWORDS: resetting the ${configuredUser.role} password from the environment`)
+          }
+
           await user.update({
-            passwordHash: configuredUser.passwordHash,
+            ...(resetting && { passwordHash: configuredUser.passwordHash }),
             name: configuredUser.name,
             role: configuredUser.role,
           })

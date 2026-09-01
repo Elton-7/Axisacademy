@@ -195,6 +195,22 @@ families use them and cannot be handed a shared password.
 
 ## Working on this host
 
+**The API is served at `www.axislearning.co.ke/api`, on the site's own origin.**
+Not on a subdomain. `api.axislearning.co.ke` was retired once the site's vhost
+was serving the application: its process could never be restarted, so it went on
+running code from before the reset-link fix, and there is no reason to keep a
+second older copy of the same API on the public internet. Its Passenger
+directives are gone and the application is unregistered; the subdomain still
+resolves and serves its document root statically, so every `/api` path there
+answers 404.
+
+Two consequences worth knowing. The client calls its own origin, so **CORS is not
+involved at all** — `CORS_ORIGIN` still matters to preflight and to any other
+caller, but the site itself no longer needs it. And the mount is written by
+`client/scripts/generate-csp.mjs` into the site's `.htaccess`, which means **it is
+installed by a client deploy**: if the API stops answering after one, check that
+the Passenger block and the `^api(/|$)` pass-through both survived.
+
 Things about this particular server that cost hours to discover. None are
 faults in the application; all of them change how you deploy to it.
 
