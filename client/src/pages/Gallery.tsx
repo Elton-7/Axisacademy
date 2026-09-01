@@ -3,14 +3,26 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Image as ImageIcon, Loader, Search, Video, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { GalleryItem, GalleryCategory, GalleryType } from '../types'
 import { galleryApi } from '../services/apiClient'
+import { preloadedGallery } from '../content/preloaded'
 
 const TYPES: Array<'all' | GalleryType> = ['all', 'Photo', 'Video']
 const CATEGORIES: Array<'all' | GalleryCategory> = ['all', 'Event', 'Programme', 'Activity', 'General']
 
 export default function Gallery() {
-  const [items, setItems] = useState<GalleryItem[]>([])
-  const [filteredItems, setFilteredItems] = useState<GalleryItem[]>([])
-  const [loading, setLoading] = useState(true)
+  /**
+   * The build hands this page its items, the same way it hands an article page
+   * its article.
+   *
+   * Without it the served HTML was the loading state — a spinner and nothing
+   * else — so a crawler indexed an empty page where twenty-three captioned
+   * photographs of the work Axis does should be. Starting from the preloaded
+   * items means the markup React builds on the client matches the markup that
+   * was served, and the page does not re-request what it already has.
+   */
+  const preloaded = preloadedGallery()
+  const [items, setItems] = useState<GalleryItem[]>(preloaded ?? [])
+  const [filteredItems, setFilteredItems] = useState<GalleryItem[]>(preloaded ?? [])
+  const [loading, setLoading] = useState(!preloaded)
   const [error, setError] = useState<string | null>(null)
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
 
@@ -39,6 +51,9 @@ export default function Gallery() {
   const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
+    // Already have them from the build; nothing to ask for.
+    if (preloaded) return
+
     const fetchGallery = async () => {
       try {
         setLoading(true)
@@ -53,6 +68,7 @@ export default function Gallery() {
     }
 
     fetchGallery()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {

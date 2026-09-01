@@ -136,6 +136,28 @@ export async function fetchArticle(slug) {
   }
 }
 
+/**
+ * The gallery, fetched once at build time.
+ *
+ * Mirrors fetchArticle. The gallery page loads its items in an effect, so the
+ * prerendered HTML was the loading state — 906 characters of shell where a
+ * crawler should find 23 captioned photographs of the work Axis does. Every
+ * other content page renders its real text; this one did not.
+ */
+export async function fetchGallery() {
+  const base = (process.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+  try {
+    await warmApi()
+    const response = await fetch(`${base}/gallery`, { signal: AbortSignal.timeout(45000) })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const body = await response.json()
+    return body.data || body
+  } catch (error) {
+    console.warn(`prerender: could not load the gallery (${error.message}). The page will still work, but its HTML will be the loading state.`)
+    return undefined
+  }
+}
+
 export async function allRoutes() {
   const serviceRoutes = readServiceSlugs().map((slug) => ({
     path: `/services/${slug}`,

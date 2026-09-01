@@ -1,4 +1,4 @@
-import type { Resource } from '../types'
+import type { GalleryItem, Resource } from '../types'
 
 /**
  * An article handed to the renderer at build time.
@@ -46,4 +46,33 @@ const fromDocument = (): Resource | undefined => {
 export const preloadedArticle = (slug?: string): Resource | undefined => {
   const candidate = seeded ?? fromDocument()
   return candidate && candidate.slug === slug ? candidate : undefined
+}
+
+/**
+ * The gallery, handed to the renderer the same way an article is.
+ *
+ * Same reasoning, same mechanism: the page fetches in an effect, effects do not
+ * run during renderToString, so the served HTML held none of the captions. The
+ * items are seeded before rendering and written into the page as a JSON block —
+ * data, never executed, so the Content-Security-Policy allows it — and read
+ * back on hydration so the client builds the same markup it was served.
+ */
+let seededGallery: GalleryItem[] | undefined
+
+export const seedGallery = (items?: GalleryItem[]) => {
+  seededGallery = items
+}
+
+export const preloadedGallery = (): GalleryItem[] | undefined => {
+  if (seededGallery) return seededGallery
+  if (typeof document === 'undefined') return undefined
+  const node = document.getElementById('preloaded-gallery')
+  if (!node?.textContent) return undefined
+  try {
+    const items = JSON.parse(node.textContent) as GalleryItem[]
+    return Array.isArray(items) && items.length ? items : undefined
+  } catch {
+    // Malformed data is ignored; the page fetches exactly as it did before.
+    return undefined
+  }
 }

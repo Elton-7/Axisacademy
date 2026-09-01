@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { allRoutes, fetchArticle } from './routes.mjs'
+import { allRoutes, fetchArticle, fetchGallery } from './routes.mjs'
 
 /**
  * Writes a real HTML file for every public route, so crawlers and social link
@@ -26,6 +26,9 @@ if (!template.includes('<div id="root"></div>')) {
 let written = 0
 const failures = []
 
+// Fetched once rather than per route: only one page needs it.
+const galleryItems = await fetchGallery()
+
 for (const { path } of await allRoutes()) {
   try {
     // An article page fetches its own data in an effect, and effects do not
@@ -35,7 +38,10 @@ for (const { path } of await allRoutes()) {
     const articleSlug = path.startsWith('/resources/') ? path.slice('/resources/'.length) : null
     const article = articleSlug ? await fetchArticle(articleSlug) : undefined
 
-    const { html, head } = render(path, article)
+    // The gallery has the same problem as an article, and the same answer.
+    const gallery = path === '/gallery' ? galleryItems : undefined
+
+    const { html, head } = render(path, article, gallery)
 
     // The route is stamped on the container so the client can tell whether the
     // markup it finds actually belongs to the page being loaded. A request for a
@@ -58,15 +64,20 @@ for (const { path } of await allRoutes()) {
     // a line in JavaScript but are legal inside a JSON string.
     const LINE_SEP = String.fromCharCode(0x2028)
     const PARA_SEP = String.fromCharCode(0x2029)
-    const preload = article
-      ? `<script id="preloaded-article" type="application/json">${JSON.stringify(article)
-          .split('<')
-          .join('\\u003c')
-          .split(LINE_SEP)
-          .join('')
-          .split(PARA_SEP)
-          .join('')}</script>`
-      : ''
+    // One escaper for both blocks, so the rule about "<" and the line
+    // separators is written once rather than copied and later diverging.
+    const asJsonBlock = (id, value) =>
+      value
+        ? `<script id="${id}" type="application/json">${JSON.stringify(value)
+            .split('<')
+            .join('\u003c')
+            .split(LINE_SEP)
+            .join('')
+            .split(PARA_SEP)
+            .join('')}</script>`
+        : ''
+
+    const preload = asJsonBlock('preloaded-article', article) + asJsonBlock('preloaded-gallery', gallery)
 
     let page = template.replace(
       '<div id="root"></div>',
