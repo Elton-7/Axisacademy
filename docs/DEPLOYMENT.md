@@ -372,6 +372,25 @@ whole time — and `startedAt` never changed. The old process was still there wh
 the directives went back. Whatever restarts this application, it is not the
 absence of a route.
 
+**The API is kept warm by a cron job.** LiteSpeed stops the application when
+nothing has asked for it for a while and starts it again on the next request,
+which is fine for the second visitor and poor for the first — they wait through
+a cold start, and if they arrive at the wrong moment they get a 503. That was
+observed exactly so: six days of quiet, a 503 on the first probe, and a healthy
+200 thirty-eight seconds later.
+
+`scripts/keep-api-warm.mjs` installs a cron job that requests `/api/health`
+every five minutes and writes the response to `~/keepwarm.log`, so "is it
+working?" is answered by reading a file rather than inferred from uptime.
+`--status` reports it, `--remove` takes it off. The interval is deliberately
+shorter than any plausible idle timeout rather than tuned to a measured one:
+the timeout is not published, and guessing high reintroduces the cold start.
+
+A side effect worth knowing: with the ping running, the application no longer
+stops on its own — so the one restart mechanism that did work by itself is
+gone. Deploying server code now means removing the job, letting it go cold, and
+putting the job back, or using `scripts/register-site-api.mjs`.
+
 **Cron is only on the older API.** The `Cron` UAPI module is not installed; the
 API2 endpoint (`/json-api/cpanel?cpanel_jsonapi_module=Cron`) works. That is the
 route to running a one-off script on the server, since there is no shell access
