@@ -30,6 +30,7 @@ import ResetPassword from './pages/ResetPassword'
 import PortalDashboard from './pages/PortalDashboard'
 import Privacy from './pages/Privacy'
 import Cookies from './pages/Cookies'
+import Fees from './pages/Fees'
 import Safeguarding from './pages/Safeguarding'
 import Terms from './pages/Terms'
 
@@ -99,6 +100,7 @@ function App() {
           <Route path="safeguarding" element={<Safeguarding />} />
           <Route path="terms" element={<Terms />} />
           <Route path="cookies" element={<Cookies />} />
+          <Route path="fees" element={<Fees />} />
           <Route path="enroll" element={<Enrollment />} />
           <Route path="consultation" element={<Consultation />} />
           <Route path="admin/login" element={<AdminLogin />} />

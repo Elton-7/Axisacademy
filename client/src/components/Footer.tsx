@@ -17,6 +17,7 @@ const quickLinks = [
   { href: '/gallery', label: 'Gallery' },
   { href: '/resources', label: 'Resources' },
   { href: '/partners', label: 'Partners' },
+  { href: '/fees', label: 'Fees' },
   { href: '/faq', label: 'FAQ' },
   { href: '/contact', label: 'Contact' },
   { href: '/safeguarding', label: 'Child Safety' },

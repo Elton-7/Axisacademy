@@ -28,6 +28,8 @@ export const staticRoutes = [
   { path: '/contact', priority: '0.8', changefreq: 'monthly' },
   { path: '/consultation', priority: '0.9', changefreq: 'monthly' },
   { path: '/enroll', priority: '0.9', changefreq: 'monthly' },
+  // Families look for fees before anything else; it earns a high priority.
+  { path: '/fees', priority: '0.9', changefreq: 'yearly' },
   { path: '/privacy', priority: '0.3', changefreq: 'yearly' },
   { path: '/terms', priority: '0.3', changefreq: 'yearly' },
   { path: '/cookies', priority: '0.3', changefreq: 'yearly' },

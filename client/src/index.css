@@ -154,3 +154,47 @@ nav *:focus-visible,
 footer *:focus-visible {
   outline-color: rgb(201 168 76);
 }
+
+/**
+ * Print rules for the fee structure.
+ *
+ * A fee structure is a document families save, forward to a spouse and bring to
+ * a consultation, so it has to survive Ctrl+P intact: navigation and decoration
+ * go, every table stays whole, and no row is split across a page break.
+ *
+ * These live here rather than in a <style> element inside the page component,
+ * where they were injected on every render and were the likeliest cause of a
+ * hydration mismatch on that route.
+ */
+@media print {
+  nav,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+
+  .fee-sheet {
+    padding: 0 !important;
+  }
+
+  table {
+    page-break-inside: auto;
+  }
+
+  tr,
+  .fee-block {
+    page-break-inside: avoid;
+  }
+
+  .fee-programme {
+    page-break-before: always;
+  }
+
+  .fee-programme:first-of-type {
+    page-break-before: auto;
+  }
+
+  a[href]::after {
+    content: "";
+  }
+}

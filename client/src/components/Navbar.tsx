@@ -12,6 +12,9 @@ const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About' },
   { href: '/learning-paths', label: 'Learning Paths' },
+  // What we teach, then what it costs. Families look for fees early and should
+  // not have to hunt the footer for them.
+  { href: '/fees', label: 'Fees' },
   { href: '/educator-network', label: 'Educators' },
   // Locations has come out of the header and stays in the footer. The bar was
   // eleven items wide before the portal entrance was added to it, and a page
