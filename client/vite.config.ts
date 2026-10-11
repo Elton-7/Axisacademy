@@ -14,7 +14,9 @@ export default defineConfig(({ isSsrBuild }) => ({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    // Off in production: published maps hand anyone the full source, and add
+    // about 3 MB to every upload to a host with tight resource limits.
+    sourcemap: false,
     rollupOptions: {
       // In an SSR build the dependencies stay external, so they cannot be
       // assigned to chunks — this splitting applies to the browser build only.
