@@ -3,6 +3,7 @@ import { GraduationCap, Phone, MessageCircle } from 'lucide-react'
 import { useScrollAnimation } from '../hooks'
 import { contact, telHref, whatsappHref } from '../content/contact'
 import { Link } from 'react-router-dom'
+import { MagneticButton } from '../motion'
 
 export default function CTASection() {
   const { ref, isVisible } = useScrollAnimation()
@@ -36,7 +37,12 @@ export default function CTASection() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Link to="/enroll" className="btn-navy">Make an Enquiry</Link>
+              {/* Eight pixels of lean, no more: this is the control the whole
+                  page exists to get clicked, and a target that moves is a
+                  target you can miss. Mouse only; a no-op on touch. */}
+              <MagneticButton>
+                <Link to="/enroll" className="btn-navy">Make an Enquiry</Link>
+              </MagneticButton>
               <Link
                 to="/consultation"
                 className="btn-secondary border-navy text-ink hover:bg-navy hover:text-white"

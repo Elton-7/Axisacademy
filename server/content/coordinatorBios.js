@@ -13,7 +13,7 @@
  * never overwritten.
  */
 const COORDINATOR_BIOS = {
-  'Amelie Mussard':
+  'Shadrack Mutonga':
     'Leads the foreign language programmes, matching learners to the right language and level and overseeing how those languages are taught across Axis.',
   'Humber Masese':
     'Runs sports and physical development, planning the activity side of a learner’s week so that physical growth is part of the programme rather than an extra.',
@@ -27,7 +27,7 @@ const COORDINATOR_BIOS = {
     'Leads technology and innovation, from digital skills to the platforms used for online learning, and keeps that side of the programme current.',
   'Yoshira Audrey':
     'Coordinates inclusive learning for sensory and physical disabilities, adapting how a programme is delivered so the learner can access it fully.',
-  'Naomie Kalachi':
+  'Millicent Auma':
     'Coordinates integrated learning for severe and intellectual disabilities, shaping programmes around each learner’s own pace and goals.',
   'Wendy Claudia':
     'Leads the Montessori infant and toddler stage, where the emphasis is on early independence, movement and language.',
@@ -37,9 +37,9 @@ const COORDINATOR_BIOS = {
     'Leads the Montessori elementary stage, where learners begin working from their own questions and following them through.',
   'Collins Isa':
     'Leads Montessori secondary, supporting learners through the transition into more formal academic work.',
-  'Gloria Lakeiisha':
+  'Gloria Atyang':
     'Coordinates CBC pre-primary, overseeing the earliest stage of the competency-based curriculum.',
-  'Mulati Mike':
+  'Collins Okisegere':
     'Coordinates CBC lower primary, where foundational literacy and numeracy are established.',
   'Adura Moses':
     'Coordinates CBC upper primary, carrying learners through to the end of the primary phase.',
@@ -49,7 +49,7 @@ const COORDINATOR_BIOS = {
     'Coordinates CBC senior secondary, overseeing the final school phase and preparation for what follows it.',
   'Laban Kagiri':
     'Coordinates Cambridge Early Years, the first stage of the Cambridge pathway.',
-  'Daisy Luvanda':
+  'Eunice Mukami':
     'Coordinates Cambridge Primary, overseeing curriculum delivery and progress through the primary stages.',
   'Warren Ndaro':
     'Coordinates Cambridge Lower Secondary, bridging primary work and formal examination courses.',

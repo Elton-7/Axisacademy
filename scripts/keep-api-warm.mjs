@@ -95,7 +95,13 @@ if (remove) {
 // Deliberately free of quotes, braces and semicolons: anything more elaborate
 // than one command and one redirect has reached cron on this host mangled, and
 // silently done nothing.
-const command = `curl -sS ${PROBE_URL} > ${LOG} 2>&1`
+// --max-time is not optional here. Without it a curl that never gets an answer
+// waits for ever, and every one of them holds a process slot on an account
+// limited to fifty. The API has been observed taking thirty to fifty seconds
+// and occasionally not answering at all, so a job firing every five minutes
+// can accumulate stuck processes until nothing on the account can fork — which
+// is exactly the state it was found in: 50/50 processes at 0% CPU.
+const command = `curl -sS --max-time 60 ${PROBE_URL} > ${LOG} 2>&1`
 
 const added = await api2('Cron', 'add_line', {
   command,

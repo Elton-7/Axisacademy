@@ -24,12 +24,13 @@ const {
   SITE_URL,
 } = process.env
 
-const isConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASSWORD && NOTIFICATION_TO)
+const smtpConfigured = Boolean(SMTP_HOST && SMTP_USER && SMTP_PASSWORD)
+const notificationRecipientsConfigured = Boolean(NOTIFICATION_TO)
 
 let transporter = null
 
 function getTransporter() {
-  if (!isConfigured) return null
+  if (!smtpConfigured) return null
   if (!transporter) {
     transporter = nodemailer.createTransport({
       host: SMTP_HOST,
@@ -75,8 +76,8 @@ function renderRows(fields) {
 async function send({ subject, heading, fields, footer }) {
   const mailer = getTransporter()
 
-  if (!mailer) {
-    console.info(`[notifications] SMTP not configured — would have sent: ${subject}`)
+  if (!mailer || !notificationRecipientsConfigured) {
+    console.info(`[notifications] SMTP or notification recipient not configured — would have sent: ${subject}`)
     return { sent: false, reason: 'not-configured' }
   }
 
@@ -222,4 +223,10 @@ async function sendPasswordReset({ to, name, resetUrl, minutesValid }) {
   }
 }
 
-module.exports = { notifyNewEnquiry, notifyNewContact, sendPasswordReset, isConfigured }
+module.exports = {
+  notifyNewEnquiry,
+  notifyNewContact,
+  sendPasswordReset,
+  isConfigured: smtpConfigured && notificationRecipientsConfigured,
+  smtpConfigured,
+}

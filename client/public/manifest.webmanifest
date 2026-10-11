@@ -1,0 +1,54 @@
+{
+  "id": "/",
+  "name": "Axis Learning",
+  "short_name": "Axis",
+  "description": "Personalised homeschooling, academic support, Special Needs Education, languages and enrichment across Kenya.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#0a1628",
+  "lang": "en-KE",
+  "dir": "ltr",
+  "categories": ["education"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Fees",
+      "short_name": "Fees",
+      "description": "The 2026/2027 fee structures",
+      "url": "/fees"
+    },
+    {
+      "name": "Contact Axis",
+      "short_name": "Contact",
+      "description": "Phone, WhatsApp and email",
+      "url": "/contact"
+    },
+    {
+      "name": "Learner portal",
+      "short_name": "Portal",
+      "description": "Sign in to the learner portal",
+      "url": "/portal/student"
+    }
+  ]
+}

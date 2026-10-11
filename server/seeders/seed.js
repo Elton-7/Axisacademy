@@ -66,10 +66,10 @@ const seedData = async () => {
 
     await seedIfEmpty(Educator, withBio([
       {
-        name: 'Amelie Mussard',
+        name: 'Shadrack Mutonga',
         position: 'Foreign Languages Coordinator',
         category: 'Language Educator',
-        photo: '/team/amelie-mussard.jpg',
+        photo: '/team/shadrack-mutonga.jpg',
         sortOrder: 1,
       },
       {
@@ -115,10 +115,10 @@ const seedData = async () => {
         sortOrder: 7,
       },
       {
-        name: 'Naomie Kalachi',
+        name: 'Millicent Auma',
         position: 'Integrated Learning Coordinator — Severe & Intellectual Disabilities',
         category: 'Specialist Educator',
-        photo: '/team/naomie-kalachi.jpg',
+        photo: '/team/millicent-auma.jpg',
         sortOrder: 8,
       },
       // The Montessori coordinators, one per stage of the curriculum.
@@ -154,17 +154,17 @@ const seedData = async () => {
       // names arrived with a trailing full stop on the supplied graphic; that
       // is a typo in the artwork rather than part of the name.
       {
-        name: 'Gloria Lakeiisha',
+        name: 'Gloria Atyang',
         position: 'CBC Pre-Primary Coordinator',
         category: 'Teacher',
-        photo: '/team/gloria-lakeiisha.jpg',
+        photo: '/team/gloria-atyang.jpg',
         sortOrder: 13,
       },
       {
-        name: 'Mulati Mike',
+        name: 'Collins Okisegere',
         position: 'CBC Lower Primary Coordinator',
         category: 'Teacher',
-        photo: '/team/mulati-mike.jpg',
+        photo: '/team/collins-okisegere.jpg',
         sortOrder: 14,
       },
       {
@@ -197,10 +197,10 @@ const seedData = async () => {
         sortOrder: 18,
       },
       {
-        name: 'Daisy Luvanda',
+        name: 'Eunice Mukami',
         position: 'Cambridge Primary Coordinator',
         category: 'Teacher',
-        photo: '/team/daisy-luvanda.jpg',
+        photo: '/team/eunice-mukami.jpg',
         sortOrder: 19,
       },
       {

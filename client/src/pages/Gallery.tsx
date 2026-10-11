@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Image as ImageIcon, Loader, Search, Video, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { GalleryItem, GalleryCategory, GalleryType } from '../types'
@@ -25,6 +25,7 @@ export default function Gallery() {
   const [loading, setLoading] = useState(!preloaded)
   const [error, setError] = useState<string | null>(null)
   const [activeIndex, setActiveIndex] = useState<number | null>(null)
+  const didFetchRef = useRef(false)
 
   // Escape closes, arrows move between items. Bound only while the overlay is
   // open, so the page's own keyboard behaviour is untouched the rest of the
@@ -52,24 +53,29 @@ export default function Gallery() {
 
   useEffect(() => {
     // Already have them from the build; nothing to ask for.
-    if (preloaded) return
+    if (preloaded || didFetchRef.current) return
+    didFetchRef.current = true
+
+    let cancelled = false
 
     const fetchGallery = async () => {
       try {
         setLoading(true)
         const galleryItems = await galleryApi.getAll({ limit: 200 })
-        setItems(galleryItems)
+        if (!cancelled) setItems(galleryItems)
       } catch (err) {
         console.error('Failed to load gallery:', err)
-        setError('Failed to load gallery. Please try again.')
+        if (!cancelled) setError('Failed to load gallery. Please try again.')
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false)
       }
     }
 
     fetchGallery()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    return () => {
+      cancelled = true
+    }
+  }, [preloaded])
 
   useEffect(() => {
     let filtered = items

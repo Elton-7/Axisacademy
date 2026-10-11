@@ -18,6 +18,19 @@ export const contact = {
   phoneDial: '0737003007',
   /** International form, required by wa.me. */
   phoneInternational: '254737003007',
+  /**
+   * The mailbox that actually delivers.
+   *
+   * Three alternatives were tried and each was published or proposed before
+   * being checked: guraxis.co.ke and guruaxis.co.ke both return NXDOMAIN from
+   * every resolver, and guruaxis.com serves a website but publishes no MX and
+   * no SPF. An address on any of them bounces, and a bounced enquiry from a
+   * parent is simply lost.
+   *
+   * This one has an MX record, a real mailbox, and is the account the server
+   * authenticates with to send. Do not change it to a branded address until
+   * that domain resolves and has a mailbox behind an MX record.
+   */
   email: 'info@axislearning.co.ke',
   addressLine: 'Nairobi, Kenya',
   headOffice: 'Chandaria Innovation Centre — Kenyatta University',

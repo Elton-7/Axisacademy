@@ -60,6 +60,16 @@ function SectionBlock({ section }: { section: ServiceSection }) {
           <p className="text-sm leading-relaxed text-ink-muted">{section.note}</p>
         </div>
       )}
+
+      {section.link && (
+        <Link
+          to={section.link.href}
+          className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-gold-700 underline-offset-4 hover:underline"
+        >
+          {section.link.label}
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      )}
     </motion.section>
   )
 }

@@ -4,8 +4,8 @@ import { HelmetProvider, type FilledContext } from 'react-helmet-async'
 import { Toaster } from 'react-hot-toast'
 import App from './App'
 import { toasterProps } from './toaster'
-import { seedArticle, seedGallery } from './content/preloaded'
-import type { GalleryItem, Resource } from './types'
+import { seedArticle, seedEvents, seedGallery, seedResources } from './content/preloaded'
+import type { Event, GalleryItem, Resource } from './types'
 
 /**
  * Build-time rendering entry point (see scripts/prerender.mjs).
@@ -17,11 +17,19 @@ import type { GalleryItem, Resource } from './types'
  * canonicals, Open Graph and structured data — in the served HTML, which is what
  * social scrapers read and what they could not see before.
  */
-export function render(url: string, preloadedArticle?: Resource, preloadedGalleryItems?: GalleryItem[]) {
-  // Seeded before rendering so an article page can produce its real head and
-  // body rather than its loading state.
+export function render(
+  url: string,
+  preloadedArticle?: Resource,
+  preloadedGalleryItems?: GalleryItem[],
+  preloadedEventItems?: Event[],
+  preloadedResourceItems?: Resource[]
+) {
+  // Seeded before rendering so list and article pages produce their real head
+  // and body rather than a loading state.
   seedArticle(preloadedArticle)
   seedGallery(preloadedGalleryItems)
+  seedEvents(preloadedEventItems)
+  seedResources(preloadedResourceItems)
 
   const helmetContext = {} as FilledContext
 

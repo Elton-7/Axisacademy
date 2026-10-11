@@ -79,7 +79,11 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), handleValidation, async (req, res) => {
   try {
-    const { name, logo, category, description, website, contact, email, phone, focusAreas } = req.body
+    // sortOrder and isActive are validated by `rules` and were then dropped
+    // here, so every partner was created at sortOrder 0 and the page fell back
+    // to alphabetical. PUT has always honoured both; create now does too.
+    const { name, logo, category, description, website, contact, email, phone, focusAreas, isActive, sortOrder } =
+      req.body
 
     const partner = await Partner.create({
       name: name.trim(),
@@ -91,6 +95,8 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), han
       email,
       phone,
       focusAreas: Array.isArray(focusAreas) ? focusAreas : [],
+      ...(isActive !== undefined && { isActive }),
+      ...(sortOrder !== undefined && { sortOrder }),
     })
 
     res.status(201).json({ success: true, data: partner })

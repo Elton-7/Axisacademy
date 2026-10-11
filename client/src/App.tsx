@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { Suspense, lazy, useEffect, useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import { LoadingScreen } from './motion'
 import Layout from './components/Layout'
 import Home from './pages/Home'
 import About from './pages/About'
@@ -20,14 +21,29 @@ import Resources from './pages/Resources'
 import ResourceDetail from './pages/ResourceDetail'
 import Partners from './pages/Partners'
 import Contact from './pages/Contact'
-import AdminDashboard from './pages/AdminDashboard'
+/**
+ * Split out of the main bundle deliberately.
+ *
+ * AdminDashboard is by some distance the largest component in the codebase, and
+ * PortalDashboard brings the learner records, pipeline board and message thread
+ * with it. Every public visitor was downloading all of it before they could
+ * read a fee, for pages only staff and enrolled families can open.
+ *
+ * This is safe here and would not be safe on a public page: the site is
+ * prerendered with renderToString, which does not wait for a lazy component —
+ * it emits the Suspense fallback instead. On a marketing page that would put a
+ * spinner in the HTML where the text should be. These two routes are not
+ * prerendered at all, and the authorisation check below renders a placeholder
+ * on the server in every case, so nothing here can suspend during the build.
+ */
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
 import AdminLogin from './pages/AdminLogin'
 import Enrollment from './pages/Enrollment'
 import { authApi } from './services/apiClient'
 import NotFound from './pages/NotFound'
 import PortalLogin from './pages/PortalLogin'
 import ResetPassword from './pages/ResetPassword'
-import PortalDashboard from './pages/PortalDashboard'
+const PortalDashboard = lazy(() => import('./pages/PortalDashboard'))
 import Privacy from './pages/Privacy'
 import Cookies from './pages/Cookies'
 import Fees from './pages/Fees'
@@ -35,6 +51,33 @@ import Safeguarding from './pages/Safeguarding'
 import Terms from './pages/Terms'
 
 function ProtectedAdminRoute() {
+  const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null)
+
+  useEffect(() => {
+    if (!localStorage.getItem('axis_token')) {
+      setIsAuthorized(false)
+      return
+    }
+
+    authApi.getCurrentUser()
+      .then((user) => setIsAuthorized(user.role === 'admin'))
+      .catch(() => setIsAuthorized(false))
+  }, [])
+
+  if (isAuthorized === null) {
+    return <div className="flex min-h-screen items-center justify-center bg-surface-sunk text-sm text-ink-muted">Checking access...</div>
+  }
+
+  return isAuthorized ? (
+    <Suspense fallback={<LoadingScreen label="Loading the dashboard" fullHeight />}>
+      <AdminDashboard />
+    </Suspense>
+  ) : (
+    <Navigate to="/admin/login" replace />
+  )
+}
+
+function ProtectedStaffRoute() {
   const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null)
 
   useEffect(() => {
@@ -52,7 +95,13 @@ function ProtectedAdminRoute() {
     return <div className="flex min-h-screen items-center justify-center bg-surface-sunk text-sm text-ink-muted">Checking access...</div>
   }
 
-  return isAuthorized ? <AdminDashboard /> : <Navigate to="/admin/login" replace />
+  return isAuthorized ? (
+    <Suspense fallback={<LoadingScreen label="Loading the dashboard" fullHeight />}>
+      <AdminDashboard />
+    </Suspense>
+  ) : (
+    <Navigate to="/staff/login" replace />
+  )
 }
 
 function ProtectedPortalRoute({ role }: { role: 'student' | 'tutor' }) {
@@ -69,7 +118,13 @@ function ProtectedPortalRoute({ role }: { role: 'student' | 'tutor' }) {
   }, [role])
 
   if (isAuthorized === null) return <div className="flex min-h-screen items-center justify-center bg-surface-sunk text-sm text-ink-muted">Checking access...</div>
-  return isAuthorized ? <PortalDashboard role={role} /> : <Navigate to={`/portal/${role}`} replace />
+  return isAuthorized ? (
+    <Suspense fallback={<LoadingScreen label="Loading your portal" fullHeight />}>
+      <PortalDashboard role={role} />
+    </Suspense>
+  ) : (
+    <Navigate to={`/portal/${role}`} replace />
+  )
 }
 
 function App() {
@@ -103,8 +158,10 @@ function App() {
           <Route path="fees" element={<Fees />} />
           <Route path="enroll" element={<Enrollment />} />
           <Route path="consultation" element={<Consultation />} />
-          <Route path="admin/login" element={<AdminLogin />} />
+          <Route path="admin/login" element={<AdminLogin portal="admin" />} />
           <Route path="admin" element={<ProtectedAdminRoute />} />
+          <Route path="staff/login" element={<AdminLogin portal="staff" />} />
+          <Route path="staff" element={<ProtectedStaffRoute />} />
           {/* Under /portal so the server answers it as a page. A reset link
               landing on a 404 would look broken to the person who needs it. */}
           <Route path="portal/reset" element={<ResetPassword />} />

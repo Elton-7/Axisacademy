@@ -1,6 +1,7 @@
 const express = require('express')
 const { Gallery } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { recordAudit } = require('../middleware/audit')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
 const { body } = require('express-validator')
 const {
@@ -104,6 +105,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), han
       consentReference: String(consentReference).trim(),
     })
 
+    await recordAudit(req, 'gallery_item_created', 'gallery', null, { id: item.id, title: item.title })
     res.status(201).json({ success: true, data: item })
   } catch (error) {
     res.status(400).json({ success: false, error: error.message })
@@ -164,6 +166,7 @@ router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, 
     }
 
     await item.update({ isActive: false })
+    await recordAudit(req, 'gallery_item_deleted', 'gallery', null, { id: item.id, title: item.title })
     res.json({ success: true, message: 'Gallery item deleted successfully' })
   } catch (error) {
     res.status(500).json({ success: false, error: error.message })

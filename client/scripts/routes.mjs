@@ -138,6 +138,34 @@ export async function fetchArticle(slug) {
   }
 }
 
+export async function fetchResources() {
+  const base = (process.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+  try {
+    await warmApi()
+    const response = await fetch(`${base}/resources?limit=500`, { signal: AbortSignal.timeout(45000) })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const body = await response.json()
+    return Array.isArray(body) ? body : body.data || []
+  } catch (error) {
+    console.warn(`prerender: could not load resources (${error.message}). The page will still work, but its HTML will be the loading state.`)
+    return undefined
+  }
+}
+
+export async function fetchEvents() {
+  const base = (process.env.VITE_API_URL || 'http://localhost:5000/api').replace(/\/$/, '')
+  try {
+    await warmApi()
+    const response = await fetch(`${base}/events?status=all&limit=200`, { signal: AbortSignal.timeout(45000) })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const body = await response.json()
+    return Array.isArray(body) ? body : body.data || []
+  } catch (error) {
+    console.warn(`prerender: could not load events (${error.message}). The page will still work, but its HTML will be the loading state.`)
+    return undefined
+  }
+}
+
 /**
  * The gallery, fetched once at build time.
  *

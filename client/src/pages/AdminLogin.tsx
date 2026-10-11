@@ -7,8 +7,9 @@ import { authApi } from '../services/apiClient'
 import ChangePasswordForm from '../components/ChangePasswordForm'
 import ForgotPasswordForm from '../components/ForgotPasswordForm'
 
-export default function AdminLogin() {
+export default function AdminLogin({ portal = 'admin' }: { portal?: 'admin' | 'staff' }) {
   const navigate = useNavigate()
+  const isStaffPortal = portal === 'staff'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -32,7 +33,7 @@ export default function AdminLogin() {
         return
       }
       toast.success('Welcome back')
-      navigate('/admin', { replace: true })
+      navigate(isStaffPortal ? '/staff' : '/admin', { replace: true })
     } catch (requestError: unknown) {
       /**
        * Say what the server said.
@@ -65,11 +66,11 @@ export default function AdminLogin() {
             </div>
           </Link>
           <div className="relative">
-            <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-gold-500">Staff portal</p>
-            <h2 className="max-w-sm text-4xl font-light leading-tight text-white">Manage every learner journey with confidence.</h2>
-            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/60">Access enquiries, applications, subscribers, and academy insights from one secure workspace.</p>
+            <p className="mb-4 text-sm font-medium uppercase tracking-[0.2em] text-gold-500">{isStaffPortal ? 'Staff portal' : 'Admin portal'}</p>
+            <h2 className="max-w-sm text-4xl font-light leading-tight text-white">{isStaffPortal ? 'Manage every learner journey with confidence.' : 'Control the academy with full administrative oversight.'}</h2>
+            <p className="mt-5 max-w-sm text-sm leading-relaxed text-white/60">{isStaffPortal ? 'Access enquiries, applications, subscribers, and academy insights from one secure workspace.' : 'Review records, manage learners, and keep the academy running smoothly from one secure admin workspace.'}</p>
           </div>
-          <div className="relative flex items-center gap-3 text-sm text-white/60"><ShieldCheck className="h-5 w-5 text-gold-500" /> Secure staff access</div>
+          <div className="relative flex items-center gap-3 text-sm text-white/60"><ShieldCheck className="h-5 w-5 text-gold-500" /> {isStaffPortal ? 'Secure staff access' : 'Secure admin access'}</div>
         </div>
 
         <div className="p-7 sm:p-10 lg:p-14">
@@ -77,8 +78,8 @@ export default function AdminLogin() {
           <div className="mb-8">
             <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gold-50 text-gold-700"><LockKeyhole className="h-6 w-6" /></div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold-700">Welcome back</p>
-            <h1 className="text-3xl font-semibold text-ink">Sign in to your account</h1>
-            <p className="mt-2 text-sm text-ink-muted">Use your staff credentials to continue to the dashboard.</p>
+            <h1 className="text-3xl font-semibold text-ink">{isStaffPortal ? 'Sign in to the staff portal' : 'Sign in to the admin portal'}</h1>
+            <p className="mt-2 text-sm text-ink-muted">Use your {isStaffPortal ? 'staff' : 'admin'} credentials to continue to the dashboard.</p>
           </div>
 
         {error && (
@@ -93,7 +94,7 @@ export default function AdminLogin() {
             currentPassword={password}
             onDone={() => {
               toast.success('Welcome back')
-              navigate('/admin', { replace: true })
+              navigate(isStaffPortal ? '/staff' : '/admin', { replace: true })
             }}
           />
         ) : forgot ? (
@@ -116,15 +117,16 @@ export default function AdminLogin() {
           <button
             type="button"
             onClick={() => setForgot(true)}
-            className="w-full text-center text-sm text-ink-muted transition-colors hover:text-gold-700"
+            className="w-full text-center text-sm font-semibold text-gold-700 underline underline-offset-4 transition-colors hover:text-gold-600"
           >
             Forgot your password?
           </button>
         </form>
         )}
         <p className="mt-8 text-center text-sm text-ink-muted">
-          Staff accounts are created by an administrator. If you need one, or you have
-          forgotten your password, ask them to issue a new one from the Accounts screen.
+          {isStaffPortal
+            ? 'Staff accounts are created by an administrator — ask them if you need one. To reset a password you already have, use the link above: it emails a reset link to your work address.'
+            : 'Admin accounts are created and managed by the system owner. To reset a password you already have, use the link above: it emails a reset link to your work address.'}
         </p>
         <p className="mt-8 text-center text-xs leading-relaxed text-ink-muted/50">Authorized personnel only. Your activity may be monitored for security.</p>
         <Link to="/" className="mt-5 block text-center text-sm text-ink-muted hover:text-gold-700">Return to website</Link>

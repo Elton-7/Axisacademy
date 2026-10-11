@@ -30,6 +30,12 @@ export type ServiceSection = {
   options?: { title: string; description: string }[]
   /** Highlighted callout rendered as a gold-bordered panel. */
   note?: string
+  /**
+   * Optional onward link. Used where a section describes something whose price
+   * is inseparable from the description — a membership is not understandable
+   * without its tiers, and the tiers live on the fee page.
+   */
+  link?: { href: string; label: string }
 }
 
 export type Service = {
@@ -61,7 +67,7 @@ export const services: Service[] = [
     accent: 'bg-tint-blue',
     highlights: [
       'CBC, Montessori, Cambridge, IGCSE, O Levels & IB',
-      'Educator comes to you, or learner comes to Axis',
+      'Educator comes to you, learner comes to Axis, or you teach with our support',
       'Individual learning pathways per learner',
       'Progress tracking and regular family updates',
     ],
@@ -121,6 +127,23 @@ export const services: Service[] = [
           'A timetable built around your household, not against it',
           'Ongoing assessment, feedback and progress reporting',
         ],
+      },
+      {
+        // Distinct from everything above it: here the parent teaches and Axis
+        // supports, rather than Axis supplying the educator. The fee document
+        // sells it, so the site has to explain it — and the boundary matters,
+        // because a family needing recurring subject teaching should be on a
+        // tuition programme, not paying a membership that cannot cover it.
+        heading: 'If you teach, and want support rather than a teacher',
+        body:
+          'Some families do the teaching themselves and want structure, direction and professional support — not an educator taking the lessons over. The Homeschool Support Membership is for them. Axis agrees the curriculum, writes a term learning plan and a suggested weekly timetable, guides you to resources and reviews progress with you, while the day-to-day teaching stays with the parent. Membership is not full programme tuition: where recurring subject teaching is needed, or Axis takes on a substantial part of the academic programme, the learner moves onto one of the tuition programmes instead.',
+        items: [
+          'Essential — structure, planning and professional guidance',
+          'Plus — regular academic oversight and learner check-ins',
+          'Premium — closer coordination and progress review, without daily teaching',
+          'One-off curriculum setup, or full homeschool transition and setup',
+        ],
+        link: { href: '/fees', label: 'Membership fees, and what each tier includes' },
       },
     ],
     cta: {

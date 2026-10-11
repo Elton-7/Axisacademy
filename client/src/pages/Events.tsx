@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Search, Filter, Loader, Calendar } from 'lucide-react'
 import { Event, EventCategory, EventStatus } from '../types'
-import { eventsApi } from '../services/apiClient'
 import EventCard from '../components/EventCard'
 import { Link } from 'react-router-dom'
+import { preloadedEvents } from '../content/preloaded'
 
 const CATEGORIES: EventCategory[] = [
   'Holiday Tuition',
@@ -20,31 +20,49 @@ const CATEGORIES: EventCategory[] = [
 const STATUSES: EventStatus[] = ['Upcoming', 'Ongoing', 'Completed', 'Cancelled']
 
 export default function Events() {
-  const [events, setEvents] = useState<Event[]>([])
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([])
-  const [loading, setLoading] = useState(true)
+  const preloaded = preloadedEvents()
+  const [events, setEvents] = useState<Event[]>(preloaded ?? [])
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>(preloaded ?? [])
+  const [loading, setLoading] = useState(!preloaded)
   const [error, setError] = useState<string | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [selectedStatus, setSelectedStatus] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const didFetchRef = useRef(false)
 
   useEffect(() => {
+    if (preloaded || didFetchRef.current) return
+    didFetchRef.current = true
+
+    let cancelled = false
+
     const fetchEvents = async () => {
       try {
         setLoading(true)
-        const eventsList = await eventsApi.getAll({ limit: 100 })
-        setEvents(eventsList)
-        setFilteredEvents(eventsList)
+        const response = await fetch('/api/events?status=all&limit=100')
+        if (!response.ok) throw new Error(`Events request failed with status ${response.status}`)
+        const payload = await response.json()
+        const eventsList = Array.isArray(payload) ? payload : payload.data
+        if (!Array.isArray(eventsList)) throw new Error('Events response did not contain a list')
+        if (!cancelled) {
+          setEvents(eventsList)
+          setFilteredEvents(eventsList)
+        }
       } catch (err) {
         console.error('Failed to load events:', err)
-        setError('Failed to load events. Please try again.')
+        if (!cancelled) {
+          setError('Failed to load events. Please try again.')
+        }
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false)
       }
     }
 
     fetchEvents()
-  }, [])
+    return () => {
+      cancelled = true
+    }
+  }, [preloaded])
 
   // Filter events based on category, status, and search
   useEffect(() => {

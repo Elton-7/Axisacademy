@@ -6,6 +6,7 @@ import { HelmetProvider } from 'react-helmet-async'
 import App from './App'
 import { toasterProps } from './toaster'
 import './index.css'
+import { registerServiceWorker } from './pwa'
 
 const container = document.getElementById('root')!
 
@@ -34,3 +35,8 @@ if (prerenderedPath && prerenderedPath === window.location.pathname) {
   container.innerHTML = ''
   ReactDOM.createRoot(container).render(app)
 }
+
+// Registered after the app is mounted and, inside, after the load event: the
+// worker's install downloads the shell, and doing that while the page is still
+// painting competes with the visitor for the same connection.
+registerServiceWorker()

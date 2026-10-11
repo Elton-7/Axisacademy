@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { allRoutes, fetchArticle, fetchGallery } from './routes.mjs'
+import { allRoutes, fetchArticle, fetchEvents, fetchGallery, fetchResources } from './routes.mjs'
 
 /**
  * Writes a real HTML file for every public route, so crawlers and social link
@@ -26,8 +26,12 @@ if (!template.includes('<div id="root"></div>')) {
 let written = 0
 const failures = []
 
-// Fetched once rather than per route: only one page needs it.
+// Fetched once rather than per route: the public list pages also need the
+// identical initial data so hydration matches and the browser does not re-fetch
+// immediately after paint.
 const galleryItems = await fetchGallery()
+const resourceItems = await fetchResources()
+const eventItems = await fetchEvents()
 
 for (const { path } of await allRoutes()) {
   try {
@@ -38,10 +42,13 @@ for (const { path } of await allRoutes()) {
     const articleSlug = path.startsWith('/resources/') ? path.slice('/resources/'.length) : null
     const article = articleSlug ? await fetchArticle(articleSlug) : undefined
 
-    // The gallery has the same problem as an article, and the same answer.
+    // The gallery, events and resources pages have the same problem as an
+    // article, and the same answer: seed the list before the first render.
     const gallery = path === '/gallery' ? galleryItems : undefined
+    const events = path === '/events' ? eventItems : undefined
+    const resources = path === '/resources' ? resourceItems : undefined
 
-    const { html, head } = render(path, article, gallery)
+    const { html, head } = render(path, article, gallery, events, resources)
 
     // The route is stamped on the container so the client can tell whether the
     // markup it finds actually belongs to the page being loaded. A request for a
@@ -77,7 +84,10 @@ for (const { path } of await allRoutes()) {
             .join('')}</script>`
         : ''
 
-    const preload = asJsonBlock('preloaded-article', article) + asJsonBlock('preloaded-gallery', gallery)
+    const preload = asJsonBlock('preloaded-article', article)
+      + asJsonBlock('preloaded-gallery', gallery)
+      + asJsonBlock('preloaded-events', events)
+      + asJsonBlock('preloaded-resources', resources)
 
     let page = template.replace(
       '<div id="root"></div>',

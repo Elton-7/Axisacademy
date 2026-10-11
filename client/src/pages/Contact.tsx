@@ -250,6 +250,7 @@ export default function Contact() {
                       >
                         <option value="">Select a programme...</option>
                         <option value="homeschooling">Homeschooling</option>
+                          <option value="homeschool-membership">Homeschool Support Membership</option>
                         <option value="academic">Academic Support</option>
                         <option value="language">Language Programmes</option>
                         <option value="enrichment">Enrichment Programmes</option>

@@ -26,6 +26,21 @@ const navLinks = [
   { href: '/contact', label: 'Contact' },
 ]
 
+/**
+ * The four links that move under a "More" button.
+ *
+ * The bar had grown to twelve items plus two dropdowns, which is more than a
+ * parent scans. These four are looked for deliberately rather than stumbled
+ * upon — nobody browses to a contact page by accident — so they lose least by
+ * being one click further away, while Learning Paths, Fees, Educators and
+ * Resources stay in the open, where they do the work of the site.
+ *
+ * Removed from the desktop bar only. The mobile menu still lists every link: a
+ * nested dropdown inside a menu that is already a list is worse than a list
+ * that is slightly longer.
+ */
+const MORE_HREFS = ['/events', '/gallery', '/faq', '/contact']
+
 /** Closes an open panel when the pointer goes elsewhere, or Escape is pressed. */
 function useDismissOnOutside(
   isOpen: boolean,
@@ -68,11 +83,13 @@ export default function Navbar() {
    * single value makes that state impossible to represent, instead of relying
    * on a listener to undo it after the fact.
    */
-  const [openMenu, setOpenMenu] = useState<'services' | 'portal' | null>(null)
+  const [openMenu, setOpenMenu] = useState<'services' | 'portal' | 'more' | null>(null)
   const isServicesOpen = openMenu === 'services'
   const isPortalOpen = openMenu === 'portal'
+  const isMoreOpen = openMenu === 'more'
   const servicesRef = useRef<HTMLDivElement>(null)
   const portalRef = useRef<HTMLDivElement>(null)
+  const moreRef = useRef<HTMLDivElement>(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -90,8 +107,11 @@ export default function Navbar() {
   // rather than two copies of the same listeners.
   useDismissOnOutside(isServicesOpen, servicesRef, () => setOpenMenu(null))
   useDismissOnOutside(isPortalOpen, portalRef, () => setOpenMenu(null))
+  useDismissOnOutside(isMoreOpen, moreRef, () => setOpenMenu(null))
 
   const isServicesActive = location.pathname.startsWith('/services')
+  const moreLinks = navLinks.filter((link) => MORE_HREFS.includes(link.href))
+  const isMoreActive = MORE_HREFS.includes(location.pathname)
   const isPortalActive = location.pathname.startsWith('/portal') || location.pathname.startsWith('/admin')
   // Found rather than hard-coded, so reordering the list cannot silently
   // move the portal entrance somewhere else.
@@ -240,9 +260,54 @@ export default function Navbar() {
               </AnimatePresence>
             </div>
 
-            {navLinks.slice(educatorsIndex + 1).map((link) => (
-              <NavItem key={link.href} link={link} pathname={location.pathname} />
-            ))}
+            {navLinks
+              .slice(educatorsIndex + 1)
+              .filter((link) => !MORE_HREFS.includes(link.href))
+              .map((link) => (
+                <NavItem key={link.href} link={link} pathname={location.pathname} />
+              ))}
+
+            <div ref={moreRef} className="relative">
+              <button
+                onClick={() => setOpenMenu((open) => (open === 'more' ? null : 'more'))}
+                aria-expanded={isMoreOpen}
+                aria-haspopup="true"
+                className={`flex items-center gap-1 whitespace-nowrap text-[0.8125rem] font-medium uppercase tracking-tight transition-colors ${
+                  isMoreActive ? 'text-gold-500' : 'text-white/90 hover:text-gold-500'
+                }`}
+              >
+                More
+                <ChevronDown className={`h-4 w-4 transition-transform ${isMoreOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              <AnimatePresence>
+                {isMoreOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -8 }}
+                    transition={{ duration: 0.15 }}
+                    // Right-aligned rather than centred like the other two:
+                    // this is the last item in the bar, and a centred panel
+                    // would hang off the edge of the window on a laptop.
+                    className="absolute right-0 top-full z-50 mt-4 w-56 overflow-hidden rounded-2xl border border-white/10 bg-navy-900/95 p-2 shadow-xl shadow-navy-900/40 backdrop-blur-xl"
+                  >
+                    {moreLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        to={link.href}
+                        onClick={() => setOpenMenu(null)}
+                        className={`block rounded-xl px-3 py-2.5 text-sm font-medium transition-colors hover:bg-surface/5 ${
+                          location.pathname === link.href ? 'text-gold-500' : 'text-white'
+                        }`}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* Phone CTA */}

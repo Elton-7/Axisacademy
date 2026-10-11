@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { AnimatedBackground, TextReveal } from '../motion'
 import { Link } from 'react-router-dom'
 import { AlertTriangle, Banknote, CalendarRange, Phone, Printer, ScrollText } from 'lucide-react'
 import {
@@ -132,10 +133,17 @@ export default function Fees() {
   return (
     <div className="pt-20">
 
-      <header className="bg-navy-900 py-16 text-white sm:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <header className="relative overflow-hidden bg-navy-900 py-16 text-white sm:py-20">
+        {/* Decorative only, and behind the text: the gradients are pure gold at
+            very low opacity, so the contrast of white on navy is unchanged. */}
+        <AnimatedBackground intensity="bold" grid />
+        <div className="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="section-label mb-4 text-gold-500">Official fee structure</div>
-          <h1 className="text-4xl font-semibold sm:text-5xl">Fees for 2026/2027</h1>
+          <h1 className="text-4xl font-semibold sm:text-5xl">
+            {/* Renders as plain text on the server and under reduced motion; it
+                only splits into words once it knows it can animate them. */}
+            <TextReveal text="Fees for 2026/2027" />
+          </h1>
           <p className="mt-5 max-w-3xl text-lg leading-relaxed text-white/75">
             One institution, several learning pathways. Fees are set by pathway, level or intensity,
             and by how learning is delivered — online, at an Axis centre, or at your home. All figures

@@ -1,6 +1,7 @@
 const express = require('express')
 const { Educator } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
+const { recordAudit } = require('../middleware/audit')
 const { validateUuidParam } = require('../middleware/validateUuidParam')
 const { body } = require('express-validator')
 const {
@@ -111,6 +112,7 @@ router.post('/', requireAuth, requireRole(['admin', 'staff']), rules(false), han
       phone,
     })
 
+    await recordAudit(req, 'educator_created', 'educator', null, { id: educator.id, name: educator.name, position: educator.position })
     res.status(201).json({ success: true, data: educator })
   } catch (error) {
     res.status(400).json({ success: false, error: error.message })
@@ -147,6 +149,7 @@ router.put('/:id', requireAuth, requireRole(['admin', 'staff']), rules(true), ha
       ...(sortOrder !== undefined && { sortOrder }),
     })
 
+    await recordAudit(req, 'educator_updated', 'educator', null, { id: educator.id, name: educator.name, position: educator.position })
     res.json({ success: true, data: educator })
   } catch (error) {
     res.status(400).json({ success: false, error: error.message })
@@ -165,6 +168,7 @@ router.delete('/:id', requireAuth, requireRole(['admin', 'staff']), async (req, 
     }
 
     await educator.update({ isActive: false })
+    await recordAudit(req, 'educator_deactivated', 'educator', null, { id: educator.id, name: educator.name })
     res.json({ success: true, message: 'Educator deactivated successfully' })
   } catch (error) {
     res.status(500).json({ success: false, error: error.message })

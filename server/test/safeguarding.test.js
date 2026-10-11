@@ -621,6 +621,40 @@ describe('a forgotten password can be reset by email', () => {
     assert.equal(after.resetTokenHash, null, 'no link should have been issued')
     await user.update({ isActive: true })
   })
+
+  test('a misconfigured SMTP or SITE_URL is reported as a service failure', async () => {
+    const originalSiteUrl = process.env.SITE_URL
+    const originalHost = process.env.SMTP_HOST
+    const originalUser = process.env.SMTP_USER
+    const originalPassword = process.env.SMTP_PASSWORD
+
+    process.env.SITE_URL = ''
+    delete process.env.SMTP_HOST
+    delete process.env.SMTP_USER
+    delete process.env.SMTP_PASSWORD
+
+    try {
+      const { status, body } = await api('/auth/forgot-password', {
+        method: 'POST',
+        body: { email: `${PREFIX}reset-config@axis.local` },
+      })
+
+      assert.equal(status, 503, 'the service should fail loudly when the reset email is not configured')
+      assert.match(body.error || '', /temporarily unavailable|contact support|configured/i)
+    } finally {
+      if (originalSiteUrl === undefined) delete process.env.SITE_URL
+      else process.env.SITE_URL = originalSiteUrl
+
+      if (originalHost === undefined) delete process.env.SMTP_HOST
+      else process.env.SMTP_HOST = originalHost
+
+      if (originalUser === undefined) delete process.env.SMTP_USER
+      else process.env.SMTP_USER = originalUser
+
+      if (originalPassword === undefined) delete process.env.SMTP_PASSWORD
+      else process.env.SMTP_PASSWORD = originalPassword
+    }
+  })
 })
 
 describe('account access', () => {

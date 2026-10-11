@@ -284,12 +284,20 @@ router.post(
       })
 
       const base = (process.env.SITE_URL || '').replace(/\/$/, '')
-      await sendPasswordReset({
+      const resetResult = await sendPasswordReset({
         to: user.email,
         name: user.name,
         resetUrl: `${base}/portal/reset?token=${token}`,
         minutesValid: RESET_TOKEN_MINUTES,
       })
+
+      if (!resetResult.sent) {
+        console.error('[auth] Password reset email could not be sent:', resetResult.reason || 'unknown')
+        return res.status(503).json({
+          success: false,
+          error: 'Password reset is temporarily unavailable. Please contact support.',
+        })
+      }
 
       // Recorded without the token, so the audit trail cannot be used to
       // take over an account.
@@ -297,9 +305,10 @@ router.post(
       res.json(sameAnswer)
     } catch (error) {
       console.error('Failed to start a password reset:', error.message)
-      // Still the same answer: an error here must not be distinguishable
-      // from an address that has no account.
-      res.json(sameAnswer)
+      return res.status(503).json({
+        success: false,
+        error: 'Password reset is temporarily unavailable. Please contact support.',
+      })
     }
   }
 )

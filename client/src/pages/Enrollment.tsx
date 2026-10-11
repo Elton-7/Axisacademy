@@ -102,6 +102,7 @@ export default function Enrollment() {
               <select id="programme" {...register('programme', { required: 'Please select a programme' })} className={`${inputClass} bg-surface`}>
                 <option value="">Select a programme...</option>
                 <option value="Academic Learning & Homeschooling">Academic Learning & Homeschooling</option>
+                <option value="Homeschool Support Membership">Homeschool Support Membership</option>
                 <option value="Academic Support & Tuition">Academic Support & Tuition</option>
                 <option value="African & Foreign Languages">African & Foreign Languages</option>
                 <option value="Talent & Creative Development">Talent & Creative Development</option>

@@ -1,6 +1,30 @@
 const jwt = require('jsonwebtoken')
 
-function requireAuth(req, res, next) {
+/**
+ * Loaded lazily rather than at the top of the file.
+ *
+ * models/index.js pulls in every model and the Sequelize instance, and this
+ * middleware is required by routes that are themselves required while the model
+ * layer is still being built. Requiring it at load time makes that a cycle.
+ */
+const getUser = () => require('../models/User')
+
+/**
+ * Verifies the token, and then verifies the account behind it still exists and
+ * is still enabled.
+ *
+ * The signature check alone was not enough. A token lasts eight hours, so
+ * disabling an account — which is what this project does instead of deleting
+ * one, precisely because people leave — did nothing until it expired. Someone
+ * whose access had been withdrawn could keep reading learner records and
+ * safeguarding notes for the rest of the working day.
+ *
+ * The cost is one indexed primary-key lookup per authenticated request. That is
+ * a real cost on a slow host, but it is paid only on routes that are already
+ * behind a login, and the alternative is an access revocation that does not
+ * revoke access.
+ */
+async function requireAuth(req, res, next) {
   const token = req.headers.authorization?.replace(/^Bearer\s+/i, '')
   const secret = process.env.JWT_SECRET
 
@@ -12,11 +36,27 @@ function requireAuth(req, res, next) {
     return res.status(401).json({ success: false, error: 'Authentication required' })
   }
 
+  let claims
   try {
-    req.user = jwt.verify(token, secret)
-    next()
+    claims = jwt.verify(token, secret)
   } catch (error) {
     return res.status(401).json({ success: false, error: 'Invalid or expired token' })
+  }
+
+  try {
+    const account = await getUser().findByPk(claims.userId, { attributes: ['id', 'role', 'isActive'] })
+
+    if (!account || !account.isActive) {
+      return res.status(401).json({ success: false, error: 'This account is no longer active' })
+    }
+
+    // The role is taken from the account rather than the token, so a change of
+    // role also takes effect at once instead of at the next sign-in.
+    req.user = { ...claims, role: account.role }
+    next()
+  } catch (error) {
+    // A database that cannot be reached must not silently grant access.
+    return res.status(503).json({ success: false, error: 'Could not verify your session just now' })
   }
 }
 

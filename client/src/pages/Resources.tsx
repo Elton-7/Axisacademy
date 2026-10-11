@@ -1,38 +1,49 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { BookOpen, ExternalLink, Loader, Search, Sparkles } from 'lucide-react'
 import { Resource, ResourceCategory, RESOURCE_CATEGORIES } from '../types'
 import { resourcesApi } from '../services/apiClient'
+import { preloadedResources } from '../content/preloaded'
 
 // Derived from the shared list rather than retyped: a filter chip for a
 // category the database no longer accepts returns nothing, silently.
 const CATEGORIES: Array<'all' | ResourceCategory> = ['all', ...RESOURCE_CATEGORIES]
 
 export default function Resources() {
-  const [resources, setResources] = useState<Resource[]>([])
-  const [filteredResources, setFilteredResources] = useState<Resource[]>([])
-  const [loading, setLoading] = useState(true)
+  const preloaded = preloadedResources()
+  const [resources, setResources] = useState<Resource[]>(preloaded ?? [])
+  const [filteredResources, setFilteredResources] = useState<Resource[]>(preloaded ?? [])
+  const [loading, setLoading] = useState(!preloaded)
   const [error, setError] = useState<string | null>(null)
   const reduceMotion = useReducedMotion()
   const [selectedCategory, setSelectedCategory] = useState<'all' | ResourceCategory>('all')
   const [searchQuery, setSearchQuery] = useState('')
+  const didFetchRef = useRef(false)
 
   useEffect(() => {
+    if (preloaded || didFetchRef.current) return
+    didFetchRef.current = true
+
+    let cancelled = false
+
     const fetchResources = async () => {
       try {
         setLoading(true)
         const list = await resourcesApi.getAll({ limit: 100 })
-        setResources(list)
+        if (!cancelled) setResources(list)
       } catch (err) {
         console.error('Failed to load resources:', err)
-        setError('Failed to load resources. Please try again.')
+        if (!cancelled) setError('Failed to load resources. Please try again.')
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false)
       }
     }
 
     fetchResources()
-  }, [])
+    return () => {
+      cancelled = true
+    }
+  }, [preloaded])
 
   useEffect(() => {
     let filtered = resources
@@ -168,8 +179,16 @@ export default function Resources() {
                       // A resource is only a link once someone has established
                       // that Axis may point at a copy. Until then the title is
                       // listed plainly — honest, where a dead link is not.
-                      const href = resource.sourceUrl || resource.fileUrl
-                      const external = Boolean(resource.sourceUrl)
+                      // The title opens whatever Axis can actually give the reader: its own
+                      // copy where there is one, the publisher's page where there is not.
+                      // sourceUrl used to win outright, which quietly sent a reader of a
+                      // hosted paper to a paywall instead of to the paper.
+                      const href = resource.fileUrl || resource.sourceUrl
+                      const external = !resource.fileUrl && Boolean(resource.sourceUrl)
+                      // Credited separately below when Axis holds a copy and the original is
+                      // known, so the work points at where it was published without the
+                      // document being taken away from the reader.
+                      const original = resource.fileUrl && resource.sourceUrl ? resource.sourceUrl : null
                       return (
                         /*
                          * Each row arrives as the reader reaches it, and the
@@ -225,6 +244,17 @@ export default function Resources() {
                             <p className="text-lg font-semibold leading-snug text-ink">{resource.title}</p>
                           )}
                           <p className="mt-1 text-sm italic leading-relaxed text-ink-muted">{resource.author}</p>
+                          {original && (
+                            <a
+                              href={original}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-1 inline-flex items-center gap-1.5 text-xs text-ink-muted underline-offset-4 hover:text-gold-700 hover:underline"
+                            >
+                              Published version
+                              <ExternalLink className="h-3 w-3" aria-hidden="true" />
+                            </a>
+                          )}
                           </div>
                         </motion.li>
                       )

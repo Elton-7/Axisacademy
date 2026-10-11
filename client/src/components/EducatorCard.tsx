@@ -43,6 +43,26 @@ const initials = (name: string) =>
     .map((part) => part[0]?.toUpperCase())
     .join('')
 
+
+/**
+ * Team photographs are cached by the browser for a week and keep their filename
+ * when the person in them changes, so replacing a file leaves anyone who has
+ * seen the page before looking at the previous photograph for up to seven days.
+ * That is exactly what happened when Humber Masese’s picture was swapped: the
+ * server was serving the new one and returning visitors were still shown the old.
+ *
+ * Appending a version the site controls turns a replaced photograph into a new
+ * URL, so it is fetched immediately, while the long cache stays in place for
+ * everything that has not changed.
+ *
+ * Bump this whenever a file in public/team is replaced under its existing name.
+ * A new filename does not need it.
+ */
+const PHOTO_VERSION = '2026-09-08'
+
+const versionedPhoto = (photo: string) =>
+  photo.startsWith('/team/') ? `${photo}?v=${PHOTO_VERSION}` : photo
+
 export default function EducatorCard({ educator, index = 0 }: EducatorCardProps) {
   const Icon = iconFor(educator)
   const reduceMotion = useReducedMotion()
@@ -61,7 +81,7 @@ export default function EducatorCard({ educator, index = 0 }: EducatorCardProps)
       <div className="relative aspect-[380/256] overflow-hidden bg-surface-muted">
         {educator.photo ? (
           <img
-            src={educator.photo}
+            src={versionedPhoto(educator.photo)}
             alt={`${educator.name}, ${educator.position}`}
             loading="lazy"
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.06]"
