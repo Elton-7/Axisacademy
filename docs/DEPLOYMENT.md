@@ -470,8 +470,10 @@ Two things this does not do for you:
   PostgreSQL client tools, and neither does `server/Dockerfile`. Run backups
   from a machine that has them — but the client must be **at least as new as
   the server** (18 here), or `pg_dump` refuses with a version mismatch.
-- **Nothing schedules it.** Add a cron job, a Render cron service, or a Task
-  Scheduler entry. Render also takes its own daily snapshots on paid plans;
+- **Nothing schedules it unless you install it.** On the cPanel host,
+  `node scripts/schedule-backup.mjs` runs one backup through cron, reads its
+  log, and only then installs the nightly job; `--status` reports on it.
+  Elsewhere, add a cron job, a Render cron service, or a Task Scheduler entry. Render also takes its own daily snapshots on paid plans;
   these dumps are independent of that and portable between hosts.
 
 Still to agree: how long backups are kept, how much data loss is acceptable if

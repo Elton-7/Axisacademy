@@ -14,10 +14,26 @@
  *   BACKUP_DIR=/mnt/x npm run backup
  *   BACKUP_KEEP_DAYS=30 npm run backup
  */
-require('dotenv').config()
+const path = require('node:path')
+// Found by path rather than by working directory: cron starts this from the
+// home directory, where a bare config() finds no .env, connects as nobody, and
+// fails every night without anyone looking.
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') })
 const { spawn } = require('node:child_process')
 const fs = require('node:fs')
-const path = require('node:path')
+
+// The same two forms config/database.js accepts: one DATABASE_URL, or the five
+// separate variables. A backup that only understood one of them would fail on
+// whichever host uses the other.
+const url = process.env.DATABASE_URL ? new URL(process.env.DATABASE_URL) : null
+const decode = (value) => (value ? decodeURIComponent(value) : value)
+const db = {
+  host: url ? url.hostname : process.env.DB_HOST || 'localhost',
+  port: String(url ? url.port || 5432 : process.env.DB_PORT || 5432),
+  name: url ? decode(url.pathname.replace(/^\//, '')) : process.env.DB_NAME,
+  user: url ? decode(url.username) : process.env.DB_USER,
+  password: url ? decode(url.password) : process.env.DB_PASSWORD,
+}
 
 const DIR = process.env.BACKUP_DIR || path.join(__dirname, '..', 'backups')
 const KEEP_DAYS = Number(process.env.BACKUP_KEEP_DAYS || 14)
@@ -45,10 +61,10 @@ const prune = () => {
 fs.mkdirSync(DIR, { recursive: true })
 
 const child = spawn(PG_DUMP, [
-  '--host', process.env.DB_HOST || 'localhost',
-  '--port', String(process.env.DB_PORT || 5432),
-  '--username', process.env.DB_USER,
-  '--dbname', process.env.DB_NAME,
+  '--host', db.host,
+  '--port', db.port,
+  '--username', db.user,
+  '--dbname', db.name,
   '--format', 'custom',
   '--no-owner',
   '--no-privileges',
@@ -56,7 +72,7 @@ const child = spawn(PG_DUMP, [
 ], {
   // Passing the password by environment keeps it off the process list, where
   // any other user on the machine could read it.
-  env: { ...process.env, PGPASSWORD: process.env.DB_PASSWORD },
+  env: { ...process.env, PGPASSWORD: db.password },
   stdio: ['ignore', 'inherit', 'inherit'],
 })
 
