@@ -4,7 +4,7 @@ const router = express.Router()
 const { Op } = require('sequelize')
 const {
   sequelize, Learner, Session, Assessment, Message, MessageRead,
-  LearnerEducator, Enrollment, Contact, AuditLog, User,
+  LearnerEducator, Enrollment, Contact, AuditLog, User, SafeguardingConcern,
 } = require('../models')
 const { requireAuth, requireRole } = require('../middleware/requireAuth')
 const { validateIntegerParam } = require('../middleware/validateUuidParam')
@@ -133,6 +133,14 @@ router.get('/learners/:id/export', ...staffOnly, async (req, res) => {
  * The audit entries are kept: they record that an erasure happened and who
  * performed it, which is itself an accountability obligation. They reference
  * the learner by id only, and the record they pointed to no longer exists.
+ *
+ * A learner with safeguarding concerns on record is not erased at all. Those
+ * records are normally exempt from a request to erase, because a duty to keep
+ * them outweighs it, and they are the ones most likely to be asked for later.
+ * Before this check the erasure went ahead and the database set each concern's
+ * learner_id to null: the concern's text survived, naming the child, while the
+ * record of which child it was about was destroyed. Refusing keeps both, and
+ * leaves the decision with whoever handles safeguarding at Axis.
  */
 router.delete('/learners/:id', ...adminOnlyErasure, async (req, res) => {
   const t = await sequelize.transaction()
@@ -148,6 +156,17 @@ router.delete('/learners/:id', ...adminOnlyErasure, async (req, res) => {
       return res.status(400).json({
         success: false,
         error: 'Type the learner’s name exactly to confirm erasure. This cannot be undone.',
+      })
+    }
+
+    const concerns = await SafeguardingConcern.count({ where: { learnerId: learner.id }, transaction: t })
+    if (concerns > 0) {
+      await t.rollback()
+      return res.status(409).json({
+        success: false,
+        error:
+          `${learner.name} has ${concerns} safeguarding record${concerns === 1 ? '' : 's'}, which must be kept, ` +
+          'so nothing has been erased. Refer the request to whoever handles safeguarding at Axis.',
       })
     }
 

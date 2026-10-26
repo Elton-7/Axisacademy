@@ -443,6 +443,19 @@ describe('data protection', () => {
     assert.equal(result.status, 403)
   })
 
+  test('a learner with a safeguarding record is not erased, and the record keeps its child', async () => {
+    // learnerA has the concern raised in "safeguarding concerns stay with Axis".
+    const result = await api(`/data-protection/learners/${ids.learnerA}`, {
+      method: 'DELETE', token: tokens.admin, body: { confirmName: 'Suite Learner A' },
+    })
+    assert.equal(result.status, 409)
+    assert.ok(await Learner.findByPk(ids.learnerA), 'the learner must still exist')
+    assert.ok(
+      (await SafeguardingConcern.count({ where: { learnerId: ids.learnerA } })) > 0,
+      'the concern must still say which child it is about'
+    )
+  })
+
   test('an export includes the audit trail', async () => {
     const result = await api(`/data-protection/learners/${ids.learnerA}/export`, { token: tokens.admin })
     assert.equal(result.status, 200)
