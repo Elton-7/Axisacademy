@@ -64,9 +64,20 @@ if (maps.length) {
 // The CSP is compiled from VITE_API_URL. A build run without it allows only
 // localhost, and the live site then loads but every API call is blocked.
 const rules = path.join(DIST, 'axis.htaccess')
-if (fs.existsSync(rules) && /connect-src[^;"]*localhost/.test(fs.readFileSync(rules, 'utf8'))) {
-  console.error('deploy-cpanel: the build\'s CSP allows only localhost. Rebuild with VITE_API_URL and VITE_SITE_URL set.')
-  process.exit(1)
+if (fs.existsSync(rules)) {
+  const connectSrc = (fs.readFileSync(rules, 'utf8').match(/connect-src[^;"]*/) || [''])[0]
+  if (/localhost/.test(connectSrc)) {
+    console.error('deploy-cpanel: the build\'s CSP allows only localhost. Rebuild with VITE_API_URL and VITE_SITE_URL set.')
+    process.exit(1)
+  }
+  // The API lives on the site's own origin. A build pointed anywhere else — the
+  // retired api. subdomain is the one old instructions named — loads normally
+  // and then fails every call.
+  const siteOrigin = new URL(process.env.VITE_SITE_URL || 'https://www.axislearning.co.ke').origin
+  if (!connectSrc.split(/\s+/).includes(siteOrigin)) {
+    console.error(`deploy-cpanel: the build sends API calls to "${connectSrc.replace('connect-src', '').trim()}", not ${siteOrigin}. Rebuild with VITE_API_URL=${siteOrigin}/api.`)
+    process.exit(1)
+  }
 }
 
 const authHeader = TOKEN

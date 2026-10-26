@@ -101,4 +101,6 @@ child.on('exit', (code) => {
 
   console.log('\nA backup you have never restored is not yet a backup.')
   console.log('Rehearse it: npm run restore -- --file <path> --database axis_restore_test')
+  // The last line run-on-host.mjs waits for.
+  console.log('done')
 })

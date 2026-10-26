@@ -46,8 +46,10 @@ Set these in the dashboard rather than in the repository:
   `NOTIFICATION_FROM` — enquiry notifications log instead of sending until
   these exist, so a missing credential never silently loses an enquiry.
 
-Confirm `https://api.axislearning.co.ke/api/health` returns
-`{"status":"OK","database":"connected"}` before going further.
+Confirm `https://www.axislearning.co.ke/api/health` returns
+`{"status":"OK","database":"connected"}` before going further. The API is on
+the site's own origin, not on `api.axislearning.co.ke`, which is retired — see
+"Working on this host".
 
 ### 2. The site
 
@@ -56,7 +58,7 @@ continuous deployment, so the bytes that get served are the bytes you built:
 
 ```
 cd client
-VITE_API_URL=https://api.axislearning.co.ke/api VITE_SITE_URL=https://www.axislearning.co.ke npm run build
+VITE_API_URL=https://www.axislearning.co.ke/api VITE_SITE_URL=https://www.axislearning.co.ke npm run build
 
 cd ..
 CPANEL_HOST=... CPANEL_USER=... CPANEL_PASSWORD=... node scripts/deploy-cpanel.mjs
@@ -71,7 +73,10 @@ uploaded.
 
 The environment variables the build needs:
 
-- `VITE_API_URL` — `https://api.axislearning.co.ke/api`
+- `VITE_API_URL` — `https://www.axislearning.co.ke/api`. Not the retired
+  `api.` subdomain: a build pointed there loads normally and then fails every
+  API call. Leave both unset and the CSP allows only localhost, which the
+  deploy now refuses.
 - `VITE_SITE_URL` — `https://www.axislearning.co.ke`
 - `VITE_GA_MEASUREMENT_ID` — only when Axis has settled its consent position.
   Left empty, the analytics code is removed from the bundle entirely rather
