@@ -1,13 +1,19 @@
 /**
- * Puts an Apache password in front of /admin, ahead of the app's own sign-in.
+ * Puts an Apache password in front of /admin and /staff, ahead of the app's own
+ * sign-in.
  *
  * Two secrets instead of one, and an attacker never reaches the login form or
  * learns whether an account exists. It is not a replacement for the app's
  * authentication — that is what actually protects the data — it is a second
- * gate on the one door that leads to everything.
+ * gate on the doors that lead to everything.
  *
- * Only /admin is covered. The parent and educator portals stay open, because
- * families use them and cannot be handed a shared password.
+ * /staff is covered as well because it is the same dashboard behind a second
+ * address, and it accepts admin accounts too. Gating /admin alone left the
+ * staff address answering with the login form to anyone, which made the
+ * password on /admin a lock on one of two identical doors.
+ *
+ * The parent and educator portals stay open, because families use them and
+ * cannot be handed a shared password.
  *
  * The password is hashed here and only the hash is sent. It is never written to
  * this repository and never printed.
@@ -18,6 +24,7 @@
  *
  * Usage:
  *   node scripts/protect-admin.mjs              asks for the password
+ *   node scripts/protect-admin.mjs --rule-only  rewrites the rule, keeps the password
  *   node scripts/protect-admin.mjs --remove     takes the gate off again
  *
  * It verifies the result before finishing: /admin must refuse an anonymous
@@ -52,6 +59,9 @@ const SITE = process.env.VITE_SITE_URL || 'https://www.axislearning.co.ke'
 
 const BASIC_USER = process.env.ADMIN_BASIC_USER || 'axis'
 const REMOVE = process.argv.includes('--remove')
+// Changes which addresses are gated without touching the password file, so
+// staff keep the password they already have.
+const RULE_ONLY = process.argv.includes('--rule-only')
 
 /**
  * Three ways to supply the password, and the order is the safety order.
@@ -96,7 +106,7 @@ if (!HOST || !USER || (!PASSWORD && !TOKEN)) {
 }
 let BASIC_PASSWORD = process.env.ADMIN_BASIC_PASSWORD
 
-if (!REMOVE && !BASIC_PASSWORD) {
+if (!REMOVE && !RULE_ONLY && !BASIC_PASSWORD) {
   if (process.stdin.isTTY) {
     BASIC_PASSWORD = await askForPassword()
   }
@@ -193,6 +203,54 @@ function withoutBlock(text) {
     return
   }
 
+  const block = `${BEGIN}
+# A password before the staff panel's own sign-in, so an attacker needs two
+# secrets and never reaches the login form. /admin and /staff are the same
+# dashboard at two addresses, so both are gated. Not the portals: families use
+# those and cannot be handed a shared password.
+<If "%{REQUEST_URI} =~ m#^/(admin|staff)(/|$)#">
+  AuthType Basic
+  AuthName "Axis Learning staff area"
+  AuthUserFile "${HOME}/${PASSWD_FILE}"
+  Require valid-user
+</If>
+${END}
+`
+
+  // Checks that need no password: both staff addresses refuse a stranger, and
+  // nothing families use has been caught by the rule.
+  const anonymousChecks = async () => ({
+    'anonymous /admin (want 401)': await probe(`${SITE}/admin`),
+    'anonymous /staff/login (want 401)': await probe(`${SITE}/staff/login`),
+    'homepage still open (want 200)': await probe(`${SITE}/`),
+    'family portal still open (want 200)': await probe(`${SITE}/portal/student`),
+    'educator portal still open (want 200)': await probe(`${SITE}/portal/tutor`),
+  })
+  const want = (label) => Number(label.match(/want (\d+)/)[1])
+  const report = (results) => {
+    console.log()
+    for (const [label, status] of Object.entries(results)) console.log(`  ${label.padEnd(38)} ${status}`)
+    return Object.entries(results).every(([label, status]) => status === want(label))
+  }
+
+  if (RULE_ONLY) {
+    if (!existing.includes(BEGIN)) {
+      console.error('  no gate is installed yet, so there is no password to keep. Run without --rule-only.')
+      process.exit(1)
+    }
+    await writeHtaccess(withoutBlock(existing).trimEnd() + '\n\n' + block)
+    console.log('  apache rule rewritten; the password file is unchanged')
+    if (!report(await anonymousChecks())) {
+      // Back to exactly what was there, old gate included, rather than to no gate.
+      console.error('\n  the rule did not behave as intended — restoring the previous .htaccess')
+      await writeHtaccess(existing)
+      console.error('  restored. The gate is as it was before this run.')
+      process.exit(1)
+    }
+    console.log('\n  done. Both staff addresses ask for the existing password.')
+    return
+  }
+
   /*
    * Apache's bcrypt support expects the $2y$ prefix. The algorithm is identical
    * to what this library produces; only the version marker differs. Rather than
@@ -213,39 +271,15 @@ function withoutBlock(text) {
   if (!w.status) throw new Error(`could not write the password file: ${(w.errors || []).join('; ').slice(0, 120)}`)
   console.log(`  password file written to ${HOME}/${PASSWD_FILE} (outside the web root)`)
 
-  const block = `${BEGIN}
-# A password before the staff panel's own sign-in, so an attacker needs two
-# secrets and never reaches the login form. Only /admin: families use the
-# portals and cannot be handed a shared password.
-<If "%{REQUEST_URI} =~ m#^/admin(/|$)#">
-  AuthType Basic
-  AuthName "Axis Learning staff area"
-  AuthUserFile "${HOME}/${PASSWD_FILE}"
-  Require valid-user
-</If>
-${END}
-`
-
   await writeHtaccess(withoutBlock(existing).trimEnd() + '\n\n' + block)
   console.log('  apache rule installed')
 
   // Verify, rather than assume. Locking out the site is the failure that matters.
-  const results = {
-    'anonymous /admin (want 401)': await probe(`${SITE}/admin`),
+  const good = report({
+    ...(await anonymousChecks()),
     'correct credentials (want 200)': await probe(`${SITE}/admin`, `${BASIC_USER}:${BASIC_PASSWORD}`),
     'wrong credentials (want 401)': await probe(`${SITE}/admin`, `${BASIC_USER}:not-the-password`),
-    'homepage still open (want 200)': await probe(`${SITE}/`),
-    'family portal still open (want 200)': await probe(`${SITE}/portal/student`),
-  }
-  console.log()
-  for (const [label, status] of Object.entries(results)) console.log(`  ${label.padEnd(38)} ${status}`)
-
-  const good =
-    results['anonymous /admin (want 401)'] === 401 &&
-    results['correct credentials (want 200)'] === 200 &&
-    results['wrong credentials (want 401)'] === 401 &&
-    results['homepage still open (want 200)'] === 200 &&
-    results['family portal still open (want 200)'] === 200
+  })
 
   if (!good) {
     console.error('\n  the gate did not behave as intended — rolling it back')
