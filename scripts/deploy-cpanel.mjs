@@ -270,7 +270,14 @@ const SITE = (process.env.VITE_SITE_URL || 'https://www.axislearning.co.ke').rep
 const entry = (fs.readFileSync(path.join(DIST, 'index.html'), 'utf8').match(/assets\/index-[^"]+\.js/) || [])[0]
 if (entry) {
   const status = await new Promise((resolve) => {
-    https.get(`${SITE}/${entry}.map`, (res) => { res.resume(); resolve(res.statusCode) }).on('error', () => resolve(0))
+    // A timeout, because without one a request the host never answers holds the
+    // deploy open indefinitely after everything has already been published.
+    const req = https.get(`${SITE}/${entry}.map`, { timeout: 30000, agent: false }, (res) => {
+      res.resume()
+      resolve(res.statusCode)
+    })
+    req.on('timeout', () => req.destroy())
+    req.on('error', () => resolve(0))
   })
   if (status === 200) {
     console.error(`deploy-cpanel: ${SITE}/${entry}.map answers 200. Source maps are public — check the Apache rules.`)
