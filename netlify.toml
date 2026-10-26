@@ -27,6 +27,16 @@
   status = 200
 
 [[redirects]]
+  from = "/staff"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
+  from = "/staff/*"
+  to = "/app.html"
+  status = 200
+
+[[redirects]]
   from = "/portal/*"
   to = "/app.html"
   status = 200

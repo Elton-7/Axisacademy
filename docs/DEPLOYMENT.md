@@ -162,9 +162,11 @@ Then submit a real enquiry and confirm it appears in the admin pipeline.
 
 ## The staff panel
 
-**It lives at `/admin`.** It is not linked from anywhere on the public site, so
-this is the only written record of the address — parents were being shown a
-staff entrance on every page that they could never use.
+**It lives at `/admin`, and at `/staff` for staff accounts.** Both addresses
+open the same dashboard, and `/staff` accepts admin accounts too. Neither is
+linked from anywhere on the public site, so this is the only written record of
+them — parents were being shown a staff entrance on every page that they could
+never use.
 
 Not being linked is not what protects it. Two things do:
 
@@ -182,16 +184,25 @@ CPANEL_HOST=... CPANEL_USER=... CPANEL_PASSWORD=... ADMIN_BASIC_USER=axis ADMIN_
 
 The password is hashed locally and only the hash is sent. The file of hashes is
 written outside `public_html`, so it is never itself downloadable. To remove the
-gate, run the same script with `--remove`.
+gate, run the same script with `--remove`. To change which addresses are gated
+without changing the password, use `--rule-only`.
 
-The script verifies before it finishes — `/admin` must refuse an anonymous
-caller and accept the credentials, and the homepage and the family portals must
-still be open — and rolls itself back if any of that is wrong. Locking the site
+The script verifies before it finishes — `/admin` and `/staff/login` must
+refuse an anonymous caller, `/admin` must accept the credentials, and the
+homepage and both portals must still be open — and rolls itself back if any of
+that is wrong. Locking the site
 out is the obvious way for this to go wrong, so it is checked rather than
 assumed.
 
-**Only `/admin` is covered.** The parent and educator portals stay open, because
-families use them and cannot be handed a shared password.
+**`/admin` and `/staff` are covered; nothing else is.** The parent and educator
+portals stay open, because families use them and cannot be handed a shared
+password.
+
+**Each gated address needs its own rewrite rule.** LiteSpeed answers a 404
+before it asks for the password, so an address that falls through to the
+not-found handler is never gated at all. `/staff` was exactly that until it was
+given a rule in `client/scripts/generate-csp.mjs` like `/admin`'s. Any new
+staff-only address needs both: a rewrite rule, and a place in the gate.
 
 ## Working on this host
 

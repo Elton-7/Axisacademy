@@ -210,6 +210,10 @@ ${apexRedirect}
   # served the shell with a 200 rather than a prerendered page.
   RewriteRule ^admin(/.*)?$ /app.html [L]
   RewriteRule ^portal(/.*)?$ /app.html [L]
+  # /staff is the same dashboard as /admin. Without its own rule it fell through
+  # to the 404 below, and LiteSpeed answers a 404 before it asks for the
+  # password protect-admin.mjs puts in front of both — so the gate never applied.
+  RewriteRule ^staff(/.*)?$ /app.html [L]
 
   # Prerendered pages are written as <route>/index.html. Left alone, Apache
   # answers /about with a 301 to /about/ — but the sitemap and the page's own

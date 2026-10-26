@@ -19,6 +19,7 @@
  * so a build made with the wrong values cannot be corrected here.
  *
  * Usage:  node scripts/deploy-cpanel.mjs
+ *         node scripts/deploy-cpanel.mjs --rules-only   Apache rules alone
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -224,6 +225,14 @@ async function verify(groups) {
     }
   }
   return { matched, problems }
+}
+
+// Installs only the Apache rules, for a change to them alone. A full upload on
+// this host takes around ten minutes to send files that are already there.
+if (process.argv.includes('--rules-only')) {
+  await installHtaccess()
+  console.log('deploy-cpanel: rules installed; no files uploaded.')
+  process.exit(0)
 }
 
 const groups = collect()
