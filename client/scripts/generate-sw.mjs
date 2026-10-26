@@ -101,6 +101,11 @@ const offlineHtml = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Tries again on its own. Without this the page stayed up after the
+     connection came back, and the site looked gone until someone navigated by
+     hand. A meta refresh rather than a script, because the CSP allows no inline
+     script this page could carry. -->
+<meta http-equiv="refresh" content="15">
 <title>Offline — Axis Learning</title>
 <style>
   :root { color-scheme: light dark; }
@@ -125,6 +130,8 @@ const offlineHtml = `<!doctype html>
     <h1>You are offline</h1>
     <p>This page has not been saved to your device yet. Pages you have already
        visited will still open without a connection.</p>
+    <p>This page tries again every few seconds, or you can
+       <a href="">try again now</a>.</p>
     <p>To reach Axis now, telephone <a href="tel:0737003007">0737 003 007</a>.</p>
   </main>
 </body>
@@ -238,6 +245,19 @@ self.addEventListener('fetch', (event) => {
 
         const response = await network
         if (response) return response
+
+        // One failed request is not proof of being offline. A phone waking from
+        // sleep or switching between Wi-Fi and mobile data fails the first
+        // request and succeeds a moment later; answering that blip with the
+        // offline page made the site look as if it had disappeared.
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+        const retry = await fetch(request).catch(() => null)
+        if (retry) return retry
+
+        // Any stored copy of the page, even one reached with a different query
+        // string, is better than no page at all.
+        const anyCopy = await caches.match(request, { ignoreSearch: true })
+        if (anyCopy) return anyCopy
 
         return (
           (await caches.match(OFFLINE_URL)) ||
