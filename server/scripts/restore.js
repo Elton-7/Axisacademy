@@ -53,6 +53,17 @@ const PG_RESTORE = process.env.PG_RESTORE_PATH || 'pg_restore'
 const exists = spawnSync(PSQL, [...conn, '--dbname', 'postgres', '--tuples-only', '--no-align',
   '--command', `SELECT 1 FROM pg_database WHERE datname='${database}'`], { env, encoding: 'utf8' })
 
+// Without this, a machine with no psql on its PATH fails the CREATE below with
+// no status and no output, and the script exits as if nothing had been asked.
+if (exists.error) {
+  console.error(
+    exists.error.code === 'ENOENT'
+      ? `psql not found. Install the PostgreSQL client tools, or set PSQL_PATH and PG_RESTORE_PATH.`
+      : `Could not run psql: ${exists.error.message}`
+  )
+  process.exit(1)
+}
+
 if (exists.stdout?.trim() === '1') {
   if (!force) {
     console.error(`Database "${database}" already exists. Pass --force to replace it.`)
@@ -78,10 +89,17 @@ if (restored.status !== 0) {
   console.warn('\npg_restore reported warnings. Confirm the counts below before trusting it.')
 }
 
+// Exact counts, not pg_stat_user_tables. Those statistics lag a bulk load, so
+// straight after a restore they can read zero for tables that are full — which
+// would report a good restore as a failed one.
 const counts = spawnSync(PSQL, [...conn, '--dbname', database, '--tuples-only', '--no-align',
   '--command',
-  `SELECT relname || ': ' || n_live_tup FROM pg_stat_user_tables
-   WHERE n_live_tup > 0 ORDER BY n_live_tup DESC LIMIT 12`], { env, encoding: 'utf8' })
+  `SELECT table_name || ': ' || n FROM (
+     SELECT table_name,
+            (xpath('/row/c/text()', query_to_xml(format('SELECT count(*) AS c FROM %I.%I', table_schema, table_name), false, true, '')))[1]::text::int AS n
+     FROM information_schema.tables
+     WHERE table_schema = 'public' AND table_type = 'BASE TABLE'
+   ) t WHERE n > 0 ORDER BY n DESC, table_name`], { env, encoding: 'utf8' })
 
 console.log(`\nRestored into "${database}":`)
 console.log(counts.stdout?.trim() || '  (no rows — this restore did NOT work)')
