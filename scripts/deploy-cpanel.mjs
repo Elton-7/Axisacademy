@@ -44,6 +44,30 @@ if (!fs.existsSync(path.join(DIST, 'index.html'))) {
   process.exit(1)
 }
 
+// A build with source maps in it is a build made with the wrong config. Refuse
+// it rather than publish the full source; the Apache rules would hide the maps,
+// but only if they are installed, and nothing should depend on that alone.
+const maps = []
+;(function findMaps(dir) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name)
+    if (entry.isDirectory()) findMaps(full)
+    else if (entry.name.endsWith('.map')) maps.push(path.relative(DIST, full))
+  }
+})(DIST)
+if (maps.length) {
+  console.error(`deploy-cpanel: client/dist contains ${maps.length} source map(s), e.g. ${maps[0]}. Turn sourcemap off and rebuild.`)
+  process.exit(1)
+}
+
+// The CSP is compiled from VITE_API_URL. A build run without it allows only
+// localhost, and the live site then loads but every API call is blocked.
+const rules = path.join(DIST, 'axis.htaccess')
+if (fs.existsSync(rules) && /connect-src[^;"]*localhost/.test(fs.readFileSync(rules, 'utf8'))) {
+  console.error('deploy-cpanel: the build\'s CSP allows only localhost. Rebuild with VITE_API_URL and VITE_SITE_URL set.')
+  process.exit(1)
+}
+
 const authHeader = TOKEN
   ? `cpanel ${USER}:${TOKEN}`
   : 'Basic ' + Buffer.from(`${USER}:${PASSWORD}`).toString('base64')
@@ -240,4 +264,19 @@ if (problems.length) {
   console.error(`deploy-cpanel: ${problems.length} file(s) did not match. The site may be part-deployed.`)
   process.exit(1)
 }
+// Checked against the live site, because a map left on disk by an older build
+// is invisible to the comparison above: it is not in this build at all.
+const SITE = (process.env.VITE_SITE_URL || 'https://www.axislearning.co.ke').replace(/\/$/, '')
+const entry = (fs.readFileSync(path.join(DIST, 'index.html'), 'utf8').match(/assets\/index-[^"]+\.js/) || [])[0]
+if (entry) {
+  const status = await new Promise((resolve) => {
+    https.get(`${SITE}/${entry}.map`, (res) => { res.resume(); resolve(res.statusCode) }).on('error', () => resolve(0))
+  })
+  if (status === 200) {
+    console.error(`deploy-cpanel: ${SITE}/${entry}.map answers 200. Source maps are public — check the Apache rules.`)
+    process.exit(1)
+  }
+  console.log(`  source maps: not served (${status})`)
+}
+
 console.log('deploy-cpanel: done.')

@@ -195,6 +195,13 @@ ${apexRedirect}
   # Harmless while nothing is mounted there: /api simply 404s as before.
   RewriteRule ^api(/|$) - [L]
 
+  # Source maps are never served, even when one is on disk. The deploy uploads
+  # and overwrites but never deletes, so maps from builds made before
+  # sourcemap was turned off are still in public_html/assets — and a map hands
+  # anyone the full source. Refusing them here closes that whatever is left
+  # behind, and whatever a future build config does.
+  RewriteRule [.]map$ - [R=404,L]
+
   # A real file wins outright: prerendered HTML, hashed assets, the sitemap.
   RewriteCond %{REQUEST_FILENAME} -f
   RewriteRule ^ - [L]
