@@ -248,3 +248,4 @@ const seedDemoPortal = async () => {
 }
 
 module.exports = seedDemoPortal
+module.exports.DEMO_LEARNER = DEMO_LEARNER
