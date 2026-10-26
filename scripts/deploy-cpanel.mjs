@@ -230,8 +230,17 @@ const groups = collect()
 const total = [...groups.values()].reduce((n, f) => n + f.length, 0)
 console.log(`deploy-cpanel: ${total} files -> ${HOST}:${DOCROOT}`)
 
+// Pages and the service worker name hashed assets, so they go last. Uploaded in
+// directory order, the new HTML went up minutes before assets/, and for that
+// whole window every visitor was sent pages whose CSS and JavaScript did not
+// exist yet — the site appeared unstyled or blank until the deploy finished.
+const isEntry = (f) => /\.html$/.test(f) || path.basename(f) === 'sw.js'
+const passes = []
+for (const [rel, files] of groups) passes.push([rel, files.filter((f) => !isEntry(f))])
+for (const [rel, files] of groups) passes.push([rel, files.filter(isEntry)])
+
 let uploaded = 0
-for (const [rel, files] of groups) {
+for (const [rel, files] of passes) {
   const target = rel ? `${DOCROOT}/${rel}` : DOCROOT
   let batch = []
   let bytes = 0
